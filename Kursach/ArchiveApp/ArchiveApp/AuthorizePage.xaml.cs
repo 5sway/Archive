@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data.Entity;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -25,27 +26,43 @@ namespace ArchiveApp
             InitializeComponent();
         }
 
-        private void Button_Click(object sender, RoutedEventArgs e)
+        private string GetUserRole(string login, string password)
+        {
+            var user = ArchiveBaseEntities.GetContext().User
+                .Where(u => u.Login == login && u.Password == password)
+                .Include(u => u.Role)
+                .FirstOrDefault();
+            return user?.Role?.Name;
+        }
+
+        public event Action OnUserAuthorized;
+        private void AuthorizeUser()
         {
             string login = LoginBox.Text.Trim();
             string password = PasswordBox.Password.Trim();
             var user = ArchiveBaseEntities.GetContext().User.FirstOrDefault(u => u.Login == login);
-
-            if (string.IsNullOrWhiteSpace(login))
-            {
-                MessageBox.Show("Введите логин!");
-                return;
-            }
+            string role = GetUserRole(login, password);
+            StringBuilder errorMessage = new StringBuilder();
 
             if (string.IsNullOrWhiteSpace(password))
             {
-                MessageBox.Show("Введите пароль!");
+                errorMessage.AppendLine("Введите пароль!");
+            }
+
+            if (string.IsNullOrWhiteSpace(login))
+            {
+                errorMessage.AppendLine("Введите логин!");
+            }
+
+            if (errorMessage.Length > 0)
+            {
+                MessageBox.Show(errorMessage.ToString());
                 return;
             }
 
-            if (user == null || user.Password != password || user.Login != login)
+            if (user == null)
             {
-                MessageBox.Show("Неверный логин или пароль!");
+                MessageBox.Show("Неверный логин!");
                 return;
             }
 
@@ -54,9 +71,27 @@ namespace ArchiveApp
                 MessageBox.Show("Неверный пароль!");
                 return;
             }
-
-            Manager.MainFrame.Navigate(new MainMenuPage());
+            OnUserAuthorized?.Invoke();
+            Manager.MainFrame.Navigate(new MainMenuPage(role));
         }
+
+        private void LoginBtn_Click(object sender, RoutedEventArgs e)
+        {
+            AuthorizeUser();
+        }
+
+        private void LoginBox_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.Key == Key.Enter)
+                PasswordBox.Focus();
+        }
+
+        private void PasswordBox_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.Key == Key.Enter)
+                AuthorizeUser();
+        }
+
         private void LoginBox_GotFocus(object sender, RoutedEventArgs e)
         {
             LoginText.Visibility = Visibility.Collapsed;

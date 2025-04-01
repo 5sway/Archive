@@ -20,9 +20,53 @@ namespace ArchiveApp
     /// </summary>
     public partial class MainMenuPage : Page
     {
-        public MainMenuPage()
+        private string _Role;
+
+        public MainMenuPage(string role)
         {
             InitializeComponent();
+            _Role = role;
+
+            SetPermissionsBasedOnRole();
+        }
+        private void SetPermissionsBasedOnRole()
+        {
+            switch (_Role)
+            {
+                case "Администратор":
+                    AdminControlsVisibility(true);
+                    ClerkControlsVisibility(true);
+                    ArchivariusControlsVisibility(true);
+                    break;
+                case "Делопроизводитель":
+                    AdminControlsVisibility(false);
+                    ClerkControlsVisibility(true);
+                    ArchivariusControlsVisibility(false);
+                    break;
+                case "Архивариус":
+                    AdminControlsVisibility(false);
+                    ClerkControlsVisibility(false);
+                    ArchivariusControlsVisibility(true);
+                    break;
+                default:
+                    MessageBox.Show("Неизвестная роль!");
+                    break;
+            }
+        }
+
+        private void AdminControlsVisibility(bool isVisible)
+        {
+            AdminBtn.Visibility = isVisible ? Visibility.Visible : Visibility.Collapsed;
+        }
+
+        private void ClerkControlsVisibility(bool isVisible)
+        {
+            ClerkBtn.Visibility = isVisible ? Visibility.Visible : Visibility.Collapsed;
+        }
+
+        private void ArchivariusControlsVisibility(bool isVisible)
+        {
+            ArchivariusBtn.Visibility = isVisible ? Visibility.Visible : Visibility.Collapsed;
         }
     }
 }
