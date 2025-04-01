@@ -7,12 +7,20 @@
       "RelativeMoniker": "D:0:0:{E536B243-99BD-442C-97CC-07DB471FD4D8}|ArchiveApp\\ArchiveApp.csproj|solutionrelative:archiveapp\\authorizepage.xaml.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
+      "AbsoluteMoniker": "D:0:0:{E536B243-99BD-442C-97CC-07DB471FD4D8}|ArchiveApp\\ArchiveApp.csproj|d:\\kursach\\kursach\\archiveapp\\archiveapp\\mainwindow.xaml.cs||{8B382828-6202-11D1-8870-0000F87579D2}|",
+      "RelativeMoniker": "D:0:0:{E536B243-99BD-442C-97CC-07DB471FD4D8}|ArchiveApp\\ArchiveApp.csproj|solutionrelative:archiveapp\\mainwindow.xaml.cs||{8B382828-6202-11D1-8870-0000F87579D2}|"
+    },
+    {
       "AbsoluteMoniker": "D:0:0:{E536B243-99BD-442C-97CC-07DB471FD4D8}|ArchiveApp\\ArchiveApp.csproj|D:\\Kursach\\Kursach\\ArchiveApp\\archiveapp\\authorizepage.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}",
       "RelativeMoniker": "D:0:0:{E536B243-99BD-442C-97CC-07DB471FD4D8}|ArchiveApp\\ArchiveApp.csproj|solutionrelative:archiveapp\\authorizepage.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{E536B243-99BD-442C-97CC-07DB471FD4D8}|ArchiveApp\\ArchiveApp.csproj|d:\\kursach\\kursach\\archiveapp\\archiveapp\\archivemodel.context.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{E536B243-99BD-442C-97CC-07DB471FD4D8}|ArchiveApp\\ArchiveApp.csproj|solutionrelative:archiveapp\\archivemodel.context.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+      "AbsoluteMoniker": "D:0:0:{E536B243-99BD-442C-97CC-07DB471FD4D8}|ArchiveApp\\ArchiveApp.csproj|d:\\kursach\\kursach\\archiveapp\\archiveapp\\mainmenupage.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}",
+      "RelativeMoniker": "D:0:0:{E536B243-99BD-442C-97CC-07DB471FD4D8}|ArchiveApp\\ArchiveApp.csproj|solutionrelative:archiveapp\\mainmenupage.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{E536B243-99BD-442C-97CC-07DB471FD4D8}|ArchiveApp\\ArchiveApp.csproj|d:\\kursach\\kursach\\archiveapp\\archiveapp\\mainwindow.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}",
+      "RelativeMoniker": "D:0:0:{E536B243-99BD-442C-97CC-07DB471FD4D8}|ArchiveApp\\ArchiveApp.csproj|solutionrelative:archiveapp\\mainwindow.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}"
     }
   ],
   "DocumentGroupContainers": [
@@ -22,24 +30,37 @@
       "DocumentGroups": [
         {
           "DockedWidth": 200,
-          "SelectedChildIndex": 2,
+          "SelectedChildIndex": 1,
           "Children": [
             {
               "$type": "Document",
-              "DocumentIndex": 2,
-              "Title": "ArchiveModel.Context.cs",
-              "DocumentMoniker": "D:\\Kursach\\Kursach\\ArchiveApp\\ArchiveApp\\ArchiveModel.Context.cs",
-              "RelativeDocumentMoniker": "ArchiveApp\\ArchiveModel.Context.cs",
-              "ToolTip": "D:\\Kursach\\Kursach\\ArchiveApp\\ArchiveApp\\ArchiveModel.Context.cs",
-              "RelativeToolTip": "ArchiveApp\\ArchiveModel.Context.cs",
-              "ViewState": "AgIAAA8AAAAAAAAAAAAAAAwAAAAbAAAAAAAAAA==",
+              "DocumentIndex": 1,
+              "Title": "MainWindow.xaml.cs",
+              "DocumentMoniker": "D:\\Kursach\\Kursach\\ArchiveApp\\ArchiveApp\\MainWindow.xaml.cs",
+              "RelativeDocumentMoniker": "ArchiveApp\\MainWindow.xaml.cs",
+              "ToolTip": "D:\\Kursach\\Kursach\\ArchiveApp\\ArchiveApp\\MainWindow.xaml.cs",
+              "RelativeToolTip": "ArchiveApp\\MainWindow.xaml.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAACoAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-03-31T12:14:13.202Z",
+              "WhenOpened": "2025-04-01T12:38:56.376Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 1,
+              "DocumentIndex": 0,
+              "Title": "AuthorizePage.xaml.cs",
+              "DocumentMoniker": "D:\\Kursach\\Kursach\\ArchiveApp\\ArchiveApp\\AuthorizePage.xaml.cs",
+              "RelativeDocumentMoniker": "ArchiveApp\\AuthorizePage.xaml.cs",
+              "ToolTip": "D:\\Kursach\\Kursach\\ArchiveApp\\ArchiveApp\\AuthorizePage.xaml.cs",
+              "RelativeToolTip": "ArchiveApp\\AuthorizePage.xaml.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAADkAAAAMAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-03-31T10:44:20.747Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 2,
               "Title": "AuthorizePage.xaml",
               "DocumentMoniker": "D:\\Kursach\\Kursach\\ArchiveApp\\ArchiveApp\\AuthorizePage.xaml",
               "RelativeDocumentMoniker": "ArchiveApp\\AuthorizePage.xaml",
@@ -51,15 +72,26 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 0,
-              "Title": "AuthorizePage.xaml.cs",
-              "DocumentMoniker": "D:\\Kursach\\Kursach\\ArchiveApp\\ArchiveApp\\AuthorizePage.xaml.cs",
-              "RelativeDocumentMoniker": "ArchiveApp\\AuthorizePage.xaml.cs",
-              "ToolTip": "D:\\Kursach\\Kursach\\ArchiveApp\\ArchiveApp\\AuthorizePage.xaml.cs",
-              "RelativeToolTip": "ArchiveApp\\AuthorizePage.xaml.cs",
-              "ViewState": "AgIAABkAAAAAAAAAAAAiwC0AAABRAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-03-31T10:44:20.747Z",
+              "DocumentIndex": 3,
+              "Title": "MainMenuPage.xaml",
+              "DocumentMoniker": "D:\\Kursach\\Kursach\\ArchiveApp\\ArchiveApp\\MainMenuPage.xaml",
+              "RelativeDocumentMoniker": "ArchiveApp\\MainMenuPage.xaml",
+              "ToolTip": "D:\\Kursach\\Kursach\\ArchiveApp\\ArchiveApp\\MainMenuPage.xaml",
+              "RelativeToolTip": "ArchiveApp\\MainMenuPage.xaml",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003549|",
+              "WhenOpened": "2025-04-01T08:25:42.281Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 4,
+              "Title": "MainWindow.xaml",
+              "DocumentMoniker": "D:\\Kursach\\Kursach\\ArchiveApp\\ArchiveApp\\MainWindow.xaml",
+              "RelativeDocumentMoniker": "ArchiveApp\\MainWindow.xaml",
+              "ToolTip": "D:\\Kursach\\Kursach\\ArchiveApp\\ArchiveApp\\MainWindow.xaml",
+              "RelativeToolTip": "ArchiveApp\\MainWindow.xaml",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003549|",
+              "WhenOpened": "2025-04-01T08:27:38.803Z",
               "EditorCaption": ""
             }
           ]

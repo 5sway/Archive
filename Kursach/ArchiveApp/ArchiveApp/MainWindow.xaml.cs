@@ -25,5 +25,18 @@ namespace ArchiveApp
             InitializeComponent();
             MainFrame.Navigate(new AuthorizePage());
         }
+
+        private void SearchBox_GotFocus(object sender, RoutedEventArgs e)
+        {
+            SearchText.Visibility = Visibility.Collapsed;
+        }
+
+        private void SearchBox_LostFocus(object sender, RoutedEventArgs e)
+        {
+            if (string.IsNullOrWhiteSpace(SearchBox.Text))
+            {
+                SearchText.Visibility = Visibility.Visible;
+            }
+        }
     }
 }

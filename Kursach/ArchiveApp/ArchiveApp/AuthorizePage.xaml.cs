@@ -55,7 +55,7 @@ namespace ArchiveApp
                 return;
             }
 
-            MessageBox.Show("Привет, " + user.Name);
+            Manager.MainFrame.Navigate(new MainMenuPage());
         }
         private void LoginBox_GotFocus(object sender, RoutedEventArgs e)
         {

@@ -75,6 +75,9 @@
     <Compile Include="Document.cs">
       <DependentUpon>ArchiveModel.tt</DependentUpon>
     </Compile>
+    <Compile Include="MainMenuPage.xaml.cs">
+      <DependentUpon>MainMenuPage.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Registration_Card.cs">
       <DependentUpon>ArchiveModel.tt</DependentUpon>
     </Compile>
@@ -88,6 +91,10 @@
       <DependentUpon>ArchiveModel.tt</DependentUpon>
     </Compile>
     <Page Include="AuthorizePage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="MainMenuPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -166,6 +173,11 @@
       <DependentUpon>ArchiveModel.edmx</DependentUpon>
       <LastGenOutput>ArchiveModel.cs</LastGenOutput>
     </Content>
+    <Resource Include="Resources\BurgerIcon.png" />
+    <Resource Include="Resources\ArchiveIcon.png" />
+    <Resource Include="Resources\UpdateIcon.png" />
+    <Resource Include="Resources\NotIcon.png" />
+    <Resource Include="Resources\SearchIcon.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">

@@ -21,3 +21,5 @@ D:\Kursach\Kursach\ArchiveApp\ArchiveApp\bin\Debug\EntityFramework.xml
 D:\Kursach\Kursach\ArchiveApp\ArchiveApp\bin\Debug\EntityFramework.SqlServer.xml
 D:\Kursach\Kursach\ArchiveApp\ArchiveApp\obj\Debug\ArchiveApp_Content.g.cs
 D:\Kursach\Kursach\ArchiveApp\ArchiveApp\obj\Debug\ArchiveApp.csproj.Up2Date
+D:\Kursach\Kursach\ArchiveApp\ArchiveApp\obj\Debug\MainMenuPage.g.cs
+D:\Kursach\Kursach\ArchiveApp\ArchiveApp\obj\Debug\MainMenuPage.baml
