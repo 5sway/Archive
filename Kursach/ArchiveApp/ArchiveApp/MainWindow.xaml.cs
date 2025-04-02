@@ -110,5 +110,29 @@ namespace ArchiveApp
             RepBtn.Visibility = newVisibility;
             MainBtn.Visibility = newVisibility;
         }
+
+        private void MainBtn_Click(object sender, RoutedEventArgs e)
+        {
+            if (MainFrame.Content is MainMenuPage) return;
+            string role = UserData.CurrentUserRole;
+            MainFrame.Navigate(new MainMenuPage(role));
+
+        }
+
+        private void DocBtn_Click(object sender, RoutedEventArgs e)
+        {
+            MainFrame.Navigate(new DocumentPage());
+
+        }
+
+        private void ReqBtn_Click(object sender, RoutedEventArgs e)
+        {
+            MainFrame.Navigate(new RequestPage());
+        }
+
+        private void RepBtn_Click(object sender, RoutedEventArgs e)
+        {
+            MainFrame.Navigate(new ReportPage());
+        }
     }
 }

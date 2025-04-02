@@ -150,6 +150,7 @@ namespace ArchiveApp
             string password = PasswordBox.Password.Trim();
             string role = GetUserRole(login, password);
 
+            UserData.CurrentUserRole = role;
             OnUserAuthorized?.Invoke();
             Manager.MainFrame.Navigate(new MainMenuPage(role));
         }

@@ -22,11 +22,11 @@
             <ColumnDefinition Width="200"/>
             <ColumnDefinition Width="*"/>
         </Grid.ColumnDefinitions>
-        <Button Name="DocumentBtn" Content="Документы" Background="#bae3e8" Grid.Row="1" Grid.Column="1" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" FontSize="20"></Button>
-        <Button Name="TaskBtn" Content="Задачи" Background="#bae3e8" Grid.Row="1" Grid.Column="2" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" FontSize="20"></Button>
-        <Button Name="UserBtn" Content="Пользователи" Background="#bae3e8" Grid.Row="1" Grid.Column="3" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" FontSize="20"></Button>
-        <Button Name="RegCardBtn" Content="Карточки" Background="#bae3e8" Grid.Row="2" Grid.Column="1" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" FontSize="20"></Button>
-        <Button Name="RequestBtn" Content="Запросы" Background="#bae3e8" Grid.Row="2" Grid.Column="2" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" FontSize="20"></Button>
-        <Button Name="ReportBtn" Content="Очеты" Background="#bae3e8" Grid.Row="2" Grid.Column="3" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" FontSize="20"></Button>
+        <Button Name="DocumentBtn" Content="Документы" Background="#bae3e8" Grid.Row="1" Grid.Column="1" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" FontSize="20" Click="DocumentBtn_Click"></Button>
+        <Button Name="TaskBtn" Content="Задачи" Background="#bae3e8" Grid.Row="1" Grid.Column="2" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" FontSize="20" Click="TaskBtn_Click"></Button>
+        <Button Name="UserBtn" Content="Пользователи" Background="#bae3e8" Grid.Row="1" Grid.Column="3" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" FontSize="20" Click="UserBtn_Click"></Button>
+        <Button Name="RegCardBtn" Content="Карточки" Background="#bae3e8" Grid.Row="2" Grid.Column="1" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" FontSize="20" Click="RegCardBtn_Click"></Button>
+        <Button Name="RequestBtn" Content="Запросы" Background="#bae3e8" Grid.Row="2" Grid.Column="2" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" FontSize="20" Click="RequestBtn_Click"></Button>
+        <Button Name="ReportBtn" Content="Очеты" Background="#bae3e8" Grid.Row="2" Grid.Column="3" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" FontSize="20" Click="ReportBtn_Click"></Button>
     </Grid>
 </Page>

@@ -26,3 +26,15 @@ D:\Kursach\Kursach\ArchiveApp\ArchiveApp\obj\Debug\MainMenuPage.baml
 D:\Kursach\Kursach\ArchiveApp\ArchiveApp\bin\Debug\System.Drawing.Common.dll
 D:\Kursach\Kursach\ArchiveApp\ArchiveApp\bin\Debug\System.Drawing.Common.pdb
 D:\Kursach\Kursach\ArchiveApp\ArchiveApp\bin\Debug\System.Drawing.Common.xml
+D:\Kursach\Kursach\ArchiveApp\ArchiveApp\obj\Debug\DocumentPage.g.cs
+D:\Kursach\Kursach\ArchiveApp\ArchiveApp\obj\Debug\RegCardPage.g.cs
+D:\Kursach\Kursach\ArchiveApp\ArchiveApp\obj\Debug\ReportPage.g.cs
+D:\Kursach\Kursach\ArchiveApp\ArchiveApp\obj\Debug\RequestPage.g.cs
+D:\Kursach\Kursach\ArchiveApp\ArchiveApp\obj\Debug\TaskPage.g.cs
+D:\Kursach\Kursach\ArchiveApp\ArchiveApp\obj\Debug\UserPage.g.cs
+D:\Kursach\Kursach\ArchiveApp\ArchiveApp\obj\Debug\DocumentPage.baml
+D:\Kursach\Kursach\ArchiveApp\ArchiveApp\obj\Debug\RegCardPage.baml
+D:\Kursach\Kursach\ArchiveApp\ArchiveApp\obj\Debug\ReportPage.baml
+D:\Kursach\Kursach\ArchiveApp\ArchiveApp\obj\Debug\RequestPage.baml
+D:\Kursach\Kursach\ArchiveApp\ArchiveApp\obj\Debug\TaskPage.baml
+D:\Kursach\Kursach\ArchiveApp\ArchiveApp\obj\Debug\UserPage.baml

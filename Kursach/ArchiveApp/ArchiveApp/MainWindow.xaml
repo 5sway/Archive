@@ -25,16 +25,16 @@
         <Button Name="MainBtn" Background="#bae3e8" Grid.Row="1" Height="50" VerticalAlignment="Top"
                 HorizontalAlignment="Stretch"
                 BorderThickness="0" Content="Главное"
-                HorizontalContentAlignment="Left" Padding="20,0,0,0" FontSize="14"/>
+                HorizontalContentAlignment="Left" Padding="20,0,0,0" FontSize="14" Click="MainBtn_Click"/>
         <Button Name="DocBtn" Background="#bae3e8" Grid.Row="1" Height="50" VerticalAlignment="Top"
                 Margin="0,50,0,0" HorizontalAlignment="Stretch" BorderThickness="0"
-                Content="Документы" HorizontalContentAlignment="Left" Padding="20,0,0,0" FontSize="14"/>
+                Content="Документы" HorizontalContentAlignment="Left" Padding="20,0,0,0" FontSize="14" Click="DocBtn_Click"/>
         <Button Name="ReqBtn" Background="#bae3e8" Grid.Row="1" Height="50" VerticalAlignment="Top"
                 Margin="0,100,0,0" HorizontalAlignment="Stretch"  BorderThickness="0"
-                Content="Запросы" HorizontalContentAlignment="Left" Padding="20,0,0,0" FontSize="14"/>
+                Content="Запросы" HorizontalContentAlignment="Left" Padding="20,0,0,0" FontSize="14" Click="ReqBtn_Click"/>
         <Button Name="RepBtn" Background="#bae3e8" Grid.Row="1" Height="50" VerticalAlignment="Top"
                 Margin="0,150,0,0" HorizontalAlignment="Stretch" BorderThickness="0"
-                Content="Отчет" HorizontalContentAlignment="Left" Padding="20,0,0,0" FontSize="14"/>
+                Content="Отчет" HorizontalContentAlignment="Left" Padding="20,0,0,0" FontSize="14" Click="RepBtn_Click"/>
         <Frame NavigationUIVisibility="Hidden" Grid.Row="1" Grid.Column="1" Name="MainFrame"/>
         <Button Name="SearchBtn" Grid.Column="1" Width="25" Height="25" VerticalAlignment="Center"
                 HorizontalAlignment="Right" Margin="0,0,100,0" Panel.ZIndex="1"

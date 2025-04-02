@@ -74,5 +74,35 @@ namespace ArchiveApp
             DocumentBtn.Visibility = isVisible ? Visibility.Visible : Visibility.Collapsed;
             TaskBtn.Visibility = isVisible ? Visibility.Visible : Visibility.Collapsed;
         }
+
+        private void DocumentBtn_Click(object sender, RoutedEventArgs e)
+        {
+            Manager.MainFrame.Navigate(new DocumentPage());
+        }
+
+        private void TaskBtn_Click(object sender, RoutedEventArgs e)
+        {
+            Manager.MainFrame.Navigate(new TaskPage());
+        }
+
+        private void UserBtn_Click(object sender, RoutedEventArgs e)
+        {
+            Manager.MainFrame.Navigate(new UserPage());
+        }
+
+        private void RegCardBtn_Click(object sender, RoutedEventArgs e)
+        {
+            Manager.MainFrame.Navigate(new RegCardPage());
+        }
+
+        private void RequestBtn_Click(object sender, RoutedEventArgs e)
+        {
+            Manager.MainFrame.Navigate(new RequestPage());
+        }
+
+        private void ReportBtn_Click(object sender, RoutedEventArgs e)
+        {
+            Manager.MainFrame.Navigate(new ReportPage());
+        }
     }
 }
