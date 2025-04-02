@@ -29,6 +29,7 @@ namespace ArchiveApp
 
             SetPermissionsBasedOnRole();
         }
+
         private void SetPermissionsBasedOnRole()
         {
             switch (_Role)
@@ -41,7 +42,7 @@ namespace ArchiveApp
                 case "Делопроизводитель":
                     AdminControlsVisibility(false);
                     ClerkControlsVisibility(true);
-                    ArchivariusControlsVisibility(false);
+                    ArchivariusControlsVisibility(true);
                     break;
                 case "Архивариус":
                     AdminControlsVisibility(false);
@@ -56,17 +57,22 @@ namespace ArchiveApp
 
         private void AdminControlsVisibility(bool isVisible)
         {
-            AdminBtn.Visibility = isVisible ? Visibility.Visible : Visibility.Collapsed;
+            ReportBtn.Visibility = isVisible ? Visibility.Visible : Visibility.Collapsed;
+            UserBtn.Visibility = isVisible ? Visibility.Visible : Visibility.Collapsed;
+            RegCardBtn.Visibility = isVisible ? Visibility.Visible : Visibility.Collapsed;
+            RequestBtn.Visibility = isVisible ? Visibility.Visible : Visibility.Collapsed;
         }
 
         private void ClerkControlsVisibility(bool isVisible)
         {
-            ClerkBtn.Visibility = isVisible ? Visibility.Visible : Visibility.Collapsed;
+            RegCardBtn.Visibility = isVisible ? Visibility.Visible : Visibility.Collapsed;
+            RequestBtn.Visibility = isVisible ? Visibility.Visible : Visibility.Collapsed;
         }
 
         private void ArchivariusControlsVisibility(bool isVisible)
         {
-            ArchivariusBtn.Visibility = isVisible ? Visibility.Visible : Visibility.Collapsed;
+            DocumentBtn.Visibility = isVisible ? Visibility.Visible : Visibility.Collapsed;
+            TaskBtn.Visibility = isVisible ? Visibility.Visible : Visibility.Collapsed;
         }
     }
 }

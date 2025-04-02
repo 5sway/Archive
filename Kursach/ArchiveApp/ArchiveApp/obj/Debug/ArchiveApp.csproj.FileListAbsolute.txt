@@ -23,3 +23,6 @@ D:\Kursach\Kursach\ArchiveApp\ArchiveApp\obj\Debug\ArchiveApp_Content.g.cs
 D:\Kursach\Kursach\ArchiveApp\ArchiveApp\obj\Debug\ArchiveApp.csproj.Up2Date
 D:\Kursach\Kursach\ArchiveApp\ArchiveApp\obj\Debug\MainMenuPage.g.cs
 D:\Kursach\Kursach\ArchiveApp\ArchiveApp\obj\Debug\MainMenuPage.baml
+D:\Kursach\Kursach\ArchiveApp\ArchiveApp\bin\Debug\System.Drawing.Common.dll
+D:\Kursach\Kursach\ArchiveApp\ArchiveApp\bin\Debug\System.Drawing.Common.pdb
+D:\Kursach\Kursach\ArchiveApp\ArchiveApp\bin\Debug\System.Drawing.Common.xml

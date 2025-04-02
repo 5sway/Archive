@@ -20,6 +20,7 @@ namespace ArchiveApp
     /// </summary>
     public partial class MainWindow : Window
     {
+        private bool isMenuVisible = true;
         public MainWindow()
         {
             InitializeComponent();
@@ -94,6 +95,20 @@ namespace ArchiveApp
         private void UpdateData()
         {
             var updatedData = ArchiveBaseEntities.GetContext().User.ToList();
+        }
+
+        private void BurgerBtn_Click(object sender, RoutedEventArgs e)
+        {
+            if (MainFrame.Content is AuthorizePage) return;
+            isMenuVisible = !isMenuVisible;
+
+            Visibility newVisibility = isMenuVisible ? Visibility.Visible : Visibility.Collapsed;
+
+            MenuGrid.Visibility = newVisibility;
+            DocBtn.Visibility = newVisibility;
+            ReqBtn.Visibility = newVisibility;
+            RepBtn.Visibility = newVisibility;
+            MainBtn.Visibility = newVisibility;
         }
     }
 }

@@ -9,8 +9,24 @@
       Title="MainMenuPage">
 
     <Grid>
-        <Button Name="AdminBtn" Width="200" Height="20" Background="Transparent" VerticalAlignment="Center" HorizontalAlignment="Center" Margin="0,0,150,0" Content="Админ" FontSize="12"></Button>
-        <Button Name="ClerkBtn" Width="200" Height="20" Background="Transparent" VerticalAlignment="Center" HorizontalAlignment="Center" Margin="0,0,150,0" Content="Делопроизводитель" FontSize="12"></Button>
-        <Button Name="ArchivariusBtn" Width="200" Height="20" Background="Transparent" VerticalAlignment="Center" HorizontalAlignment="Center" Margin="0,0,150,0" Content="Архивариус" FontSize="12"></Button>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="100"/>
+            <RowDefinition Height="100"/>
+            <RowDefinition/>
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="200"/>
+            <ColumnDefinition Width="200"/>
+            <ColumnDefinition Width="200"/>
+            <ColumnDefinition Width="*"/>
+        </Grid.ColumnDefinitions>
+        <Button Name="DocumentBtn" Content="Документы" Background="#bae3e8" Grid.Row="1" Grid.Column="1" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" FontSize="20"></Button>
+        <Button Name="TaskBtn" Content="Задачи" Background="#bae3e8" Grid.Row="1" Grid.Column="2" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" FontSize="20"></Button>
+        <Button Name="UserBtn" Content="Пользователи" Background="#bae3e8" Grid.Row="1" Grid.Column="3" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" FontSize="20"></Button>
+        <Button Name="RegCardBtn" Content="Карточки" Background="#bae3e8" Grid.Row="2" Grid.Column="1" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" FontSize="20"></Button>
+        <Button Name="RequestBtn" Content="Запросы" Background="#bae3e8" Grid.Row="2" Grid.Column="2" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" FontSize="20"></Button>
+        <Button Name="ReportBtn" Content="Очеты" Background="#bae3e8" Grid.Row="2" Grid.Column="3" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" FontSize="20"></Button>
     </Grid>
 </Page>
