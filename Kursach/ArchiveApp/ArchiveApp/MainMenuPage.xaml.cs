@@ -72,7 +72,7 @@ namespace ArchiveApp
         private void ArchivariusControlsVisibility(bool isVisible)
         {
             DocumentBtn.Visibility = isVisible ? Visibility.Visible : Visibility.Collapsed;
-            TaskBtn.Visibility = isVisible ? Visibility.Visible : Visibility.Collapsed;
+            ExpBtn.Visibility = isVisible ? Visibility.Visible : Visibility.Collapsed;
         }
 
         private void DocumentBtn_Click(object sender, RoutedEventArgs e)
@@ -80,9 +80,9 @@ namespace ArchiveApp
             Manager.MainFrame.Navigate(new DocumentPage());
         }
 
-        private void TaskBtn_Click(object sender, RoutedEventArgs e)
+        private void ExpBtn_Click(object sender, RoutedEventArgs e)
         {
-            Manager.MainFrame.Navigate(new TaskPage());
+            Manager.MainFrame.Navigate(new ExpPage());
         }
 
         private void UserBtn_Click(object sender, RoutedEventArgs e)

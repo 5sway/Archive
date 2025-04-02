@@ -4,11 +4,12 @@
   <edmx:Designer xmlns="http://schemas.microsoft.com/ado/2009/11/edmx">
     <!-- Diagram content (shape and connector positions) -->
     <edmx:Diagrams>
-      <Diagram DiagramId="8262db3c35464f20aa528acafb22118c" Name="Diagram1">
+      <Diagram DiagramId="fd25f4a7d43347258c28ef458f09168d" Name="Diagram1">
         <EntityTypeShape EntityType="ArchiveBaseModel.Document" Width="1.5" PointX="3" PointY="7.5" IsExpanded="true" />
         <EntityTypeShape EntityType="ArchiveBaseModel.Registration_Card" Width="1.5" PointX="5.25" PointY="2.75" IsExpanded="true" />
         <EntityTypeShape EntityType="ArchiveBaseModel.Request" Width="1.5" PointX="8.25" PointY="2.625" IsExpanded="true" />
         <EntityTypeShape EntityType="ArchiveBaseModel.Role" Width="1.5" PointX="0.75" PointY="3.125" IsExpanded="true" />
+        <EntityTypeShape EntityType="ArchiveBaseModel.sysdiagrams" Width="1.5" PointX="5.75" PointY="6.75" IsExpanded="true" />
         <EntityTypeShape EntityType="ArchiveBaseModel.User" Width="1.5" PointX="3" PointY="2.25" IsExpanded="true" />
         <AssociationConnector Association="ArchiveBaseModel.FK_Registration_Card_Document" ManuallyRouted="false" />
         <AssociationConnector Association="ArchiveBaseModel.FK_Request_Document" ManuallyRouted="false" />

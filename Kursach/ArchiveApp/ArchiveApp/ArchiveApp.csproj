@@ -70,16 +70,44 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
-    <Compile Include="UserData.cs" />
+    <Compile Include="ArchiveModel.Context.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>ArchiveModel.Context.tt</DependentUpon>
+    </Compile>
     <Compile Include="ArchiveModel.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
       <DependentUpon>ArchiveModel.tt</DependentUpon>
     </Compile>
-    <Compile Include="CaptchaGenerator.cs" />
+    <Compile Include="ArchiveModel.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>ArchiveModel.edmx</DependentUpon>
+    </Compile>
     <Compile Include="Document.cs">
       <DependentUpon>ArchiveModel.tt</DependentUpon>
     </Compile>
+    <Compile Include="ExpPage.xaml.cs">
+      <DependentUpon>ExpPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Registration_Card.cs">
+      <DependentUpon>ArchiveModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Request.cs">
+      <DependentUpon>ArchiveModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Role.cs">
+      <DependentUpon>ArchiveModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="sysdiagrams.cs">
+      <DependentUpon>ArchiveModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="User.cs">
+      <DependentUpon>ArchiveModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="UserData.cs" />
+    <Compile Include="CaptchaGenerator.cs" />
     <Compile Include="DocumentPage.xaml.cs">
       <DependentUpon>DocumentPage.xaml</DependentUpon>
     </Compile>
@@ -89,26 +117,11 @@
     <Compile Include="RegCardPage.xaml.cs">
       <DependentUpon>RegCardPage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Registration_Card.cs">
-      <DependentUpon>ArchiveModel.tt</DependentUpon>
-    </Compile>
     <Compile Include="ReportPage.xaml.cs">
       <DependentUpon>ReportPage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Request.cs">
-      <DependentUpon>ArchiveModel.tt</DependentUpon>
-    </Compile>
     <Compile Include="RequestPage.xaml.cs">
       <DependentUpon>RequestPage.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Role.cs">
-      <DependentUpon>ArchiveModel.tt</DependentUpon>
-    </Compile>
-    <Compile Include="TaskPage.xaml.cs">
-      <DependentUpon>TaskPage.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="User.cs">
-      <DependentUpon>ArchiveModel.tt</DependentUpon>
     </Compile>
     <Compile Include="UserPage.xaml.cs">
       <DependentUpon>UserPage.xaml</DependentUpon>
@@ -118,6 +131,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="DocumentPage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="ExpPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -132,16 +149,6 @@
     <Compile Include="App.xaml.cs">
       <DependentUpon>App.xaml</DependentUpon>
       <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="ArchiveModel.Context.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>ArchiveModel.Context.tt</DependentUpon>
-    </Compile>
-    <Compile Include="ArchiveModel.Designer.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>ArchiveModel.edmx</DependentUpon>
     </Compile>
     <Compile Include="AuthorizePage.xaml.cs">
       <DependentUpon>AuthorizePage.xaml</DependentUpon>
@@ -159,10 +166,6 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="RequestPage.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="TaskPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -210,6 +213,13 @@
     <Service Include="{508349B6-6B84-4DF5-91F0-309BEEBAD82D}" />
   </ItemGroup>
   <ItemGroup>
+    <Resource Include="Resources\BurgerIcon.png" />
+    <Resource Include="Resources\ArchiveIcon.png" />
+    <Resource Include="Resources\UpdateIcon.png" />
+    <Resource Include="Resources\NotIcon.png" />
+    <Resource Include="Resources\SearchIcon.png" />
+  </ItemGroup>
+  <ItemGroup>
     <Content Include="ArchiveModel.Context.tt">
       <Generator>TextTemplatingFileGenerator</Generator>
       <LastGenOutput>ArchiveModel.Context.cs</LastGenOutput>
@@ -220,11 +230,6 @@
       <DependentUpon>ArchiveModel.edmx</DependentUpon>
       <LastGenOutput>ArchiveModel.cs</LastGenOutput>
     </Content>
-    <Resource Include="Resources\BurgerIcon.png" />
-    <Resource Include="Resources\ArchiveIcon.png" />
-    <Resource Include="Resources\UpdateIcon.png" />
-    <Resource Include="Resources\NotIcon.png" />
-    <Resource Include="Resources\SearchIcon.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">

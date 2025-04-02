@@ -28,15 +28,11 @@ namespace ArchiveApp
             return _context;
         }
 
-        protected override void OnModelCreating(DbModelBuilder modelBuilder)
-        {
-            throw new UnintentionalCodeFirstException();
-        }
-    
         public virtual DbSet<Document> Document { get; set; }
         public virtual DbSet<Registration_Card> Registration_Card { get; set; }
         public virtual DbSet<Request> Request { get; set; }
         public virtual DbSet<Role> Role { get; set; }
+        public virtual DbSet<sysdiagrams> sysdiagrams { get; set; }
         public virtual DbSet<User> User { get; set; }
     }
 }

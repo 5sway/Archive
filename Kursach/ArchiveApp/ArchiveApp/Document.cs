@@ -23,7 +23,7 @@ namespace ArchiveApp
     
         public int Id { get; set; }
         public string Number { get; set; }
-        public System.DateTime Receipt_Date { get; set; }
+        public DateTime Receipt_Date { get; set; }
         public string Title { get; set; }
         public string Source { get; set; }
         public int Copies_Count { get; set; }

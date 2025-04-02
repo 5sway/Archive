@@ -55,7 +55,7 @@ namespace ArchiveApp
         {
             string login = LoginBox.Text.Trim();
             string password = PasswordBox.Password.Trim();
-            var user = ArchiveBaseEntities.GetContext().User.FirstOrDefault(u => u.Login == login);
+            var user = ArchiveBaseEntities.GetContext().User.AsEnumerable().FirstOrDefault(u => u.Login == login);
             StringBuilder errorMessage = new StringBuilder();
 
             if (string.IsNullOrWhiteSpace(password))
@@ -130,7 +130,7 @@ namespace ArchiveApp
             }
             else
             {
-                MessageBox.Show("Введенн неверный логин или пароль!");
+                MessageBox.Show("Введен неверный логин или пароль!");
             }
 
             _captchaPassed = true;

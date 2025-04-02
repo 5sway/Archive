@@ -16,7 +16,7 @@ namespace ArchiveApp
     {
         public int Id { get; set; }
         public System.DateTime Registration_Date { get; set; }
-        public string Signature { get; set; }
+        public bool Signature { get; set; }
         public int User_Id { get; set; }
         public int Document_Id { get; set; }
     

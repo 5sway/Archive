@@ -16,11 +16,11 @@ using System.Windows.Shapes;
 namespace ArchiveApp
 {
     /// <summary>
-    /// Логика взаимодействия для TaskPage.xaml
+    /// Логика взаимодействия для ExpPage.xaml
     /// </summary>
-    public partial class TaskPage : Page
+    public partial class ExpPage : Page
     {
-        public TaskPage()
+        public ExpPage()
         {
             InitializeComponent();
         }
