@@ -110,6 +110,7 @@ namespace ArchiveApp
                 SaveChanges();
             }
         }
+
         private void SaveChanges()
         {
             using (var context = new ArchiveBaseEntities())
@@ -168,6 +169,7 @@ namespace ArchiveApp
             DataGridTable.IsReadOnly = true;
             EditBtn.Content = "Изменить";
         }
+
         private void DataGridTable_PreviewKeyDown(object sender, KeyEventArgs e)
         {
             if (e.Key == Key.Enter)
