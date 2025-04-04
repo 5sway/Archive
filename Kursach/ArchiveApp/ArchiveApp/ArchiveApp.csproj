@@ -128,6 +128,7 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>ArchiveModel.edmx</DependentUpon>
     </Compile>
+    <Compile Include="BoolToconverter.cs" />
     <Compile Include="BoolToStatusConverter.cs" />
     <Compile Include="Document.cs">
       <DependentUpon>ArchiveModel.tt</DependentUpon>

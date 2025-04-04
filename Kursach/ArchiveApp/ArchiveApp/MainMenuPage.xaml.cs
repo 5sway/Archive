@@ -73,6 +73,7 @@ namespace ArchiveApp
         {
             DocumentBtn.Visibility = isVisible ? Visibility.Visible : Visibility.Collapsed;
             ExpBtn.Visibility = isVisible ? Visibility.Visible : Visibility.Collapsed;
+            RegCardBtn.Visibility = isVisible ? Visibility.Visible : Visibility.Collapsed;
         }
 
         private void DocumentBtn_Click(object sender, RoutedEventArgs e)

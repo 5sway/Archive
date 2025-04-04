@@ -8,7 +8,43 @@
       d:DesignHeight="450" d:DesignWidth="800"
       Title="RegCardPage">
 
-    <Grid>
-        
+    <Page.Resources>
+        <local:BoolToconverter x:Key="BoolToсonverter"/>
+    </Page.Resources>
+
+    <Grid Margin="10">
+        <ComboBox x:Name="DocumentComboBox"
+                  Width="350" Height="30"
+                  VerticalAlignment="Top" HorizontalAlignment="Left"
+                  Margin="0,0,0,0"
+                  Padding="7,0,0,0"
+                  DisplayMemberPath="Title"
+                  SelectedValuePath="Id" VerticalContentAlignment="Center"/>
+
+        <Border Background="#f3f3f3" CornerRadius="10" Padding="20"
+                Width="400" Height="330"
+                HorizontalAlignment="Center" VerticalAlignment="Center"
+                BorderBrush="#cccccc" BorderThickness="1">
+            <StackPanel>
+                <TextBlock Text="Название документа:" FontWeight="Bold" Margin="0,0,0,5"/>
+                <TextBox x:Name="TitleTextBox" Height="30" Margin="0,0,0,15"
+                         VerticalContentAlignment="Center" Padding="5,0,0,0" IsReadOnly="True"/>
+
+                <TextBlock Text="Кем подписан:" FontWeight="Bold" Margin="0,0,0,5"/>
+                <TextBox x:Name="SignedByTextBox" Height="30" Margin="0,0,0,15"
+                         VerticalContentAlignment="Center" Padding="5,0,0,0" IsReadOnly="True"/>
+
+                <TextBlock Text="Подпись:" FontWeight="Bold" Margin="0,0,0,5"/>
+                <ComboBox x:Name="SignatureСomboBox" Height="30" Margin="0,0,0,15"
+                          Padding="7,0,0,0" VerticalContentAlignment="Center"/>
+
+                <TextBlock Text="Дата регистрации:" FontWeight="Bold" Margin="0,0,0,5"/>
+                <DatePicker x:Name="RegistrationDatePicker" Height="30" Background="White"
+                            Padding="5,0,0,0" VerticalContentAlignment="Center" IsEnabled="False"/>
+                <Button Name="EditBtn" Content="Изменить" Background="#bae3e8"
+                            VerticalAlignment="Bottom" HorizontalAlignment="Center" Margin="275,17,0,5"
+                            Width="80" Height="20" Grid.Row="1" FontSize="12" Click="EditBtn_Click"/>
+            </StackPanel>
+        </Border>
     </Grid>
 </Page>

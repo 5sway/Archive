@@ -27,7 +27,7 @@
                   Margin="5,5,5,0"
                   IsReadOnly="True">
             <DataGrid.Columns>
-                <DataGridTextColumn Header="Дата" Binding="{Binding Receipt_Date}" Width="*"/>
+                <DataGridTextColumn Header="Дата" Binding="{Binding Receipt_Date, StringFormat={}{0:dd.MM.yyyy}}" Width="*"/>
                 <DataGridTextColumn Header="Архивный шифр" Binding="{Binding Number}" Width="*"/>
                 <DataGridTextColumn Header="Заголовок" Binding="{Binding Title}" Width="*"/>
                 <DataGridTextColumn Header="Описание" Binding="{Binding Annotation}" Width="*"/>
