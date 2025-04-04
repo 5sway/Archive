@@ -20,7 +20,6 @@ namespace ArchiveApp
     /// </summary>
     public partial class RegCardPage : Page
     {
-        private bool isEditing = false;
         private bool isEditMode = false;
         private string previousTitle;
         private bool? previousSignature;
@@ -38,8 +37,9 @@ namespace ArchiveApp
 
             LoadStatusList();
             LoadUsers();
-            LoadDocuments();
             LoadRegistrationCards();
+            LoadDocuments();
+            
         }
 
         private void LoadStatusList()
@@ -57,15 +57,25 @@ namespace ArchiveApp
 
         private void LoadDocuments()
         {
+            // Загрузка списка документов из базы данных
             using (var context = new ArchiveBaseEntities())
             {
                 Documents = context.Document.ToList();
+                // Настройка ComboBox для выбора документов
                 DocumentComboBox.ItemsSource = Documents;
-                DocumentComboBox.DisplayMemberPath = "Title";
-                DocumentComboBox.SelectedValuePath = "Id";
+                DocumentComboBox.DisplayMemberPath = "Title"; // Отображаемое поле
+                DocumentComboBox.SelectedValuePath = "Id";    // Значение поля
             }
 
+            // Подписка на событие изменения выбранного документа
             DocumentComboBox.SelectionChanged += DocumentComboBox_SelectionChanged;
+
+            // Установка первого документа по умолчанию, если список не пуст
+            if (Documents != null && Documents.Any())
+            {
+                DocumentComboBox.SelectedItem = Documents.First();
+                DocumentComboBox_SelectionChanged(DocumentComboBox, null);
+            }
         }
 
         private void LoadUsers()
@@ -78,32 +88,38 @@ namespace ArchiveApp
 
         private void LoadRegistrationCards()
         {
+            // Загрузка карточек регистрации с включением связанных данных
             using (var context = new ArchiveBaseEntities())
             {
                 RegCards = context.Registration_Card
-                                  .Include("User")
-                                  .Include("Document")
+                                  .Include("User")     // Загрузка данных пользователя
+                                  .Include("Document") // Загрузка данных документа
                                   .ToList();
             }
         }
 
         private void EditBtn_Click(object sender, RoutedEventArgs e)
         {
+            // Переключение между режимами редактирования и сохранения
             if (!isEditMode)
             {
+                // Вход в режим редактирования
                 isEditMode = true;
 
                 if (DocumentComboBox.SelectedItem is Document selectedDoc)
                 {
+                    // Активация полей для редактирования
                     TitleTextBox.IsReadOnly = false;
                     SignatureСomboBox.IsEnabled = true;
                     RegistrationDatePicker.IsEnabled = true;
 
+                    // Сохранение предыдущих значений для возможного отката
                     var regCard = RegCards.FirstOrDefault(rc => rc.Document_Id == selectedDoc.Id);
                     previousTitle = TitleTextBox.Text;
                     previousSignature = regCard?.Signature;
                     previousDate = regCard?.Registration_Date;
 
+                    // Настройка интерфейса
                     EditBtn.Content = "Сохранить";
                     var currentUser = Users.FirstOrDefault(u => u.Id == currentUserId);
                     if (currentUser != null)
@@ -114,10 +130,12 @@ namespace ArchiveApp
             }
             else
             {
+                // Проверка заполнения обязательных полей
                 if (string.IsNullOrWhiteSpace(TitleTextBox.Text) ||
                     SignatureСomboBox.SelectedIndex == -1 ||
                     !RegistrationDatePicker.SelectedDate.HasValue)
                 {
+                    // Откат изменений при невалидных данных
                     TitleTextBox.Text = previousTitle;
                     SignatureСomboBox.SelectedValue = previousSignature;
                     RegistrationDatePicker.SelectedDate = previousDate;
@@ -125,16 +143,19 @@ namespace ArchiveApp
                     return;
                 }
 
+                // Сохранение изменений в базе данных
                 using (var context = new ArchiveBaseEntities())
                 {
                     if (DocumentComboBox.SelectedItem is Document selectedDoc)
                     {
-                        // Обновляем или добавляем документ
+                        // Обновление данных документа
                         var doc = context.Document.FirstOrDefault(d => d.Id == selectedDoc.Id);
                         if (doc != null)
                         {
                             doc.Title = TitleTextBox.Text;
                         }
+
+                        // Обновление или создание карточки регистрации
                         var regCard = context.Registration_Card.FirstOrDefault(rc => rc.Document_Id == selectedDoc.Id);
                         if (regCard != null)
                         {
@@ -143,6 +164,7 @@ namespace ArchiveApp
                         }
                         else
                         {
+                            // Создание новой карточки регистрации
                             regCard = new Registration_Card
                             {
                                 Document_Id = selectedDoc.Id,
@@ -150,7 +172,6 @@ namespace ArchiveApp
                                 Signature = (bool)SignatureСomboBox.SelectedValue,
                                 Registration_Date = RegistrationDatePicker.SelectedDate.Value.Date
                             };
-
                             context.Registration_Card.Add(regCard);
                         }
 
@@ -159,44 +180,50 @@ namespace ArchiveApp
                 }
 
                 MessageBox.Show("Изменения сохранены.");
+                // Выход из режима редактирования
                 isEditMode = false;
                 EditBtn.Content = "Изменить";
                 TitleTextBox.IsReadOnly = true;
                 SignatureСomboBox.IsEnabled = false;
                 RegistrationDatePicker.IsEnabled = false;
 
+                // Перезагрузка данных
                 LoadDocuments();
                 LoadRegistrationCards();
             }
         }
 
-
         private void DocumentComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
+            // Обработка изменения выбранного документа
             if (DocumentComboBox.SelectedItem is Document selectedDocument)
             {
+                // Отображение названия документа
                 TitleTextBox.Text = selectedDocument.Title;
 
-                selectedRegCard = RegCards.FirstOrDefault(rc => rc.Document_Id == selectedDocument.Id);
-                if (selectedRegCard != null)
+                if (RegCards != null)
                 {
-                    var user = Users.FirstOrDefault(u => u.Id == selectedRegCard.User_Id);
-                    if (user != null)
+                    // Поиск карточки регистрации для выбранного документа
+                    selectedRegCard = RegCards.FirstOrDefault(rc => rc.Document_Id == selectedDocument.Id);
+
+                    if (selectedRegCard != null)
                     {
+                        // Если карточка найдена, заполняем данные
+                        var user = Users.FirstOrDefault(u => u.Id == selectedRegCard.User_Id);
                         SignedByTextBox.Text = user?.Name ?? "Неизвестно";
+                        SignatureСomboBox.SelectedValue = selectedRegCard.Signature;
+                        RegistrationDatePicker.SelectedDate = selectedRegCard.Registration_Date;
                     }
-
-                    SignatureСomboBox.SelectedValue = selectedRegCard.Signature;
-                    RegistrationDatePicker.SelectedDate = selectedRegCard.Registration_Date;
-                }
-                else
-                {
-                    SignedByTextBox.Text = "";
-                    SignatureСomboBox.SelectedIndex = -1;
-                    RegistrationDatePicker.SelectedDate = null;
+                    else
+                    {
+                        // Если карточка не найдена, очищаем поля
+                        SignedByTextBox.Text = "";
+                        SignatureСomboBox.SelectedIndex = -1;
+                        RegistrationDatePicker.SelectedDate = null;
+                    }
                 }
 
-                isEditing = false;
+                // Сброс режима редактирования
                 EditBtn.Content = "Изменить";
                 TitleTextBox.IsReadOnly = true;
                 SignatureСomboBox.IsEnabled = false;

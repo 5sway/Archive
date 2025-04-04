@@ -49,17 +49,23 @@ namespace ArchiveApp
 
         private void LoadData()
         {
+            // Загрузка данных документов из базы данных
             using (var context = new ArchiveBaseEntities())
             {
+                // Установка источника данных для DataGrid
                 DataGridTable.ItemsSource = context.Document.ToList();
             }
+            // Установка режима только для чтения по умолчанию
             DataGridTable.IsReadOnly = true;
         }
 
+
         private void DelBtn_Click(object sender, RoutedEventArgs e)
         {
+            // Получение выбранных для удаления документов
             var documentsForRemoving = DataGridTable.SelectedItems.Cast<Document>().ToList();
 
+            // Проверка, что хотя бы один элемент выбран
             if (documentsForRemoving.Count == 0)
             {
                 MessageBox.Show("Выберите хотя бы один элемент для удаления!", "Ошибка",
@@ -67,6 +73,7 @@ namespace ArchiveApp
                 return;
             }
 
+            // Подтверждение удаления
             if (MessageBox.Show($"Вы точно хотите удалить {documentsForRemoving.Count} элементов?",
                     "Внимание", MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes)
             {
@@ -74,24 +81,30 @@ namespace ArchiveApp
                 {
                     using (var context = new ArchiveBaseEntities())
                     {
+                        // Удаление каждого выбранного документа и связанных данных
                         foreach (var doc in documentsForRemoving)
                         {
                             var docToRemove = context.Document.Find(doc.Id);
                             if (docToRemove != null)
                             {
+                                // Удаление связанных регистрационных карточек
                                 context.Registration_Card.RemoveRange(docToRemove.Registration_Card);
+                                // Удаление связанных запросов
                                 context.Request.RemoveRange(docToRemove.Request);
+                                // Удаление самого документа
                                 context.Document.Remove(docToRemove);
                             }
                         }
                         context.SaveChanges();
                     }
                     MessageBox.Show("Данные удалены!");
+                    // Перезагрузка данных после удаления
                     LoadData();
                 }
                 catch (Exception ex)
                 {
-                    MessageBox.Show($"Ошибка при удалении: {ex.Message}", "Ошибка", MessageBoxButton.OK, MessageBoxImage.Error);
+                    MessageBox.Show($"Ошибка при удалении: {ex.Message}", "Ошибка",
+                        MessageBoxButton.OK, MessageBoxImage.Error);
                 }
             }
         }
@@ -113,10 +126,13 @@ namespace ArchiveApp
 
         private void SaveChanges()
         {
+            // Сохранение изменений в базе данных
             using (var context = new ArchiveBaseEntities())
             {
+                // Обработка добавления нового документа
                 if (newDocument != null && isAddingNewRow)
                 {
+                    // Проверка обязательных полей
                     if (string.IsNullOrWhiteSpace(newDocument.Title) ||
                         string.IsNullOrWhiteSpace(newDocument.Number) ||
                         string.IsNullOrWhiteSpace(newDocument.Source) ||
@@ -126,9 +142,11 @@ namespace ArchiveApp
                         return;
                     }
 
+                    // Добавление нового документа
                     context.Document.Add(newDocument);
                 }
 
+                // Обновление существующих документов
                 foreach (var item in DataGridTable.Items)
                 {
                     if (item is Document doc && doc != newDocument)
@@ -136,6 +154,7 @@ namespace ArchiveApp
                         var docToUpdate = context.Document.Find(doc.Id);
                         if (docToUpdate != null)
                         {
+                            // Обновление всех полей документа
                             docToUpdate.Number = doc.Number;
                             docToUpdate.Receipt_Date = doc.Receipt_Date;
                             docToUpdate.Title = doc.Title;
@@ -149,6 +168,7 @@ namespace ArchiveApp
                 context.SaveChanges();
             }
 
+            // Сброс флагов и перезагрузка данных
             isAddingNewRow = false;
             newDocument = null;
             LoadData();
@@ -171,33 +191,39 @@ namespace ArchiveApp
         }
         private void DataGridTable_PreviewKeyDown(object sender, KeyEventArgs e)
         {
+            // Обработка нажатия Enter для удобного перехода между ячейками
             if (e.Key == Key.Enter)
             {
-                e.Handled = true;
-                    
+                e.Handled = true; // Предотвращаем стандартное поведение
+
                 DataGrid dataGrid = sender as DataGrid;
                 if (dataGrid == null) return;
 
                 var currentCell = dataGrid.CurrentCell;
                 if (currentCell.Column == null) return;
 
+                // Определяем следующую ячейку для перехода
                 int currentColumnIndex = currentCell.Column.DisplayIndex;
                 int nextColumnIndex = currentColumnIndex + 1;
                 int currentRowIndex = dataGrid.Items.IndexOf(currentCell.Item);
 
+                // Логика перехода между ячейками и строками
                 if (nextColumnIndex < dataGrid.Columns.Count)
                 {
+                    // Переход в следующую колонку
                     dataGrid.CurrentCell = new DataGridCellInfo(
-                    dataGrid.Items[currentRowIndex],
-                    dataGrid.Columns[nextColumnIndex]);
+                        dataGrid.Items[currentRowIndex],
+                        dataGrid.Columns[nextColumnIndex]);
                 }
                 else if (currentRowIndex < dataGrid.Items.Count - 1)
                 {
+                    // Переход на следующую строку
                     dataGrid.CurrentCell = new DataGridCellInfo(
-                    dataGrid.Items[currentRowIndex + 1],
-                    dataGrid.Columns[0]);
+                        dataGrid.Items[currentRowIndex + 1],
+                        dataGrid.Columns[0]);
                 }
 
+                // Запуск редактирования новой ячейки
                 dataGrid.Dispatcher.InvokeAsync(() =>
                 {
                     dataGrid.BeginEdit();
@@ -207,22 +233,25 @@ namespace ArchiveApp
 
         private void AddBtn_Click(object sender, RoutedEventArgs e)
         {
+            // Защита от повторного добавления
             if (isAddingNewRow)
                 return;
 
             isAddingNewRow = true;
 
+            // Создание нового документа с дефолтными значениями
             newDocument = new Document
             {
-                Receipt_Date = DateTime.Now,
-                Number = "",
-                Title = "",
-                Source = "",
-                Copies_Count = 0,
-                Annotation = "",
-                Storage_Type = StorageTypes.FirstOrDefault()
+                Receipt_Date = DateTime.Now, // Текущая дата
+                Number = "", // Пустой номер
+                Title = "", // Пустое название
+                Source = "", // Пустой источник
+                Copies_Count = 0, // 0 копий по умолчанию
+                Annotation = "", // Пустая аннотация
+                Storage_Type = StorageTypes.FirstOrDefault() // Первый тип хранения из списка
             };
 
+            // Добавление нового документа в коллекцию
             var items = DataGridTable.ItemsSource as List<Document>;
             if (items != null)
             {
@@ -231,7 +260,10 @@ namespace ArchiveApp
                 DataGridTable.ItemsSource = items;
             }
 
+            // Установка фокуса на новую строку
             DataGridTable.SelectedItem = newDocument;
+
+            // Блокировка редактирования других строк во время добавления
             foreach (var item in DataGridTable.Items)
             {
                 if (item is Document doc && doc != newDocument)
@@ -244,6 +276,7 @@ namespace ArchiveApp
                 }
             }
 
+            // Переключение в режим редактирования
             DataGridTable.IsReadOnly = false;
             EditBtn.Content = "Сохранить";
         }

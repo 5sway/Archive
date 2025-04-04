@@ -8,7 +8,7 @@
         <beforeApplicationStartup />
       </update>
     </subscription>
-    <deploymentProvider codebase="http://swayy/ArchiveApp/ArchiveApp.application" />
+    <deploymentProvider codebase="http://sway/ArchiveApp/ArchiveApp.application" />
   </deployment>
   <compatibleFrameworks xmlns="urn:schemas-microsoft-com:clickonce.v2">
     <framework targetVersion="4.8" profile="Full" supportedRuntime="4.0.30319" />
@@ -21,7 +21,7 @@
           <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
         </dsig:Transforms>
         <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha256" />
-        <dsig:DigestValue>DOnkq8QgERpmBliYzxA8F4MmnKmY9z8/l/5tOQHNBss=</dsig:DigestValue>
+        <dsig:DigestValue>l4gUoF+Ps/LlEqShsCxwVJvqjZdraJL1QxEEuzKAwQ8=</dsig:DigestValue>
       </hash>
     </dependentAssembly>
   </dependency>

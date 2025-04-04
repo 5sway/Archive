@@ -13,6 +13,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using System.Windows.Threading;
 
 namespace ArchiveApp
 {
@@ -21,14 +22,24 @@ namespace ArchiveApp
     /// </summary>
     public partial class AuthorizePage : Page
     {
+        private string _pendingLogin;
+        private string _pendingPassword;
         private string _captchaText;
-        private bool _captchaPassed = false;
         private bool _credentialsVerified = false;
+        private int _failedAttempts = 0;
+        private static Random _random = new Random();
+        private DateTime? _captchaPassedTime = null;
+        private readonly TimeSpan _captchaValidPeriod = TimeSpan.FromMinutes(10);
+        private DateTime? _captchaGraceUntil = null;
+        private readonly TimeSpan _captchaGracePeriod = TimeSpan.FromMinutes(1);
+
+
         public AuthorizePage()
         {
             InitializeComponent();
             SetupInitialState();
         }
+
         private void SetupInitialState()
         {
             CaptchaContainer.Visibility = Visibility.Collapsed;
@@ -53,114 +64,189 @@ namespace ArchiveApp
 
         private void VerifyCredentials()
         {
+            // Получение введенных данных
             string login = LoginBox.Text.Trim();
             string password = PasswordBox.Password.Trim();
+
+            // Поиск пользователя в базе данных (без учета регистра)
             var user = ArchiveBaseEntities.GetContext().User.AsEnumerable().FirstOrDefault(u => u.Login == login);
             StringBuilder errorMessage = new StringBuilder();
 
+            // Проверка на пустые поля
             if (string.IsNullOrWhiteSpace(password))
                 errorMessage.AppendLine("Введите пароль!");
 
             if (string.IsNullOrWhiteSpace(login))
                 errorMessage.AppendLine("Введите логин!");
 
+            // Вывод ошибок, если есть
             if (errorMessage.Length > 0)
             {
                 MessageBox.Show(errorMessage.ToString());
                 return;
             }
 
-            if (user == null)
+            // Проверка соответствия логина и пароля
+            if (user == null || user.Password != password)
             {
-                MessageBox.Show("Неверный логин!");
+                _failedAttempts++; // Увеличение счетчика неудачных попыток
+
+                MessageBox.Show(user == null ? "Неверный логин!" : "Неверный пароль!");
+
+                // Если было 2 или более неудачных попыток и не в "периоде милосердия"
+                if (_failedAttempts >= 3 && !IsCaptchaInGracePeriod())
+                {
+                    RequestCaptcha(); // Требование ввода капчи
+                }
+
+                return;
+            }
+
+            // Сохранение введенных данных
+            _pendingLogin = login;
+            _pendingPassword = password;
+
+            // Дополнительная проверка на необходимость капчи
+            if (_failedAttempts >= 3 && !IsCaptchaInGracePeriod())
+            {
                 RequestCaptcha();
                 return;
             }
 
-            if (user.Password != password)
-            {
-                MessageBox.Show("Неверный пароль!");
-                RequestCaptcha();
-                return;
-            }
-
-            _credentialsVerified = true;
-
-            if (_captchaPassed)
-            {
-                AuthorizeUser();
-            }
-            else
-            {
-                GenerateNewCaptcha();
-                ShowCaptchaStep();
-            }
+            // Авторизация пользователя
+            AuthorizeUser();
         }
 
-        private void RequestCaptcha()
+        private void HideCaptchaUI()
         {
-            _captchaPassed = false;
-            GenerateNewCaptcha();
-            ShowCaptchaStep();
-        }
+            // Скрытие контейнера капчи
+            CaptchaContainer.Visibility = Visibility.Collapsed;
 
-        private void ShowCaptchaStep()
-        {
-            LoginBox.Visibility = Visibility.Collapsed;
-            LoginText.Visibility = Visibility.Collapsed;
-            PasswordBox.Visibility = Visibility.Collapsed;
-            PasswordText.Visibility = Visibility.Collapsed;
-            LoginBtn.Visibility = Visibility.Collapsed;
-            CaptchaContainer.Visibility = Visibility.Visible;
-        }
+            // Очистка поля ввода капчи
+            CaptchaTextBox.Clear();
+            CaptchaText.Visibility = Visibility.Visible;
 
-        private void AuthorizeWithCaptcha()
-        {
-            string enteredCaptcha = CaptchaTextBox.Text.Trim();
-            if (string.IsNullOrWhiteSpace(enteredCaptcha) || enteredCaptcha != _captchaText)
-            {
-                MessageBox.Show("Неверная капча! Попробуйте еще раз.");
-                GenerateNewCaptcha();
-                return;
-            }
-
-            if (_credentialsVerified)
-            {
-                AuthorizeUser();
-            }
-            else
-            {
-                MessageBox.Show("Введен неверный логин или пароль!");
-            }
-
-            _captchaPassed = true;
-            LoginBox.Clear();
-            PasswordBox.Clear();
+            // Восстановление видимости стандартных элементов входа
             LoginBox.Visibility = Visibility.Visible;
             LoginText.Visibility = Visibility.Visible;
             PasswordBox.Visibility = Visibility.Visible;
             PasswordText.Visibility = Visibility.Visible;
             LoginBtn.Visibility = Visibility.Visible;
-            CaptchaContainer.Visibility = Visibility.Collapsed;
-            CaptchaTextBox.Clear();
+
+            // Обновление видимости подсказок
+            UpdatePlaceholderVisibility();
         }
+
+        private bool IsCaptchaStillValid()
+        {
+            return _captchaPassedTime.HasValue && (DateTime.Now - _captchaPassedTime.Value) <= _captchaValidPeriod;
+        }
+
+        private bool IsCaptchaInGracePeriod()
+        {
+            return _captchaGraceUntil.HasValue && DateTime.Now < _captchaGraceUntil.Value;
+        }
+
+        private void RequestCaptcha()
+        {
+            // Генерация новой капчи
+            GenerateNewCaptcha();
+
+            // Отображение интерфейса капчи
+            ShowCaptchaStep();
+        }
+
+
+        private void ShowCaptchaStep()
+        {
+            // Скрытие стандартных элементов входа
+            LoginBox.Visibility = Visibility.Collapsed;
+            LoginText.Visibility = Visibility.Collapsed;
+            PasswordBox.Visibility = Visibility.Collapsed;
+            PasswordText.Visibility = Visibility.Collapsed;
+            LoginBtn.Visibility = Visibility.Collapsed;
+
+            // Отображение контейнера капчи
+            CaptchaContainer.Visibility = Visibility.Visible;
+        }
+
+        private void UpdatePlaceholderVisibility()
+        {
+            LoginText.Visibility = string.IsNullOrWhiteSpace(LoginBox.Text) ? Visibility.Visible : Visibility.Collapsed;
+            PasswordText.Visibility = string.IsNullOrWhiteSpace(PasswordBox.Password) ? Visibility.Visible : Visibility.Collapsed;
+        }
+
+        private void AuthorizeWithCaptcha()
+        {
+            // Получение введенной капчи
+            string enteredCaptcha = CaptchaTextBox.Text.Trim();
+
+            // Проверка капчи
+            if (string.IsNullOrWhiteSpace(enteredCaptcha) || enteredCaptcha != _captchaText)
+            {
+                MessageBox.Show("Неверная капча! Попробуйте еще раз.");
+                GenerateNewCaptcha(); // Генерация новой капчи при ошибке
+                return;
+            }
+
+            // Запись времени успешного прохождения капчи
+            _captchaPassedTime = DateTime.Now;
+            _captchaGraceUntil = DateTime.Now.Add(_captchaGracePeriod); // Установка "периода милосердия"
+            HideCaptchaUI(); // Скрытие интерфейса капчи
+
+            // Если учетные данные уже проверены, авторизовать пользователя
+            if (_credentialsVerified)
+            {
+                AuthorizeUser();
+            }
+        }
+
+        private void ResetLoginUI(bool clearInputs = true)
+        {
+            // Скрытие интерфейса капчи
+            HideCaptchaUI();
+
+            // Очистка полей ввода (если требуется)
+            if (clearInputs)
+            {
+                LoginBox.Clear();
+                PasswordBox.Clear();
+            }
+        }
+
         private void AuthorizeUser()
         {
-            string login = LoginBox.Text.Trim();
-            string password = PasswordBox.Password.Trim();
+            // Использование сохраненных учетных данных
+            string login = _pendingLogin;
+            string password = _pendingPassword;
+
+            // Получение роли пользователя
             string role = GetUserRole(login, password);
 
+            // Поиск пользователя в базе данных
             var user = ArchiveBaseEntities.GetContext().User
                 .FirstOrDefault(u => u.Login == login);
 
+            // Сохранение ID текущего пользователя
             if (user != null)
             {
                 UserData.CurrentUserId = user.Id;
             }
 
+            // Сброс счетчика неудачных попыток
+            _failedAttempts = 0;
+
+            // Сохранение роли текущего пользователя
             UserData.CurrentUserRole = role;
+
+            // Вызов события успешной авторизации
             OnUserAuthorized?.Invoke();
+
+            // Переход на главную страницу с передачей роли
             Manager.MainFrame.Navigate(new MainMenuPage(role));
+
+            // Сброс интерфейса входа
+            ResetLoginUI();
         }
 
         private void LoginBtn_Click(object sender, RoutedEventArgs e)
@@ -170,7 +256,7 @@ namespace ArchiveApp
 
         private void CaptchaSubmitBtn_Click(object sender, RoutedEventArgs e)
         {
-                AuthorizeWithCaptcha();
+            AuthorizeWithCaptcha();
         }
 
         private void RefreshCaptcha_Click(object sender, RoutedEventArgs e)

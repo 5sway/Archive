@@ -11,7 +11,7 @@
     <Page.Resources>
         <local:BoolToStatusConverter x:Key="BoolToStatusConverter"/>
     </Page.Resources>
-    
+
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="*"/>

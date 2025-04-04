@@ -66,26 +66,33 @@ namespace ArchiveApp
 
         private void LoadData()
         {
+            // Загрузка данных о запросах из базы данных
             using (var context = new ArchiveBaseEntities())
             {
+                // Включаем связанные данные о пользователях и документах
                 var requests = context.Request
                     .Include(r => r.User)
                     .Include(r => r.Document)
                     .ToList();
 
+                // Очищаем текущую коллекцию и заполняем новыми данными
                 Requests.Clear();
                 foreach (var req in requests)
                 {
                     Requests.Add(req);
                 }
             }
+            // Устанавливаем источник данных для DataGrid
             DataGridTable.ItemsSource = Requests;
-            DataGridTable.IsReadOnly = true;
+            DataGridTable.IsReadOnly = true; // Запрещаем редактирование по умолчанию
         }
 
         private void DelBtn_Click(object sender, RoutedEventArgs e)
         {
+            // Получаем выбранные для удаления запросы
             var selectedRequests = DataGridTable.SelectedItems.Cast<Request>().ToList();
+
+            // Проверяем, что хотя бы один элемент выбран
             if (selectedRequests.Count == 0)
             {
                 MessageBox.Show("Выберите хотя бы один элемент для удаления!", "Ошибка",
@@ -93,6 +100,7 @@ namespace ArchiveApp
                 return;
             }
 
+            // Запрашиваем подтверждение удаления
             if (MessageBox.Show($"Вы точно хотите удалить {selectedRequests.Count} элементов?",
                 "Внимание", MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes)
             {
@@ -100,6 +108,7 @@ namespace ArchiveApp
                 {
                     using (var context = new ArchiveBaseEntities())
                     {
+                        // Удаляем каждый выбранный запрос
                         foreach (var req in selectedRequests)
                         {
                             var reqToRemove = context.Request.Find(req.Id);
@@ -108,10 +117,10 @@ namespace ArchiveApp
                                 context.Request.Remove(reqToRemove);
                             }
                         }
-                        context.SaveChanges();
+                        context.SaveChanges(); // Сохраняем изменения в БД
                     }
                     MessageBox.Show("Данные удалены!");
-                    LoadData();
+                    LoadData(); // Перезагружаем данные после удаления
                 }
                 catch (Exception ex)
                 {
@@ -142,38 +151,46 @@ namespace ArchiveApp
             {
                 using (var context = new ArchiveBaseEntities())
                 {
+                    // Обработка добавления новой строки
                     if (isAddingNewRow && newRequest != null)
                     {
+                        // Проверка обязательных полей
                         if (string.IsNullOrWhiteSpace(newRequest.Reason) ||
                             newRequest.Document_Id == 0)
                         {
                             RemoveEmptyRow();
                             return;
                         }
+
+                        // Установка текущего пользователя и статуса
                         newRequest.User_Id = currentUserId;
                         if (newRequest.Status == null)
                         {
                             newRequest.Status = null;
                         }
 
+                        // Добавление нового запроса
                         context.Request.Add(newRequest);
                         context.SaveChanges();
                     }
 
+                    // Обновление существующих запросов
                     foreach (var req in Requests.Where(r => r.Id != 0))
                     {
                         var reqToUpdate = context.Request.Find(req.Id);
                         if (reqToUpdate != null)
                         {
+                            // Обновление всех полей запроса
                             reqToUpdate.Request_Date = req.Request_Date;
                             reqToUpdate.Reason = req.Reason;
                             reqToUpdate.Status = req.Status;
                             reqToUpdate.Document_Id = req.Document_Id;
                         }
                     }
-                    context.SaveChanges();
+                    context.SaveChanges(); // Сохраняем все изменения
                 }
 
+                // Сбрасываем флаги и перезагружаем данные
                 isAddingNewRow = false;
                 newRequest = null;
                 LoadData();
@@ -199,28 +216,31 @@ namespace ArchiveApp
 
         private void AddBtn_Click(object sender, RoutedEventArgs e)
         {
+            // Защита от повторного добавления
             if (isAddingNewRow)
                 return;
 
             isAddingNewRow = true;
 
+            // Создание нового запроса с дефолтными значениями
             newRequest = new Request
             {
-                Id = 0,
-                Request_Date = DateTime.Now,
-                Reason = "",
-                Status = null,
-                User_Id = currentUserId,
-                Document_Id = 0,
-                Document = Documents.FirstOrDefault(),
-                User = Users.FirstOrDefault(u => u.Id == currentUserId)
+                Id = 0, // ID=0 означает новую запись
+                Request_Date = DateTime.Now, // Текущая дата
+                Reason = "", // Пустое основание
+                Status = null, // Статус не установлен
+                User_Id = currentUserId, // Текущий пользователь
+                Document_Id = 0, // Документ не выбран
+                Document = Documents.FirstOrDefault(), // Первый документ по умолчанию
+                User = Users.FirstOrDefault(u => u.Id == currentUserId) // Данные текущего пользователя
             };
 
+            // Добавление в коллекцию и настройка UI
             Requests.Add(newRequest);
             DataGridTable.SelectedItem = newRequest;
-            DataGridTable.ScrollIntoView(newRequest);
-            DataGridTable.IsReadOnly = false;
-            EditBtn.Content = "Сохранить";
+            DataGridTable.ScrollIntoView(newRequest); // Прокрутка к новой строке
+            DataGridTable.IsReadOnly = false; // Разрешаем редактирование
+            EditBtn.Content = "Сохранить"; // Меняем текст кнопки
         }
 
         private void Page_IsVisibleChanged(object sender, DependencyPropertyChangedEventArgs e)

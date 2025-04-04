@@ -32,11 +32,15 @@ namespace ArchiveApp
 
         private void LoadData()
         {
+            // Загрузка данных пользователей из базы данных с включением связанных ролей
             using (var context = new ArchiveBaseEntities())
             {
+                // Установка источника данных для DataGrid
                 DataGridTable.ItemsSource = context.User.Include(u => u.Role).ToList();
             }
+            // Загрузка списка ролей для выпадающих списков
             LoadRoles();
+            // Установка режима только для чтения по умолчанию
             DataGridTable.IsReadOnly = true;
         }
 
@@ -60,33 +64,41 @@ namespace ArchiveApp
 
         private void DelBtn_Click(object sender, RoutedEventArgs e)
         {
+            // Получение выбранных для удаления пользователей
             var UsersForRemoving = DataGridTable.SelectedItems.Cast<User>().ToList();
 
+            // Проверка, что хотя бы один элемент выбран
             if (UsersForRemoving.Count == 0)
             {
                 MessageBox.Show("Выберите хотя бы один элемент для удаления!", "Ошибка", MessageBoxButton.OK, MessageBoxImage.Warning);
                 return;
             }
 
+            // Подтверждение удаления
             if (MessageBox.Show($"Вы точно хотите удалить {UsersForRemoving.Count} элементов?", "Внимание", MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes)
             {
                 try
                 {
                     using (var context = new ArchiveBaseEntities())
                     {
+                        // Удаление всех связанных записей и самого пользователя
                         foreach (var usr in UsersForRemoving)
                         {
                             var usrToRemove = context.User.Find(usr.Id);
                             if (usrToRemove != null)
                             {
+                                // Удаление связанных регистрационных карточек
                                 context.Registration_Card.RemoveRange(usrToRemove.Registration_Card);
+                                // Удаление связанных запросов
                                 context.Request.RemoveRange(usrToRemove.Request);
+                                // Удаление самого пользователя
                                 context.User.Remove(usrToRemove);
                             }
                         }
                         context.SaveChanges();
                     }
                     MessageBox.Show("Данные удалены!");
+                    // Перезагрузка данных после удаления
                     LoadData();
                 }
                 catch (Exception ex)
@@ -95,6 +107,7 @@ namespace ArchiveApp
                 }
             }
         }
+
 
         private void EditBtn_Click(object sender, RoutedEventArgs e)
         {
@@ -115,18 +128,22 @@ namespace ArchiveApp
         {
             using (var context = new ArchiveBaseEntities())
             {
+                // Обработка нового пользователя, если идет добавление
                 if (newUser != null && isAddingNewRow)
                 {
+                    // Проверка обязательных полей
                     if (string.IsNullOrWhiteSpace(newUser.Login) ||
                         string.IsNullOrWhiteSpace(newUser.Password))
                     {
                         RemoveEmptyRow();
                         return;
                     }
+                    // Установка связанной роли для нового пользователя
                     newUser.Role = Roles.FirstOrDefault(r => r.Id == newUser.Role_Id);
                     context.User.Add(newUser);
                 }
 
+                // Обновление измененных данных существующих пользователей
                 foreach (var item in DataGridTable.Items)
                 {
                     if (item is User usr && usr != newUser)
@@ -134,6 +151,7 @@ namespace ArchiveApp
                         var usrToUpdate = context.User.Include(u => u.Role).FirstOrDefault(u => u.Id == usr.Id);
                         if (usrToUpdate != null)
                         {
+                            // Обновление всех полей пользователя
                             usrToUpdate.Role_Id = usr.Role_Id;
                             usrToUpdate.Role = Roles.FirstOrDefault(r => r.Id == usr.Role_Id);
                             usrToUpdate.Login = usr.Login;
@@ -149,6 +167,7 @@ namespace ArchiveApp
 
                 context.SaveChanges();
             }
+            // Сброс флагов и перезагрузка данных
             isAddingNewRow = false;
             newUser = null;
             LoadData();
@@ -204,11 +223,13 @@ namespace ArchiveApp
 
         private void AddBtn_Click(object sender, RoutedEventArgs e)
         {
+            // Защита от повторного добавления
             if (isAddingNewRow)
                 return;
 
             isAddingNewRow = true;
 
+            // Создание нового пользователя с дефолтными значениями
             newUser = new User
             {
                 Role_Id = (int)(Roles.FirstOrDefault()?.Id),
@@ -222,6 +243,7 @@ namespace ArchiveApp
                 Role = Roles.FirstOrDefault()
             };
 
+            // Добавление нового пользователя в коллекцию
             var items = DataGridTable.ItemsSource as List<User>;
             if (items != null)
             {
@@ -230,7 +252,10 @@ namespace ArchiveApp
                 DataGridTable.ItemsSource = items;
             }
 
+            // Установка фокуса на новую строку
             DataGridTable.SelectedItem = newUser;
+
+            // Блокировка редактирования других строк во время добавления
             foreach (var item in DataGridTable.Items)
             {
                 if (item is User usr && usr != newUser)
@@ -243,6 +268,7 @@ namespace ArchiveApp
                 }
             }
 
+            // Переключение в режим редактирования
             DataGridTable.IsReadOnly = false;
             EditBtn.Content = "Сохранить";
         }
