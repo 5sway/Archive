@@ -16,142 +16,119 @@ using System.Data.Entity;
 
 namespace ArchiveApp
 {
-    /// <summary>
-    /// Логика взаимодействия для UserPage.xaml
-    /// </summary>
     public partial class UserPage : Page
     {
-        private bool isAddingNewRow = false;
-        private User newUser;
+        private bool isAddingNewRow = false;        // Флаг добавления новой строки
+        private User newUser;                       // Новый пользователь для добавления
+
         public UserPage()
         {
-            InitializeComponent();
-            this.DataContext = this;
-            LoadData();
+            InitializeComponent();                  // Инициализация компонентов страницы
+            this.DataContext = this;                // Установка контекста данных
+            LoadData();                            // Загрузка данных пользователей
         }
 
         private void LoadData()
         {
-            // Загрузка данных пользователей из базы данных с включением связанных ролей
-            using (var context = new ArchiveBaseEntities())
+            using (var context = new ArchiveBaseEntities()) // Подключение к базе данных
             {
-                // Установка источника данных для DataGrid
-                DataGridTable.ItemsSource = context.User.Include(u => u.Role).ToList();
+                DataGridTable.ItemsSource = context.User.Include(u => u.Role).ToList(); // Загрузка пользователей с ролями
             }
-            // Загрузка списка ролей для выпадающих списков
-            LoadRoles();
-            // Установка режима только для чтения по умолчанию
-            DataGridTable.IsReadOnly = true;
+            LoadRoles();                            // Загрузка списка ролей
+            DataGridTable.IsReadOnly = true;        // Установка режима "только чтение"
         }
 
-        private List<Role> _roles;
+        private List<Role> _roles;                  // Список ролей
         public List<Role> Roles
         {
             get { return _roles; }
-            set
-            {
-                _roles = value;
-            }
+            set { _roles = value; }
         }
 
-        private void LoadRoles()
+        hectaresprivate void LoadRoles()
         {
-            using (var context = new ArchiveBaseEntities())
+            using (var context = new ArchiveBaseEntities()) // Подключение к базе данных
             {
-                Roles = context.Role.ToList();
+                Roles = context.Role.ToList();      // Загрузка всех ролей
             }
         }
 
         private void DelBtn_Click(object sender, RoutedEventArgs e)
         {
-            // Получение выбранных для удаления пользователей
-            var UsersForRemoving = DataGridTable.SelectedItems.Cast<User>().ToList();
-
-            // Проверка, что хотя бы один элемент выбран
-            if (UsersForRemoving.Count == 0)
+            var UsersForRemoving = DataGridTable.SelectedItems.Cast<User>().ToList(); // Получение выбранных пользователей
+            if (UsersForRemoving.Count == 0)        // Проверка наличия выбранных элементов
             {
                 MessageBox.Show("Выберите хотя бы один элемент для удаления!", "Ошибка", MessageBoxButton.OK, MessageBoxImage.Warning);
                 return;
             }
 
-            // Подтверждение удаления
-            if (MessageBox.Show($"Вы точно хотите удалить {UsersForRemoving.Count} элементов?", "Внимание", MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes)
+            if (MessageBox.Show($"Вы точно хотите удалить {UsersForRemoving.Count} элементов?", // Подтверждение удаления
+                "Внимание", MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes)
             {
                 try
                 {
-                    using (var context = new ArchiveBaseEntities())
+                    using (var context = new ArchiveBaseEntities()) // Подключение к базе данных
                     {
-                        // Удаление всех связанных записей и самого пользователя
-                        foreach (var usr in UsersForRemoving)
+                        foreach (var usr in UsersForRemoving) // Удаление каждого пользователя
                         {
-                            var usrToRemove = context.User.Find(usr.Id);
+                            var usrToRemove = context.User.Find(usr.Id); // Поиск пользователя в базе
                             if (usrToRemove != null)
                             {
-                                // Удаление связанных регистрационных карточек
-                                context.Registration_Card.RemoveRange(usrToRemove.Registration_Card);
-                                // Удаление связанных запросов
-                                context.Request.RemoveRange(usrToRemove.Request);
-                                // Удаление самого пользователя
-                                context.User.Remove(usrToRemove);
+                                context.Registration_Card.RemoveRange(usrToRemove.Registration_Card); // Удаление связанных карточек
+                                context.Request.RemoveRange(usrToRemove.Request); // Удаление связанных запросов
+                                context.User.Remove(usrToRemove); // Удаление пользователя
                             }
                         }
-                        context.SaveChanges();
+                        context.SaveChanges();          // Сохранение изменений
                     }
-                    MessageBox.Show("Данные удалены!");
-                    // Перезагрузка данных после удаления
-                    LoadData();
+                    MessageBox.Show("Данные удалены!"); // Уведомление об успешном удалении
+                    LoadData();                        // Перезагрузка данных
                 }
-                catch (Exception ex)
+                catch (Exception ex)                    // Обработка ошибок
                 {
                     MessageBox.Show($"Ошибка при удалении: {ex.Message}", "Ошибка", MessageBoxButton.OK, MessageBoxImage.Error);
                 }
             }
         }
 
-
         private void EditBtn_Click(object sender, RoutedEventArgs e)
         {
-            if (DataGridTable.IsReadOnly)
+            if (DataGridTable.IsReadOnly)           // Переключение в режим редактирования
             {
-                DataGridTable.IsReadOnly = false;
-                EditBtn.Content = "Сохранить";
+                DataGridTable.IsReadOnly = false;   // Разрешение редактирования
+                EditBtn.Content = "Сохранить";      // Изменение текста кнопки
             }
-            else
+            else                                    // Сохранение изменений
             {
-                DataGridTable.IsReadOnly = true;
-                EditBtn.Content = "Изменить";
-                SaveChanges();
+                DataGridTable.IsReadOnly = true;    // Блокировка редактирования
+                EditBtn.Content = "Изменить";       // Восстановление текста кнопки
+                SaveChanges();                     // Сохранение изменений
             }
         }
 
         private void SaveChanges()
         {
-            using (var context = new ArchiveBaseEntities())
+            using (var context = new ArchiveBaseEntities()) // Подключение к базе данных
             {
-                // Обработка нового пользователя, если идет добавление
-                if (newUser != null && isAddingNewRow)
+                if (newUser != null && isAddingNewRow) // Добавление нового пользователя
                 {
-                    // Проверка обязательных полей
-                    if (string.IsNullOrWhiteSpace(newUser.Login) ||
+                    if (string.IsNullOrWhiteSpace(newUser.Login) || // Проверка обязательных полей
                         string.IsNullOrWhiteSpace(newUser.Password))
                     {
-                        RemoveEmptyRow();
+                        RemoveEmptyRow();           // Удаление пустой строки при ошибке
                         return;
                     }
-                    // Установка связанной роли для нового пользователя
-                    newUser.Role = Roles.FirstOrDefault(r => r.Id == newUser.Role_Id);
-                    context.User.Add(newUser);
+                    newUser.Role = Roles.FirstOrDefault(r => r.Id == newUser.Role_Id); // Установка роли
+                    context.User.Add(newUser);      // Добавление пользователя в базу
                 }
 
-                // Обновление измененных данных существующих пользователей
-                foreach (var item in DataGridTable.Items)
+                foreach (var item in DataGridTable.Items) // Обновление существующих пользователей
                 {
-                    if (item is User usr && usr != newUser)
+                    if (item is User usr && usr != newUser) // Проверка типа и исключение нового пользователя
                     {
-                        var usrToUpdate = context.User.Include(u => u.Role).FirstOrDefault(u => u.Id == usr.Id);
-                        if (usrToUpdate != null)
+                        var usrToUpdate = context.User.Include(u => u.Role).FirstOrDefault(u => u.Id == usr.Id); // Поиск пользователя
+                        if (usrToUpdate != null)    // Обновление полей
                         {
-                            // Обновление всех полей пользователя
                             usrToUpdate.Role_Id = usr.Role_Id;
                             usrToUpdate.Role = Roles.FirstOrDefault(r => r.Id == usr.Role_Id);
                             usrToUpdate.Login = usr.Login;
@@ -164,121 +141,103 @@ namespace ArchiveApp
                         }
                     }
                 }
-
-                context.SaveChanges();
+                context.SaveChanges();              // Сохранение изменений
             }
-            // Сброс флагов и перезагрузка данных
-            isAddingNewRow = false;
-            newUser = null;
-            LoadData();
+            isAddingNewRow = false;                 // Сброс флага добавления
+            newUser = null;                         // Очистка нового пользователя
+            LoadData();                            // Перезагрузка данных
         }
 
         private void RemoveEmptyRow()
         {
-            var items = DataGridTable.ItemsSource as List<User>;
-            if (items != null)
+            var items = DataGridTable.ItemsSource as List<User>; // Получение текущего списка
+            if (items != null)                      // Удаление пустой строки
             {
-                items.Remove(newUser);
-                DataGridTable.ItemsSource = null;
-                DataGridTable.ItemsSource = items;
+                items.Remove(newUser);              // Удаление нового пользователя
+                DataGridTable.ItemsSource = null;   // Сброс источника данных
+                DataGridTable.ItemsSource = items;  // Переустановка источника данных
             }
-
-            isAddingNewRow = false;
-            newUser = null;
-            DataGridTable.IsReadOnly = true;
-            EditBtn.Content = "Изменить";
+            isAddingNewRow = false;                 // Сброс флага добавления
+            newUser = null;                         // Очистка нового пользователя
+            DataGridTable.IsReadOnly = true;        // Установка режима "только чтение"
+            EditBtn.Content = "Изменить";           // Восстановление текста кнопки
         }
 
         private void DataGridTable_PreviewKeyDown(object sender, KeyEventArgs e)
         {
-            if (e.Key == Key.Enter)
+            if (e.Key == Key.Enter)                 // Обработка нажатия Enter
             {
-                e.Handled = true;
-
-                DataGrid dataGrid = sender as DataGrid;
+                e.Handled = true;                   // Отмена стандартного поведения
+                DataGrid dataGrid = sender as DataGrid; // Получение DataGrid
                 if (dataGrid == null) return;
 
-                var currentCell = dataGrid.CurrentCell;
+                var currentCell = dataGrid.CurrentCell; // Текущая ячейка
                 if (currentCell.Column == null) return;
 
-                int currentColumnIndex = currentCell.Column.DisplayIndex;
-                int nextColumnIndex = currentColumnIndex + 1;
-                int currentRowIndex = dataGrid.Items.IndexOf(currentCell.Item);
+                int currentColumnIndex = currentCell.Column.DisplayIndex; // Индекс текущей колонки
+                int nextColumnIndex = currentColumnIndex + 1; // Следующий индекс колонки
+                int currentRowIndex = dataGrid.Items.IndexOf(currentCell.Item); // Индекс текущей строки
 
-                if (nextColumnIndex < dataGrid.Columns.Count)
+                if (nextColumnIndex < dataGrid.Columns.Count) // Переход к следующей колонке
                 {
                     dataGrid.CurrentCell = new DataGridCellInfo(dataGrid.Items[currentRowIndex], dataGrid.Columns[nextColumnIndex]);
                 }
-                else if (currentRowIndex < dataGrid.Items.Count - 1)
+                else if (currentRowIndex < dataGrid.Items.Count - 1) // Переход к следующей строке
                 {
                     dataGrid.CurrentCell = new DataGridCellInfo(dataGrid.Items[currentRowIndex + 1], dataGrid.Columns[0]);
                 }
 
-                dataGrid.Dispatcher.InvokeAsync(() =>
-                {
-                    dataGrid.BeginEdit();
-                }, System.Windows.Threading.DispatcherPriority.Input);
+                dataGrid.Dispatcher.InvokeAsync(() => dataGrid.BeginEdit(), System.Windows.Threading.DispatcherPriority.Input); // Запуск редактирования
             }
         }
 
         private void AddBtn_Click(object sender, RoutedEventArgs e)
         {
-            // Защита от повторного добавления
-            if (isAddingNewRow)
-                return;
+            if (isAddingNewRow) return;             // Защита от повторного добавления
 
-            isAddingNewRow = true;
-
-            // Создание нового пользователя с дефолтными значениями
-            newUser = new User
+            isAddingNewRow = true;                  // Установка флага добавления
+            newUser = new User                      // Создание нового пользователя
             {
-                Role_Id = (int)(Roles.FirstOrDefault()?.Id),
-                Login = "",
-                Password = "",
-                Name = "",
-                Full_Name = "",
-                First_Name = "",
-                Phone_Number = "",
-                Email = "",
-                Role = Roles.FirstOrDefault()
+                Role_Id = (int)(Roles.FirstOrDefault()?.Id), // ID первой роли по умолчанию
+                Login = "",                        // Пустой логин
+                Password = "",                     // Пустой пароль
+                Name = "",                         // Пустое имя
+                Full_Name = "",                    // Пустая фамилия
+                First_Name = "",                   // Пустое отчество
+                Phone_Number = "",                 // Пустой номер телефона
+                Email = "",                        // Пустой email
+                Role = Roles.FirstOrDefault()      // Первая роль по умолчанию
             };
 
-            // Добавление нового пользователя в коллекцию
-            var items = DataGridTable.ItemsSource as List<User>;
-            if (items != null)
+            var items = DataGridTable.ItemsSource as List<User>; // Получение текущего списка
+            if (items != null)                      // Добавление нового пользователя
             {
                 items.Add(newUser);
-                DataGridTable.ItemsSource = null;
-                DataGridTable.ItemsSource = items;
+                DataGridTable.ItemsSource = null;   // Сброс источника данных
+                DataGridTable.ItemsSource = items;  // Переустановка источника данных
             }
 
-            // Установка фокуса на новую строку
-            DataGridTable.SelectedItem = newUser;
+            DataGridTable.SelectedItem = newUser;   // Установка фокуса на новую строку
 
-            // Блокировка редактирования других строк во время добавления
-            foreach (var item in DataGridTable.Items)
+            foreach (var item in DataGridTable.Items) // Блокировка других строк
             {
                 if (item is User usr && usr != newUser)
                 {
                     var row = DataGridTable.ItemContainerGenerator.ContainerFromItem(usr) as DataGridRow;
-                    if (row != null)
-                    {
-                        row.IsEnabled = false;
-                    }
+                    if (row != null) row.IsEnabled = false; // Отключение строки
                 }
             }
 
-            // Переключение в режим редактирования
-            DataGridTable.IsReadOnly = false;
-            EditBtn.Content = "Сохранить";
+            DataGridTable.IsReadOnly = false;       // Разрешение редактирования
+            EditBtn.Content = "Сохранить";          // Изменение текста кнопки
         }
 
         private void Page_IsVisibleChanged(object sender, DependencyPropertyChangedEventArgs e)
         {
-            if (Visibility == Visibility.Visible)
+            if (Visibility == Visibility.Visible)   // Обновление данных при отображении страницы
             {
-                ArchiveBaseEntities.GetContext().ChangeTracker.Entries().ToList().ForEach(p => p.Reload());
-                DataGridTable.ItemsSource = ArchiveBaseEntities.GetContext().User.ToList();
+                ArchiveBaseEntities.GetContext().ChangeTracker.Entries().ToList().ForEach(p => p.Reload()); // Перезагрузка данных
+                DataGridTable.ItemsSource = ArchiveBaseEntities.GetContext().User.ToList(); // Обновление источника данных
             }
         }
     }

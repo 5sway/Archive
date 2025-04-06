@@ -13,84 +13,68 @@ namespace ArchiveApp
 {
     public static class CaptchaGenerator
     {
-        private static Random _random = new Random();
+        private static Random _random = new Random(); // Генератор случайных чисел
 
         public static string GenerateCaptchaText(int length = 5)
         {
-            // Генерация текста CAPTCHA заданной длины
-            const string chars = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789"; // Используемые символы (исключены похожие символы)
-            char[] captcha = new char[length];
-            for (int i = 0; i < length; i++)
-            {
-                // Случайный выбор символа из доступных
-                captcha[i] = chars[_random.Next(chars.Length)];
-            }
-            return new string(captcha);
+            const string chars = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789"; // Допустимые символы без похожих (I, O, 1, 0)
+            char[] captcha = new char[length];      // Массив для хранения символов капчи
+            for (int i = 0; i < length; i++)        // Заполнение массива случайными символами
+                captcha[i] = chars[_random.Next(chars.Length)]; // Выбор случайного символа
+            return new string(captcha);             // Преобразование массива в строку
         }
 
         public static BitmapImage GenerateCaptchaImage(string captchaText)
         {
-            // Создание изображения CAPTCHA с заданным текстом
-            int width = 150, height = 50;
-            DrawingVisual visual = new DrawingVisual();
-            using (DrawingContext dc = visual.RenderOpen())
+            int width = 150, height = 50;           // Размеры изображения капчи
+            DrawingVisual visual = new DrawingVisual(); // Объект для рисования
+            using (DrawingContext dc = visual.RenderOpen()) // Открытие контекста рисования
             {
-                // Рисуем белый фон
-                dc.DrawRectangle(Brushes.White, null, new Rect(0, 0, width, height));
+                dc.DrawRectangle(Brushes.White, null, new Rect(0, 0, width, height)); // Отрисовка белого фона
+                Typeface typeface = new Typeface("Arial"); // Шрифт для текста капчи
+                FormattedText formattedText = new FormattedText( // Форматированный текст капчи
+                    captchaText,                    // Текст для отображения
+                    CultureInfo.InvariantCulture,   // Инвариантная культура
+                    FlowDirection.LeftToRight,      // Направление текста слева направо
+                    typeface,                       // Выбранный шрифт
+                    30,                             // Размер шрифта
+                    Brushes.Black,                  // Цвет текста
+                    1.0);                           // Плотность пикселей
+                dc.DrawText(formattedText, new Point(15, 5)); // Отрисовка текста на изображении
 
-                // Настройки для текста CAPTCHA
-                Typeface typeface = new Typeface("Arial");
-                FormattedText formattedText = new FormattedText(
-                    captchaText,
-                    CultureInfo.InvariantCulture,
-                    FlowDirection.LeftToRight,
-                    typeface,
-                    30, // Размер шрифта
-                    Brushes.Black, // Цвет текста
-                    1.0); // Плотность пикселей
-
-                // Рисуем текст
-                dc.DrawText(formattedText, new Point(15, 5));
-
-                // Добавляем шум (точки)
-                for (int i = 0; i < 20; i++)
+                for (int i = 0; i < 20; i++)        // Добавление шума в виде случайных точек
                 {
-                    double x = _random.Next(width);
-                    double y = _random.Next(height);
-                    dc.DrawRectangle(Brushes.Gray, null, new Rect(x, y, 2, 2));
+                    double x = _random.Next(width); // Случайная X-координата
+                    double y = _random.Next(height);// Случайная Y-координата
+                    dc.DrawRectangle(Brushes.Gray, null, new Rect(x, y, 2, 2)); // Отрисовка серой точки
                 }
             }
 
-            // Создаем растровое изображение
-            RenderTargetBitmap bitmap = new RenderTargetBitmap(
-                width, height, // Размеры
-                96, 96, // DPI
-                PixelFormats.Pbgra32); // Формат пикселей
-            bitmap.Render(visual);
+            RenderTargetBitmap bitmap = new RenderTargetBitmap( // Создание растрового изображения
+                width, height,                      // Размеры изображения
+                96, 96,                             // Разрешение DPI
+                PixelFormats.Pbgra32);              // Формат пикселей с альфа-каналом
+            bitmap.Render(visual);                  // Рендеринг визуального объекта в битмап
 
-            // Конвертируем в BitmapImage
-            return ConvertBitmapToBitmapImage(bitmap);
+            return ConvertBitmapToBitmapImage(bitmap); // Конвертация в BitmapImage
         }
 
         private static BitmapImage ConvertBitmapToBitmapImage(BitmapSource bitmap)
         {
-            // Конвертация BitmapSource в BitmapImage
-            using (MemoryStream memory = new MemoryStream())
+            using (MemoryStream memory = new MemoryStream()) // Создание потока памяти
             {
-                // Используем PNG кодировщик
-                PngBitmapEncoder encoder = new PngBitmapEncoder();
-                encoder.Frames.Add(BitmapFrame.Create(bitmap));
-                encoder.Save(memory);
+                PngBitmapEncoder encoder = new PngBitmapEncoder(); // Кодировщик для PNG формата
+                encoder.Frames.Add(BitmapFrame.Create(bitmap)); // Добавление кадра из битмапа
+                encoder.Save(memory);               // Сохранение в поток памяти
 
-                // Создаем и настраиваем BitmapImage
-                BitmapImage bitmapImage = new BitmapImage();
-                bitmapImage.BeginInit();
-                bitmapImage.StreamSource = new MemoryStream(memory.ToArray());
-                bitmapImage.CacheOption = BitmapCacheOption.OnLoad; // Загрузка сразу
-                bitmapImage.EndInit();
-                bitmapImage.Freeze(); // Делаем неизменяемым для потокобезопасности
+                BitmapImage bitmapImage = new BitmapImage(); // Создание объекта BitmapImage
+                bitmapImage.BeginInit();            // Начало инициализации
+                bitmapImage.StreamSource = new MemoryStream(memory.ToArray()); // Установка источника данных
+                bitmapImage.CacheOption = BitmapCacheOption.OnLoad; // Загрузка в память сразу
+                bitmapImage.EndInit();              // Завершение инициализации
+                bitmapImage.Freeze();               // Заморозка для потокобезопасности
 
-                return bitmapImage;
+                return bitmapImage;                 // Возврат готового изображения
             }
         }
     }

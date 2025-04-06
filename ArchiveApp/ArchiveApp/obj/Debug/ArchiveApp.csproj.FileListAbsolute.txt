@@ -95,8 +95,6 @@ D:\Kursach\ArchiveApp\ArchiveApp\obj\Debug\ArchiveApp.g.resources
 D:\Kursach\ArchiveApp\ArchiveApp\obj\Debug\ArchiveApp.Properties.Resources.resources
 D:\Kursach\ArchiveApp\ArchiveApp\obj\Debug\ArchiveApp.csproj.GenerateResource.cache
 D:\Kursach\ArchiveApp\ArchiveApp\obj\Debug\ArchiveApp.csproj.CoreCompileInputs.cache
-D:\Kursach\ArchiveApp\ArchiveApp\obj\Debug\ArchiveApp.csproj.Fody.CopyLocal.cache
-D:\Kursach\ArchiveApp\ArchiveApp\obj\Debug\ArchiveApp.csproj.Fody.RuntimeCopyLocal.cache
 D:\Kursach\ArchiveApp\ArchiveApp\obj\Debug\ArchiveApp.exe.manifest
 D:\Kursach\ArchiveApp\ArchiveApp\obj\Debug\ArchiveApp.application
 D:\Kursach\ArchiveApp\ArchiveApp\obj\Debug\ArchiveApp.csproj.Up2Date
@@ -154,3 +152,5 @@ D:\ArchiveApp\ArchiveApp\obj\Debug\ArchiveApp.application
 D:\ArchiveApp\ArchiveApp\obj\Debug\ArchiveApp.csproj.Up2Date
 D:\ArchiveApp\ArchiveApp\obj\Debug\ArchiveApp.exe
 D:\ArchiveApp\ArchiveApp\obj\Debug\ArchiveApp.pdb
+D:\Kursach\ArchiveApp\ArchiveApp\obj\Debug\ArchiveApp.csproj.Fody.CopyLocal.cache
+D:\Kursach\ArchiveApp\ArchiveApp\obj\Debug\ArchiveApp.csproj.Fody.RuntimeCopyLocal.cache

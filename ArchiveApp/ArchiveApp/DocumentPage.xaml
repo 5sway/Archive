@@ -29,11 +29,11 @@
             <DataGrid.Columns>
                 <DataGridTextColumn Header="Дата" Binding="{Binding Receipt_Date, StringFormat={}{0:dd.MM.yyyy}}" Width="*"/>
                 <DataGridTextColumn Header="Архивный шифр" Binding="{Binding Number}" Width="*"/>
-                <DataGridTextColumn Header="Заголовок" Binding="{Binding Title}" Width="*"/>
+                <DataGridTextColumn Header="Название" Binding="{Binding Title}" Width="*"/>
                 <DataGridTextColumn Header="Описание" Binding="{Binding Annotation}" Width="*"/>
                 <DataGridTextColumn Header="Источник" Binding="{Binding Source}" Width="*"/>
                 <DataGridTextColumn Header="Количество копий" Binding="{Binding Copies_Count}" Width="*"/>
-                <DataGridTemplateColumn Header="Тип хранилища" Width="*">
+                <DataGridTemplateColumn Header="Тип хранилища" Width="*" SortMemberPath="Storage_Type">
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
                             <TextBlock Text="{Binding Storage_Type}"/>
@@ -49,8 +49,11 @@
             </DataGrid.Columns>
         </DataGrid>
 
-        <Button Name="AddBtn" Content="Добавить" Background="#bae3e8" VerticalAlignment="Center" HorizontalAlignment="Left" Margin="5,0,0,0" Width="120" Height="40" Grid.Row="1" Click="AddBtn_Click"/>
-        <Button Name="DelBtn" Content="Удалить" Background="#bae3e8" VerticalAlignment="Center" HorizontalAlignment="Left" Margin="130,0,0,0" Width="120" Height="40" Grid.Row="1" Click="DelBtn_Click"/>
-        <Button Name="EditBtn" Content="Изменить" Background="#bae3e8" VerticalAlignment="Center" HorizontalAlignment="Right" Margin="0,0,5,0" Width="120" Height="40" Grid.Row="1" Click="EditBtn_Click"/>
+        <Button Name="AddBtn" Content="Добавить" Background="#bae3e8" VerticalAlignment="Center"
+                HorizontalAlignment="Left" Margin="5,0,0,0" Width="120" Height="40" Grid.Row="1" Click="AddBtn_Click"/>
+        <Button Name="DelBtn" Content="Удалить" Background="#bae3e8" VerticalAlignment="Center"
+                HorizontalAlignment="Left" Margin="130,0,0,0" Width="120" Height="40" Grid.Row="1" Click="DelBtn_Click"/>
+        <Button Name="EditBtn" Content="Изменить" Background="#bae3e8" VerticalAlignment="Center"
+                HorizontalAlignment="Right" Margin="0,0,5,0" Width="120" Height="40" Grid.Row="1" Click="EditBtn_Click"/>
     </Grid>
 </Page>

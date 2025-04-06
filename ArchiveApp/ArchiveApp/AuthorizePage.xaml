@@ -37,5 +37,8 @@
         <Button Name="LoginBtn" Content="Войти" VerticalContentAlignment="Center" Background="#bae3e8" HorizontalAlignment="Center"
                 VerticalAlignment="Center" Width="150" Height="40"
                 Margin="0,110,140,0" Click="LoginBtn_Click" FontSize="18"></Button>
+        <TextBlock Name="ErrorMessage" VerticalAlignment="Center" HorizontalAlignment="Center"
+                   Margin="0,160,140,0" Foreground="Red" FontSize="14" TextAlignment="Center"
+                   Visibility="Collapsed" TextWrapping="Wrap" MaxWidth="300"/>
     </Grid>
 </Page>

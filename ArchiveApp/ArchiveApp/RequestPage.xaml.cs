@@ -20,128 +20,113 @@ namespace ArchiveApp
 {
     public partial class RequestPage : Page
     {
-        private bool isAddingNewRow = false;
-        private Request newRequest;
-        private int currentUserId = UserData.CurrentUserId;
-        public ObservableCollection<Request> Requests { get; set; }
-        public List<KeyValuePair<bool?, string>> StatusList { get; set; }
-        public List<Document> Documents { get; set; }
-        public List<User> Users { get; set; }
+        private bool isAddingNewRow = false;        // Флаг добавления новой строки
+        private Request newRequest;                 // Новый запрос для добавления
+        private int currentUserId = UserData.CurrentUserId; // ID текущего пользователя
+        public ObservableCollection<Request> Requests { get; set; } // Коллекция запросов
+        public List<KeyValuePair<bool?, string>> StatusList { get; set; } // Список статусов
+        public List<Document> Documents { get; set; } // Список документов
+        public List<User> Users { get; set; }       // Список пользователей
 
         public RequestPage()
         {
-            InitializeComponent();
-            DataContext = this;
-            Requests = new ObservableCollection<Request>();
-            LoadStatusList();
-            LoadDocuments();
-            LoadUsers();
-            LoadData();
+            InitializeComponent();                  // Инициализация компонентов страницы
+            DataContext = this;                     // Установка контекста данных
+            Requests = new ObservableCollection<Request>(); // Инициализация коллекции запросов
+            LoadStatusList();                      // Загрузка списка статусов
+            LoadDocuments();                       // Загрузка списка документов
+            LoadUsers();                           // Загрузка списка пользователей
+            LoadData();                            // Загрузка данных запросов
         }
 
         private void LoadStatusList()
         {
-            StatusList = new List<KeyValuePair<bool?, string>>
+            StatusList = new List<KeyValuePair<bool?, string>> // Создание списка статусов
             {
-                new KeyValuePair<bool?, string>(true, "Принято"),
-                new KeyValuePair<bool?, string>(false, "Отклонено"),
+                new KeyValuePair<bool?, string>(true, "Принято"), // Статус "Принято"
+                new KeyValuePair<bool?, string>(false, "Отклонено") // Статус "Отклонено"
             };
         }
 
         private void LoadDocuments()
         {
-            using (var context = new ArchiveBaseEntities())
+            using (var context = new ArchiveBaseEntities()) // Подключение к базе данных
             {
-                Documents = context.Document.ToList();
+                Documents = context.Document.ToList(); // Загрузка всех документов
             }
         }
 
         private void LoadUsers()
         {
-            using (var context = new ArchiveBaseEntities())
+            using (var context = new ArchiveBaseEntities()) // Подключение к базе данных
             {
-                Users = context.User.ToList();
+                Users = context.User.ToList();      // Загрузка всех пользователей
             }
         }
 
         private void LoadData()
         {
-            // Загрузка данных о запросах из базы данных
-            using (var context = new ArchiveBaseEntities())
+            using (var context = new ArchiveBaseEntities()) // Подключение к базе данных
             {
-                // Включаем связанные данные о пользователях и документах
-                var requests = context.Request
-                    .Include(r => r.User)
-                    .Include(r => r.Document)
+                var requests = context.Request      // Загрузка запросов с связанными данными
+                    .Include(r => r.User)           // Включение данных пользователей
+                    .Include(r => r.Document)       // Включение данных документов
                     .ToList();
 
-                // Очищаем текущую коллекцию и заполняем новыми данными
-                Requests.Clear();
-                foreach (var req in requests)
-                {
+                Requests.Clear();                   // Очистка текущей коллекции
+                foreach (var req in requests)       // Заполнение коллекции
                     Requests.Add(req);
-                }
             }
-            // Устанавливаем источник данных для DataGrid
-            DataGridTable.ItemsSource = Requests;
-            DataGridTable.IsReadOnly = true; // Запрещаем редактирование по умолчанию
+            DataGridTable.ItemsSource = Requests;   // Установка источника данных для DataGrid
+            DataGridTable.IsReadOnly = true;        // Установка режима "только чтение"
         }
 
         private void DelBtn_Click(object sender, RoutedEventArgs e)
         {
-            // Получаем выбранные для удаления запросы
-            var selectedRequests = DataGridTable.SelectedItems.Cast<Request>().ToList();
-
-            // Проверяем, что хотя бы один элемент выбран
-            if (selectedRequests.Count == 0)
+            var selectedRequests = DataGridTable.SelectedItems.Cast<Request>().ToList(); // Получение выбранных запросов
+            if (selectedRequests.Count == 0)        // Проверка наличия выбранных элементов
             {
-                MessageBox.Show("Выберите хотя бы один элемент для удаления!", "Ошибка",
-                    MessageBoxButton.OK, MessageBoxImage.Warning);
+                MessageBox.Show("Выберите хотя бы один элемент для удаления!", "Ошибка", MessageBoxButton.OK, MessageBoxImage.Warning);
                 return;
             }
 
-            // Запрашиваем подтверждение удаления
-            if (MessageBox.Show($"Вы точно хотите удалить {selectedRequests.Count} элементов?",
+            if (MessageBox.Show($"Вы точно хотите удалить {selectedRequests.Count} элементов?", // Подтверждение удаления
                 "Внимание", MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes)
             {
                 try
                 {
-                    using (var context = new ArchiveBaseEntities())
+                    using (var context = new ArchiveBaseEntities()) // Подключение к базе данных
                     {
-                        // Удаляем каждый выбранный запрос
-                        foreach (var req in selectedRequests)
+                        foreach (var req in selectedRequests) // Удаление каждого запроса
                         {
-                            var reqToRemove = context.Request.Find(req.Id);
+                            var reqToRemove = context.Request.Find(req.Id); // Поиск запроса в базе
                             if (reqToRemove != null)
-                            {
-                                context.Request.Remove(reqToRemove);
-                            }
+                                context.Request.Remove(reqToRemove); // Удаление запроса
                         }
-                        context.SaveChanges(); // Сохраняем изменения в БД
+                        context.SaveChanges();          // Сохранение изменений
                     }
-                    MessageBox.Show("Данные удалены!");
-                    LoadData(); // Перезагружаем данные после удаления
+                    MessageBox.Show("Данные удалены!"); // Уведомление об успешном удалении
+                    LoadData();                        // Перезагрузка данных
                 }
-                catch (Exception ex)
+                catch (Exception ex)                    // Обработка ошибок
                 {
-                    MessageBox.Show($"Ошибка при удалении: {ex.Message}", "Ошибка",
-                        MessageBoxButton.OK, MessageBoxImage.Error);
+                    MessageBox.Show($"Ошибка при удалении: {ex.Message}", "Ошибка", MessageBoxButton.OK, MessageBoxImage.Error);
                 }
             }
         }
 
         private void EditBtn_Click(object sender, RoutedEventArgs e)
         {
-            if (DataGridTable.IsReadOnly)
+            if (DataGridTable.IsReadOnly)           // Переключение в режим редактирования
             {
-                DataGridTable.IsReadOnly = false;
-                EditBtn.Content = "Сохранить";
+                DataGridTable.IsReadOnly = false;   // Разрешение редактирования
+                EditBtn.Content = "Сохранить";      // Изменение текста кнопки
             }
-            else
+            else                                    // Сохранение изменений
             {
-                DataGridTable.IsReadOnly = true;
-                EditBtn.Content = "Изменить";
-                SaveChanges();
+                DataGridTable.IsReadOnly = true;    // Блокировка редактирования
+                EditBtn.Content = "Изменить";       // Восстановление текста кнопки
+                SaveChanges();                     // Сохранение изменений
             }
         }
 
@@ -149,106 +134,89 @@ namespace ArchiveApp
         {
             try
             {
-                using (var context = new ArchiveBaseEntities())
+                using (var context = new ArchiveBaseEntities()) // Подключение к базе данных
                 {
-                    // Обработка добавления новой строки
-                    if (isAddingNewRow && newRequest != null)
+                    if (isAddingNewRow && newRequest != null) // Добавление нового запроса
                     {
-                        // Проверка обязательных полей
-                        if (string.IsNullOrWhiteSpace(newRequest.Reason) ||
-                            newRequest.Document_Id == 0)
+                        if (string.IsNullOrWhiteSpace(newRequest.Reason) || newRequest.Document_Id == 0) // Проверка обязательных полей
                         {
-                            RemoveEmptyRow();
+                            RemoveEmptyRow();       // Удаление пустой строки при ошибке
                             return;
                         }
-
-                        // Установка текущего пользователя и статуса
-                        newRequest.User_Id = currentUserId;
-                        if (newRequest.Status == null)
+                        var requestToAdd = new Request // Создание нового запроса
                         {
-                            newRequest.Status = null;
-                        }
-
-                        // Добавление нового запроса
-                        context.Request.Add(newRequest);
-                        context.SaveChanges();
+                            Request_Date = newRequest.Request_Date,
+                            Reason = newRequest.Reason,
+                            Status = newRequest.Status,
+                            User_Id = newRequest.User_Id,
+                            Document_Id = newRequest.Document_Id
+                        };
+                        context.Request.Add(requestToAdd); // Добавление запроса в базу
+                        context.SaveChanges();      // Сохранение изменений
                     }
 
-                    // Обновление существующих запросов
-                    foreach (var req in Requests.Where(r => r.Id != 0))
+                    foreach (var req in Requests.Where(r => r.Id != 0)) // Обновление существующих запросов
                     {
-                        var reqToUpdate = context.Request.Find(req.Id);
-                        if (reqToUpdate != null)
+                        var reqToUpdate = context.Request.Find(req.Id); // Поиск запроса в базе
+                        if (reqToUpdate != null)    // Обновление полей
                         {
-                            // Обновление всех полей запроса
                             reqToUpdate.Request_Date = req.Request_Date;
                             reqToUpdate.Reason = req.Reason;
                             reqToUpdate.Status = req.Status;
                             reqToUpdate.Document_Id = req.Document_Id;
                         }
                     }
-                    context.SaveChanges(); // Сохраняем все изменения
+                    context.SaveChanges();          // Сохранение всех изменений
                 }
-
-                // Сбрасываем флаги и перезагружаем данные
-                isAddingNewRow = false;
-                newRequest = null;
-                LoadData();
+                isAddingNewRow = false;             // Сброс флага добавления
+                newRequest = null;                  // Очистка нового запроса
+                LoadData();                        // Перезагрузка данных
             }
-            catch (Exception ex)
+            catch (Exception ex)                    // Обработка ошибок
             {
-                MessageBox.Show($"Ошибка при сохранении: {ex.Message}", "Ошибка",
-                    MessageBoxButton.OK, MessageBoxImage.Error);
+                MessageBox.Show($"Ошибка при сохранении: {ex.Message}", "Ошибка", MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
 
         private void RemoveEmptyRow()
         {
-            if (newRequest != null && Requests.Contains(newRequest))
-            {
+            if (newRequest != null && Requests.Contains(newRequest)) // Удаление пустой строки
                 Requests.Remove(newRequest);
-            }
-            isAddingNewRow = false;
-            newRequest = null;
-            DataGridTable.IsReadOnly = true;
-            EditBtn.Content = "Изменить";
+            isAddingNewRow = false;                 // Сброс флага добавления
+            newRequest = null;                      // Очистка нового запроса
+            DataGridTable.IsReadOnly = true;        // Установка режима "только чтение"
+            EditBtn.Content = "Изменить";           // Восстановление текста кнопки
         }
 
         private void AddBtn_Click(object sender, RoutedEventArgs e)
         {
-            // Защита от повторного добавления
-            if (isAddingNewRow)
-                return;
+            if (isAddingNewRow) return;             // Защита от повторного добавления
 
-            isAddingNewRow = true;
-
-            // Создание нового запроса с дефолтными значениями
-            newRequest = new Request
+            isAddingNewRow = true;                  // Установка флага добавления
+            var currentUser = Users.FirstOrDefault(u => u.Id == currentUserId); // Поиск текущего пользователя
+            newRequest = new Request                // Создание нового запроса
             {
-                Id = 0, // ID=0 означает новую запись
-                Request_Date = DateTime.Now, // Текущая дата
-                Reason = "", // Пустое основание
-                Status = null, // Статус не установлен
-                User_Id = currentUserId, // Текущий пользователь
-                Document_Id = 0, // Документ не выбран
-                Document = Documents.FirstOrDefault(), // Первый документ по умолчанию
-                User = Users.FirstOrDefault(u => u.Id == currentUserId) // Данные текущего пользователя
+                Id = 0,                            // ID=0 для новой записи
+                Request_Date = DateTime.Now,       // Текущая дата
+                Reason = "",                       // Пустое основание
+                Status = null,                     // Статус не установлен
+                User_Id = currentUserId,           // ID текущего пользователя
+                Document_Id = 0,                   // Документ не выбран
+                Document = null,                   // Связанный документ не установлен
+                User = currentUser                 // Данные текущего пользователя
             };
 
-            // Добавление в коллекцию и настройка UI
-            Requests.Add(newRequest);
-            DataGridTable.SelectedItem = newRequest;
+            Requests.Add(newRequest);               // Добавление в коллекцию
+            DataGridTable.SelectedItem = newRequest; // Установка фокуса на новую строку
             DataGridTable.ScrollIntoView(newRequest); // Прокрутка к новой строке
-            DataGridTable.IsReadOnly = false; // Разрешаем редактирование
-            EditBtn.Content = "Сохранить"; // Меняем текст кнопки
+            DataGridTable.IsReadOnly = false;       // Разрешение редактирования
+            EditBtn.Content = "Сохранить";          // Изменение текста кнопки
         }
 
         private void Page_IsVisibleChanged(object sender, DependencyPropertyChangedEventArgs e)
         {
-            if (Visibility == Visibility.Visible)
-            {
+            if (Visibility == Visibility.Visible)   // Обновление данных при отображении страницы
                 LoadData();
-            }
         }
     }
 }

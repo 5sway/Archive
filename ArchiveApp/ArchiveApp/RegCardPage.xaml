@@ -10,6 +10,35 @@
 
     <Page.Resources>
         <local:BoolToconverter x:Key="BoolToсonverter"/>
+        <Style x:Key="EditButtonStyle" TargetType="Button">
+            <Setter Property="Foreground" Value="Black"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border Background="{TemplateBinding Background}"
+                            BorderBrush="{TemplateBinding BorderBrush}"
+                            BorderThickness="{TemplateBinding BorderThickness}">
+                            <ContentPresenter HorizontalAlignment="Center"
+                                          VerticalAlignment="Center"/>
+                        </Border>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+            <Style.Triggers>
+                <Trigger Property="IsEnabled" Value="False">
+                    <Setter Property="Background" Value="#a4d2d9"/>
+                    <Setter Property="Foreground" Value="Black"/>
+                    <Setter Property="BorderBrush" Value="Black"/>
+                    <Setter Property="BorderThickness" Value="0.5"/>
+                </Trigger>
+                <Trigger Property="IsEnabled" Value="True">
+                    <Setter Property="Background" Value="#bae3e8"/>
+                    <Setter Property="Foreground" Value="Black"/>
+                    <Setter Property="BorderBrush" Value="Black"/>
+                    <Setter Property="BorderThickness" Value="0.5"/>
+                </Trigger>
+            </Style.Triggers>
+        </Style>
     </Page.Resources>
 
     <Grid Margin="10">
@@ -39,11 +68,11 @@
                           Padding="7,0,0,0" VerticalContentAlignment="Center"/>
 
                 <TextBlock Text="Дата регистрации:" FontWeight="Bold" Margin="0,0,0,5"/>
-                <DatePicker x:Name="RegistrationDatePicker" Height="30" Background="White"
-                            Padding="5,0,0,0" VerticalContentAlignment="Center" IsEnabled="False"/>
-                <Button Name="EditBtn" Content="Изменить" Background="#bae3e8"
+                <DatePicker x:Name="RegistrationDatePicker" Height="30" Background="White" 
+                            Padding="5,0,0,0" VerticalContentAlignment="Center"/>
+                <Button Name="EditBtn" Content="Изменить" Style="{StaticResource EditButtonStyle}"
                             VerticalAlignment="Bottom" HorizontalAlignment="Center" Margin="275,17,0,5"
-                            Width="80" Height="20" Grid.Row="1" FontSize="12" Click="EditBtn_Click"/>
+                            Width="80" Height="20" Grid.Row="1" FontSize="12" Click="EditBtn_Click" BorderBrush="Black"></Button>
             </StackPanel>
         </Border>
     </Grid>

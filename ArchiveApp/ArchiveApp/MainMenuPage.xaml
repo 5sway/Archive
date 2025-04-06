@@ -22,11 +22,23 @@
             <ColumnDefinition Width="200"/>
             <ColumnDefinition Width="*"/>
         </Grid.ColumnDefinitions>
-        <Button Name="DocumentBtn" Content="Документы" Background="#bae3e8" Grid.Row="1" Grid.Column="1" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" FontSize="20" Click="DocumentBtn_Click"></Button>
-        <Button Name="ExpBtn" Content="Экспорт" Background="#bae3e8" Grid.Row="1" Grid.Column="2" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" FontSize="20" Click="ExpBtn_Click"></Button>
-        <Button Name="UserBtn" Content="Пользователи" Background="#bae3e8" Grid.Row="1" Grid.Column="3" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" FontSize="20" Click="UserBtn_Click"></Button>
-        <Button Name="RegCardBtn" Content="Карточки" Background="#bae3e8" Grid.Row="2" Grid.Column="1" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" FontSize="20" Click="RegCardBtn_Click"></Button>
-        <Button Name="RequestBtn" Content="Запросы" Background="#bae3e8" Grid.Row="2" Grid.Column="2" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" FontSize="20" Click="RequestBtn_Click"></Button>
-        <Button Name="ReportBtn" Content="Отчеты" Background="#bae3e8" Grid.Row="2" Grid.Column="3" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" FontSize="20" Click="ReportBtn_Click"></Button>
+        <Button Name="DocumentBtn" Content="Документы" Background="#bae3e8" Grid.Row="1" Grid.Column="1" 
+                VerticalAlignment="Stretch" HorizontalAlignment="Stretch" FontSize="20" Click="DocumentBtn_Click" 
+                BorderThickness="2,2,1,1" BorderBrush="Black"/>
+        <Button Name="SimpleRepBtn" Content="Простой отчет" Background="#bae3e8" Grid.Row="1" Grid.Column="2" 
+                VerticalAlignment="Stretch" HorizontalAlignment="Stretch" FontSize="20" Click="SimpleRepBtn_Click" 
+                BorderThickness="1,2,1,1" BorderBrush="Black"/>
+        <Button Name="UserBtn" Content="Пользователи" Background="#bae3e8" Grid.Row="1" Grid.Column="3" 
+                VerticalAlignment="Stretch" HorizontalAlignment="Stretch" FontSize="20" Click="UserBtn_Click" 
+                BorderThickness="1,2,2,1" BorderBrush="Black"/>
+        <Button Name="RegCardBtn" Content="Карточки" Background="#bae3e8" Grid.Row="2" Grid.Column="1" 
+                VerticalAlignment="Stretch" HorizontalAlignment="Stretch" FontSize="20" Click="RegCardBtn_Click" 
+                BorderThickness="2,1,1,2" BorderBrush="Black"/>
+        <Button Name="RequestBtn" Content="Запросы" Background="#bae3e8" Grid.Row="2" Grid.Column="2" 
+                VerticalAlignment="Stretch" HorizontalAlignment="Stretch" FontSize="20" Click="RequestBtn_Click" 
+                BorderThickness="1,1,1,2" BorderBrush="Black"/>
+        <Button Name="ReportBtn" Content="Отчет" Background="#bae3e8" Grid.Row="2" Grid.Column="3" 
+                VerticalAlignment="Stretch" HorizontalAlignment="Stretch" FontSize="20" Click="ReportBtn_Click" 
+                BorderThickness="1,1,2,2" BorderBrush="Black"/>
     </Grid>
 </Page>

@@ -15,16 +15,14 @@ using System.Windows.Shapes;
 
 namespace ArchiveApp
 {
-    /// <summary>
-    /// Логика взаимодействия для DocumentPage.xaml
-    /// </summary>
     public partial class DocumentPage : Page
     {
-        private bool isAddingNewRow = false;
-        private Document newDocument;
-        private List<string> _storageTypes;
+        private bool isAddingNewRow = false;        // Флаг добавления новой строки
+        private Document newDocument;               // Новый документ для добавления
+        private List<string> _storageTypes;         // Список типов хранения
+        private string currentUserRole = UserData.CurrentUserRole; // Роль текущего пользователя
 
-        public List<string> StorageTypes
+        public List<string> StorageTypes            // Свойство для доступа к типам хранения
         {
             get { return _storageTypes; }
             set { _storageTypes = value; }
@@ -32,129 +30,114 @@ namespace ArchiveApp
 
         public DocumentPage()
         {
-            InitializeComponent();
-            this.DataContext = this;
-            LoadStorageTypes();
-            LoadData();
+            InitializeComponent();                  // Инициализация компонентов страницы
+            this.DataContext = this;                // Установка контекста данных
+            LoadStorageTypes();                    // Загрузка типов хранения
+            LoadData();                            // Загрузка данных документов
+            if (currentUserRole == "Делопроизводитель") // Ограничение доступа для делопроизводителя
+            {
+                DelBtn.Visibility = Visibility.Collapsed; // Скрытие кнопки удаления
+                AddBtn.Visibility = Visibility.Collapsed; // Скрытие кнопки добавления
+                EditBtn.Visibility = Visibility.Collapsed; // Скрытие кнопки редактирования
+                return;
+            }
         }
 
         private void LoadStorageTypes()
         {
-            StorageTypes = new List<string>
-        {
-            "Бумажный",
-            "Электронный"
-        };
+            StorageTypes = new List<string>         // Инициализация списка типов хранения
+            {
+                "Бумажный",                        // Тип хранения "Бумажный"
+                "Электронный"                      // Тип хранения "Электронный"
+            };
         }
 
         private void LoadData()
         {
-            // Загрузка данных документов из базы данных
-            using (var context = new ArchiveBaseEntities())
+            using (var context = new ArchiveBaseEntities()) // Подключение к базе данных
             {
-                // Установка источника данных для DataGrid
-                DataGridTable.ItemsSource = context.Document.ToList();
+                DataGridTable.ItemsSource = context.Document.ToList(); // Загрузка документов в DataGrid
             }
-            // Установка режима только для чтения по умолчанию
-            DataGridTable.IsReadOnly = true;
+            DataGridTable.IsReadOnly = true;        // Установка режима "только чтение"
         }
-
 
         private void DelBtn_Click(object sender, RoutedEventArgs e)
         {
-            // Получение выбранных для удаления документов
-            var documentsForRemoving = DataGridTable.SelectedItems.Cast<Document>().ToList();
-
-            // Проверка, что хотя бы один элемент выбран
-            if (documentsForRemoving.Count == 0)
+            var documentsForRemoving = DataGridTable.SelectedItems.Cast<Document>().ToList(); // Получение выбранных документов
+            if (documentsForRemoving.Count == 0)    // Проверка наличия выбранных элементов
             {
-                MessageBox.Show("Выберите хотя бы один элемент для удаления!", "Ошибка",
-                    MessageBoxButton.OK, MessageBoxImage.Warning);
+                MessageBox.Show("Выберите хотя бы один элемент для удаления!", "Ошибка", MessageBoxButton.OK, MessageBoxImage.Warning);
                 return;
             }
 
-            // Подтверждение удаления
-            if (MessageBox.Show($"Вы точно хотите удалить {documentsForRemoving.Count} элементов?",
-                    "Внимание", MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes)
+            if (MessageBox.Show($"Вы точно хотите удалить {documentsForRemoving.Count} элементов?", // Подтверждение удаления
+                "Внимание", MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes)
             {
                 try
                 {
-                    using (var context = new ArchiveBaseEntities())
+                    using (var context = new ArchiveBaseEntities()) // Подключение к базе данных
                     {
-                        // Удаление каждого выбранного документа и связанных данных
-                        foreach (var doc in documentsForRemoving)
+                        foreach (var doc in documentsForRemoving) // Удаление каждого документа
                         {
-                            var docToRemove = context.Document.Find(doc.Id);
+                            var docToRemove = context.Document.Find(doc.Id); // Поиск документа в базе
                             if (docToRemove != null)
                             {
-                                // Удаление связанных регистрационных карточек
-                                context.Registration_Card.RemoveRange(docToRemove.Registration_Card);
-                                // Удаление связанных запросов
-                                context.Request.RemoveRange(docToRemove.Request);
-                                // Удаление самого документа
-                                context.Document.Remove(docToRemove);
+                                context.Registration_Card.RemoveRange(docToRemove.Registration_Card); // Удаление связанных карточек
+                                context.Request.RemoveRange(docToRemove.Request); // Удаление связанных запросов
+                                context.Document.Remove(docToRemove); // Удаление документа
                             }
                         }
-                        context.SaveChanges();
+                        context.SaveChanges();          // Сохранение изменений
                     }
-                    MessageBox.Show("Данные удалены!");
-                    // Перезагрузка данных после удаления
-                    LoadData();
+                    MessageBox.Show("Данные удалены!"); // Уведомление об успешном удалении
+                    LoadData();                        // Перезагрузка данных
                 }
-                catch (Exception ex)
+                catch (Exception ex)                    // Обработка ошибок
                 {
-                    MessageBox.Show($"Ошибка при удалении: {ex.Message}", "Ошибка",
-                        MessageBoxButton.OK, MessageBoxImage.Error);
+                    MessageBox.Show($"Ошибка при удалении: {ex.Message}", "Ошибка", MessageBoxButton.OK, MessageBoxImage.Error);
                 }
             }
         }
 
         private void EditBtn_Click(object sender, RoutedEventArgs e)
         {
-            if (DataGridTable.IsReadOnly)
+            if (DataGridTable.IsReadOnly)           // Переключение в режим редактирования
             {
-                DataGridTable.IsReadOnly = false;
-                EditBtn.Content = "Сохранить";
+                DataGridTable.IsReadOnly = false;   // Разрешение редактирования
+                EditBtn.Content = "Сохранить";      // Изменение текста кнопки
             }
-            else
+            else                                    // Сохранение изменений
             {
-                DataGridTable.IsReadOnly = true;
-                EditBtn.Content = "Изменить";
-                SaveChanges();
+                DataGridTable.IsReadOnly = true;    // Блокировка редактирования
+                EditBtn.Content = "Изменить";       // Восстановление текста кнопки
+                SaveChanges();                     // Сохранение изменений
             }
         }
 
         private void SaveChanges()
         {
-            // Сохранение изменений в базе данных
-            using (var context = new ArchiveBaseEntities())
+            using (var context = new ArchiveBaseEntities()) // Подключение к базе данных
             {
-                // Обработка добавления нового документа
-                if (newDocument != null && isAddingNewRow)
+                if (newDocument != null && isAddingNewRow) // Добавление нового документа
                 {
-                    // Проверка обязательных полей
-                    if (string.IsNullOrWhiteSpace(newDocument.Title) ||
+                    if (string.IsNullOrWhiteSpace(newDocument.Title) || // Проверка обязательных полей
                         string.IsNullOrWhiteSpace(newDocument.Number) ||
                         string.IsNullOrWhiteSpace(newDocument.Source) ||
                         string.IsNullOrWhiteSpace(newDocument.Storage_Type))
                     {
-                        RemoveEmptyRow();
+                        RemoveEmptyRow();           // Удаление пустой строки при ошибке
                         return;
                     }
-
-                    // Добавление нового документа
-                    context.Document.Add(newDocument);
+                    context.Document.Add(newDocument); // Добавление нового документа в базу
                 }
 
-                // Обновление существующих документов
-                foreach (var item in DataGridTable.Items)
+                foreach (var item in DataGridTable.Items) // Обновление существующих документов
                 {
-                    if (item is Document doc && doc != newDocument)
+                    if (item is Document doc && doc != newDocument) // Проверка типа и исключение нового документа
                     {
-                        var docToUpdate = context.Document.Find(doc.Id);
-                        if (docToUpdate != null)
+                        var docToUpdate = context.Document.Find(doc.Id); // Поиск документа в базе
+                        if (docToUpdate != null)    // Обновление полей документа
                         {
-                            // Обновление всех полей документа
                             docToUpdate.Number = doc.Number;
                             docToUpdate.Receipt_Date = doc.Receipt_Date;
                             docToUpdate.Title = doc.Title;
@@ -165,128 +148,102 @@ namespace ArchiveApp
                         }
                     }
                 }
-                context.SaveChanges();
+                context.SaveChanges();              // Сохранение изменений в базе
             }
 
-            // Сброс флагов и перезагрузка данных
-            isAddingNewRow = false;
-            newDocument = null;
-            LoadData();
+            isAddingNewRow = false;                 // Сброс флага добавления
+            newDocument = null;                     // Очистка нового документа
+            LoadData();                            // Перезагрузка данных
         }
 
         private void RemoveEmptyRow()
         {
-            var items = DataGridTable.ItemsSource as List<Document>;
-            if (items != null)
+            var items = DataGridTable.ItemsSource as List<Document>; // Получение текущего списка документов
+            if (items != null)                      // Удаление пустой строки
             {
-                items.Remove(newDocument);
-                DataGridTable.ItemsSource = null;
-                DataGridTable.ItemsSource = items;
+                items.Remove(newDocument);          // Удаление нового документа из списка
+                DataGridTable.ItemsSource = null;   // Сброс источника данных
+                DataGridTable.ItemsSource = items;  // Переустановка источника данных
             }
-
-            isAddingNewRow = false;
-            newDocument = null;
-            DataGridTable.IsReadOnly = true;
-            EditBtn.Content = "Изменить";
+            isAddingNewRow = false;                 // Сброс флага добавления
+            newDocument = null;                     // Очистка нового документа
+            DataGridTable.IsReadOnly = true;        // Установка режима "только чтение"
+            EditBtn.Content = "Изменить";           // Восстановление текста кнопки
         }
+
         private void DataGridTable_PreviewKeyDown(object sender, KeyEventArgs e)
         {
-            // Обработка нажатия Enter для удобного перехода между ячейками
-            if (e.Key == Key.Enter)
+            if (e.Key == Key.Enter)                 // Обработка нажатия Enter
             {
-                e.Handled = true; // Предотвращаем стандартное поведение
-
-                DataGrid dataGrid = sender as DataGrid;
+                e.Handled = true;                   // Отмена стандартного поведения
+                DataGrid dataGrid = sender as DataGrid; // Получение DataGrid
                 if (dataGrid == null) return;
 
-                var currentCell = dataGrid.CurrentCell;
+                var currentCell = dataGrid.CurrentCell; // Текущая ячейка
                 if (currentCell.Column == null) return;
 
-                // Определяем следующую ячейку для перехода
-                int currentColumnIndex = currentCell.Column.DisplayIndex;
-                int nextColumnIndex = currentColumnIndex + 1;
-                int currentRowIndex = dataGrid.Items.IndexOf(currentCell.Item);
+                int currentColumnIndex = currentCell.Column.DisplayIndex; // Индекс текущей колонки
+                int nextColumnIndex = currentColumnIndex + 1; // Следующий индекс колонки
+                int currentRowIndex = dataGrid.Items.IndexOf(currentCell.Item); // Индекс текущей строки
 
-                // Логика перехода между ячейками и строками
-                if (nextColumnIndex < dataGrid.Columns.Count)
+                if (nextColumnIndex < dataGrid.Columns.Count) // Переход к следующей колонке
                 {
-                    // Переход в следующую колонку
-                    dataGrid.CurrentCell = new DataGridCellInfo(
-                        dataGrid.Items[currentRowIndex],
-                        dataGrid.Columns[nextColumnIndex]);
+                    dataGrid.CurrentCell = new DataGridCellInfo(dataGrid.Items[currentRowIndex], dataGrid.Columns[nextColumnIndex]);
                 }
-                else if (currentRowIndex < dataGrid.Items.Count - 1)
+                else if (currentRowIndex < dataGrid.Items.Count - 1) // Переход к следующей строке
                 {
-                    // Переход на следующую строку
-                    dataGrid.CurrentCell = new DataGridCellInfo(
-                        dataGrid.Items[currentRowIndex + 1],
-                        dataGrid.Columns[0]);
+                    dataGrid.CurrentCell = new DataGridCellInfo(dataGrid.Items[currentRowIndex + 1], dataGrid.Columns[0]);
                 }
 
-                // Запуск редактирования новой ячейки
-                dataGrid.Dispatcher.InvokeAsync(() =>
-                {
-                    dataGrid.BeginEdit();
-                }, System.Windows.Threading.DispatcherPriority.Input);
+                dataGrid.Dispatcher.InvokeAsync(() => dataGrid.BeginEdit(), System.Windows.Threading.DispatcherPriority.Input); // Запуск редактирования
             }
         }
 
         private void AddBtn_Click(object sender, RoutedEventArgs e)
         {
-            // Защита от повторного добавления
-            if (isAddingNewRow)
-                return;
+            if (isAddingNewRow) return;             // Защита от повторного добавления
 
-            isAddingNewRow = true;
-
-            // Создание нового документа с дефолтными значениями
-            newDocument = new Document
+            isAddingNewRow = true;                  // Установка флага добавления
+            newDocument = new Document              // Создание нового документа
             {
-                Receipt_Date = DateTime.Now, // Текущая дата
-                Number = "", // Пустой номер
-                Title = "", // Пустое название
-                Source = "", // Пустой источник
-                Copies_Count = 0, // 0 копий по умолчанию
-                Annotation = "", // Пустая аннотация
-                Storage_Type = StorageTypes.FirstOrDefault() // Первый тип хранения из списка
+                Receipt_Date = DateTime.Now,        // Текущая дата
+                Number = "",                       // Пустой номер
+                Title = "",                        // Пустое название
+                Source = "",                       // Пустой источник
+                Copies_Count = 0,                  // Количество копий по умолчанию
+                Annotation = "",                   // Пустая аннотация
+                Storage_Type = StorageTypes.FirstOrDefault() // Первый тип хранения
             };
 
-            // Добавление нового документа в коллекцию
-            var items = DataGridTable.ItemsSource as List<Document>;
-            if (items != null)
+            var items = DataGridTable.ItemsSource as List<Document>; // Получение текущего списка
+            if (items != null)                      // Добавление нового документа в список
             {
                 items.Add(newDocument);
-                DataGridTable.ItemsSource = null;
-                DataGridTable.ItemsSource = items;
+                DataGridTable.ItemsSource = null;   // Сброс источника данных
+                DataGridTable.ItemsSource = items;  // Переустановка источника данных
             }
 
-            // Установка фокуса на новую строку
-            DataGridTable.SelectedItem = newDocument;
+            DataGridTable.SelectedItem = newDocument; // Установка фокуса на новую строку
 
-            // Блокировка редактирования других строк во время добавления
-            foreach (var item in DataGridTable.Items)
+            foreach (var item in DataGridTable.Items) // Блокировка других строк
             {
                 if (item is Document doc && doc != newDocument)
                 {
                     var row = DataGridTable.ItemContainerGenerator.ContainerFromItem(doc) as DataGridRow;
-                    if (row != null)
-                    {
-                        row.IsEnabled = false;
-                    }
+                    if (row != null) row.IsEnabled = false; // Отключение строки
                 }
             }
 
-            // Переключение в режим редактирования
-            DataGridTable.IsReadOnly = false;
-            EditBtn.Content = "Сохранить";
+            DataGridTable.IsReadOnly = false;       // Разрешение редактирования
+            EditBtn.Content = "Сохранить";          // Изменение текста кнопки
         }
 
         private void Page_IsVisibleChanged(object sender, DependencyPropertyChangedEventArgs e)
         {
-            if (Visibility == Visibility.Visible)
+            if (Visibility == Visibility.Visible)   // Обновление данных при отображении страницы
             {
-                ArchiveBaseEntities.GetContext().ChangeTracker.Entries().ToList().ForEach(p => p.Reload());
-                DataGridTable.ItemsSource = ArchiveBaseEntities.GetContext().Document.ToList();
+                ArchiveBaseEntities.GetContext().ChangeTracker.Entries().ToList().ForEach(p => p.Reload()); // Перезагрузка данных
+                DataGridTable.ItemsSource = ArchiveBaseEntities.GetContext().Document.ToList(); // Обновление источника данных
             }
         }
     }

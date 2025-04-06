@@ -10,5 +10,6 @@ namespace ArchiveApp
     {
         public static string CurrentUserRole { get; set; }
         public static int CurrentUserId { get; set; }
+        public static string CurrentUserName { get; set; }
     }
 }

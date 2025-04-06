@@ -29,7 +29,7 @@
                   IsReadOnly="True" 
                   KeyDown="DataGridTable_PreviewKeyDown">
             <DataGrid.Columns>
-                <DataGridTemplateColumn Header="Роль" Width="*">
+                <DataGridTemplateColumn Header="Роль" Width="*" SortMemberPath="Role.Name">
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
                             <TextBlock Text="{Binding Role.Name}"/>
@@ -55,8 +55,14 @@
             </DataGrid.Columns>
         </DataGrid>
 
-        <Button Name="AddBtn" Content="Добавить" Background="#bae3e8" VerticalAlignment="Center" HorizontalAlignment="Left" Margin="5,0,0,0" Width="120" Height="40" Grid.Row="1" Click="AddBtn_Click"/>
-        <Button Name="DelBtn" Content="Удалить" Background="#bae3e8" VerticalAlignment="Center" HorizontalAlignment="Left" Margin="130,0,0,0" Width="120" Height="40" Grid.Row="1" Click="DelBtn_Click"/>
-        <Button Name="EditBtn" Content="Изменить" Background="#bae3e8" VerticalAlignment="Center" HorizontalAlignment="Right" Margin="0,0,5,0" Width="120" Height="40" Grid.Row="1" Click="EditBtn_Click"/>
+        <Button Name="AddBtn" Content="Добавить" Background="#bae3e8"
+                VerticalAlignment="Center" HorizontalAlignment="Left"
+                Margin="5,0,0,0" Width="120" Height="40" Grid.Row="1" Click="AddBtn_Click"/>
+        <Button Name="DelBtn" Content="Удалить" Background="#bae3e8"
+                VerticalAlignment="Center" HorizontalAlignment="Left"
+                Margin="130,0,0,0" Width="120" Height="40" Grid.Row="1" Click="DelBtn_Click"/>
+        <Button Name="EditBtn" Content="Изменить" Background="#bae3e8"
+                VerticalAlignment="Center" HorizontalAlignment="Right"
+                Margin="0,0,5,0" Width="120" Height="40" Grid.Row="1" Click="EditBtn_Click"/>
     </Grid>
 </Page>

@@ -9,7 +9,7 @@
         ResizeMode="CanResizeWithGrip" WindowStyle="SingleBorderWindow"
         ShowInTaskbar="True" Background="White"
         MinHeight="450" MinWidth="800" MaxHeight="700" MaxWidth="1400">
-    <Grid>
+    <Grid x:Name="MainGrid">
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="160"/>
             <ColumnDefinition/>
@@ -49,7 +49,7 @@
         </Button>
         <Button Name="NotBtn" Background="Transparent" BorderThickness="0" Grid.Column="1"
                 VerticalAlignment="Center" HorizontalAlignment="Right" Height="25"
-                Width="25" Margin="0,0,60,0">
+                Width="25" Margin="0,0,60,0" Click="NotBtn_Click">
             <Image Source="/Resources/NotIcon.png"></Image>
         </Button>
         <Button Name="RefreshBtn" Background="Transparent" BorderThickness="0" Grid.Column="1"

@@ -16,47 +16,39 @@ using System.Windows.Shapes;
 
 namespace ArchiveApp
 {
-    /// <summary>
-    /// Логика взаимодействия для MainMenuPage.xaml
-    /// </summary>
     public partial class MainMenuPage : Page
     {
-        private string _Role;
-        public event Action OnRoleChanged;
+        private string _Role;                    // Роль текущего пользователя
+        public event Action OnRoleChanged;      // Событие изменения роли
 
         public MainMenuPage(string role)
         {
-            InitializeComponent();
-            _Role = role;
-
-            SetPermissionsBasedOnRole();
-            OnRoleChanged?.Invoke();
+            InitializeComponent();               // Инициализация компонентов страницы
+            _Role = role;                       // Установка роли пользователя
+            SetPermissionsBasedOnRole();        // Настройка видимости элементов по роли
+            OnRoleChanged?.Invoke();            // Вызов события изменения роли
         }
 
         private void SetPermissionsBasedOnRole()
         {
-            // Установка видимости элементов управления в зависимости от роли пользователя
-            switch (_Role)
+            switch (_Role)                      // Настройка интерфейса в зависимости от роли
             {
-                case "Администратор":
-                    // Администратор видит все элементы управления
+                case "Администратор":           // Полный доступ для администратора
                     AdminControlsVisibility(true);
                     ClerkControlsVisibility(true);
                     ArchivariusControlsVisibility(true);
                     break;
-                case "Делопроизводитель":
-                    // Делопроизводитель видит только свои элементы и архивариуса
+                case "Делопроизводитель":       // Ограниченный доступ для делопроизводителя
                     AdminControlsVisibility(false);
                     ClerkControlsVisibility(true);
                     ArchivariusControlsVisibility(false);
                     break;
-                case "Архивариус":
-                    // Архивариус видит только свои элементы
+                case "Архивариус":              // Ограниченный доступ для архивариуса
                     AdminControlsVisibility(false);
                     ClerkControlsVisibility(true);
                     ArchivariusControlsVisibility(true);
                     break;
-                default:
+                default:                        // Обработка неизвестной роли
                     MessageBox.Show("Неизвестная роль!");
                     break;
             }
@@ -64,81 +56,74 @@ namespace ArchiveApp
 
         private void AdminControlsVisibility(bool isVisible)
         {
-            // Управление видимостью элементов для администратора
-            ReportBtn.Visibility = isVisible ? Visibility.Visible : Visibility.Collapsed;
-            UserBtn.Visibility = isVisible ? Visibility.Visible : Visibility.Collapsed;
-            RegCardBtn.Visibility = isVisible ? Visibility.Visible : Visibility.Collapsed;
-            RequestBtn.Visibility = isVisible ? Visibility.Visible : Visibility.Collapsed;
+            Visibility visibility = isVisible ? Visibility.Visible : Visibility.Collapsed; // Установка видимости
+            ReportBtn.Visibility = visibility;  // Кнопка отчета
+            UserBtn.Visibility = visibility;    // Кнопка пользователей
+            RegCardBtn.Visibility = visibility; // Кнопка карточек
+            RequestBtn.Visibility = visibility; // Кнопка запросов
         }
 
         private void ClerkControlsVisibility(bool isVisible)
         {
-            // Управление видимостью элементов для делопроизводителя
-            RegCardBtn.Visibility = isVisible ? Visibility.Visible : Visibility.Collapsed;
-            DocumentBtn.Visibility = isVisible ? Visibility.Visible : Visibility.Collapsed;
-            ExpBtn.Visibility = isVisible ? Visibility.Visible : Visibility.Collapsed;
-
+            Visibility visibility = isVisible ? Visibility.Visible : Visibility.Collapsed; // Установка видимости
+            RegCardBtn.Visibility = visibility; // Кнопка карточек
+            DocumentBtn.Visibility = visibility;// Кнопка документов
+            SimpleRepBtn.Visibility = visibility;// Кнопка простого отчета
         }
 
         private void ArchivariusControlsVisibility(bool isVisible)
         {
-            // Управление видимостью элементов для архивариуса
-            RequestBtn.Visibility = isVisible ? Visibility.Visible : Visibility.Collapsed;
+            Visibility visibility = isVisible ? Visibility.Visible : Visibility.Collapsed; // Установка видимости
+            RequestBtn.Visibility = visibility; // Кнопка запросов
         }
 
         private void DocumentBtn_Click(object sender, RoutedEventArgs e)
         {
-            Manager.MainFrame.Navigate(new DocumentPage());
+            Manager.MainFrame.Navigate(new DocumentPage()); // Переход на страницу документов
         }
 
         private void UserBtn_Click(object sender, RoutedEventArgs e)
         {
-            Manager.MainFrame.Navigate(new UserPage());
+            Manager.MainFrame.Navigate(new UserPage()); // Переход на страницу пользователей
         }
 
         private void RegCardBtn_Click(object sender, RoutedEventArgs e)
         {
-            Manager.MainFrame.Navigate(new RegCardPage());
+            Manager.MainFrame.Navigate(new RegCardPage()); // Переход на страницу карточек
         }
 
         private void RequestBtn_Click(object sender, RoutedEventArgs e)
         {
-            Manager.MainFrame.Navigate(new RequestPage());
+            Manager.MainFrame.Navigate(new RequestPage()); // Переход на страницу запросов
         }
 
-        private void ExpBtn_Click(object sender, RoutedEventArgs e)
+        private void SimpleRepBtn_Click(object sender, RoutedEventArgs e)
         {
-            // Обработка экспорта данных в Excel
-            var saveFileDialog = new Microsoft.Win32.SaveFileDialog
+            var saveFileDialog = new Microsoft.Win32.SaveFileDialog // Диалог сохранения файла Excel
             {
-                FileName = "Экспорт",
-                DefaultExt = ".xlsx",
-                Filter = "Excel files (.xlsx)|*.xlsx"
+                FileName = "Простой отчет",     // Имя файла по умолчанию
+                DefaultExt = ".xlsx",           // Расширение по умолчанию
+                Filter = "Excel files (.xlsx)|*.xlsx" // Фильтр файлов
             };
 
-            // Отображение диалога сохранения файла
-            if (saveFileDialog.ShowDialog() == true)
+            if (saveFileDialog.ShowDialog() == true) // Открытие диалога и проверка выбора
             {
-                // Вызов метода экспорта с указанием пути к файлу
-                ExportExcel.ExportToExcel(saveFileDialog.FileName);
+                ExportExcel.ExportToExcel(saveFileDialog.FileName); // Экспорт данных в Excel
             }
         }
 
         private void ReportBtn_Click(object sender, RoutedEventArgs e)
         {
-            // Обработка создания отчета в Word
-            var saveFileDialog = new Microsoft.Win32.SaveFileDialog
+            var saveFileDialog = new Microsoft.Win32.SaveFileDialog // Диалог сохранения файла Word
             {
-                FileName = "Отчет",
-                DefaultExt = ".docx",
-                Filter = "Word documents (.docx)|*.docx"
+                FileName = "Отчет",             // Имя файла по умолчанию
+                DefaultExt = ".docx",           // Расширение по умолчанию
+                Filter = "Word documents (.docx)|*.docx" // Фильтр файлов
             };
 
-            // Отображение диалога сохранения файла
-            if (saveFileDialog.ShowDialog() == true)
+            if (saveFileDialog.ShowDialog() == true) // Открытие диалога и проверка выбора
             {
-                // Вызов метода экспорта с указанием пути к файлу
-                ExportWord.ExportToWord(saveFileDialog.FileName);
+                ExportWord.ExportToWord(saveFileDialog.FileName); // Экспорт данных в Word
             }
         }
     }
