@@ -42,14 +42,14 @@
     </dependentAssembly>
   </dependency>
   <dependency>
-    <dependentAssembly dependencyType="install" allowDelayedBinding="true" codebase="ArchiveApp.exe" size="5402528">
+    <dependentAssembly dependencyType="install" allowDelayedBinding="true" codebase="ArchiveApp.exe" size="5402016">
       <assemblyIdentity name="ArchiveApp" version="1.0.0.0" language="neutral" processorArchitecture="msil" />
       <hash>
         <dsig:Transforms>
           <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
         </dsig:Transforms>
         <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha256" />
-        <dsig:DigestValue>8i14Mck8Z0EBCNd7nKSkoI+eJpMwzZ9a88a8Nkg+/CU=</dsig:DigestValue>
+        <dsig:DigestValue>/qURxt409JAU4rPEAs69FjMu0yG0H6hJVHrOeQDlPgY=</dsig:DigestValue>
       </hash>
     </dependentAssembly>
   </dependency>

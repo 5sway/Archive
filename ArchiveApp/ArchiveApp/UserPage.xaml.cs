@@ -45,7 +45,7 @@ namespace ArchiveApp
             set { _roles = value; }
         }
 
-        hectaresprivate void LoadRoles()
+        private void LoadRoles()
         {
             using (var context = new ArchiveBaseEntities()) // Подключение к базе данных
             {
