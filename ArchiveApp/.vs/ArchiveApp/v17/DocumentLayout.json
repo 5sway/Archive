@@ -1,12 +1,36 @@
 {
   "Version": 1,
   "WorkspaceRootPath": "D:\\Kursach\\ArchiveApp\\",
-  "Documents": [],
+  "Documents": [
+    {
+      "AbsoluteMoniker": "D:0:0:{E536B243-99BD-442C-97CC-07DB471FD4D8}|ArchiveApp\\ArchiveApp.csproj|d:\\kursach\\archiveapp\\archiveapp\\documentpage.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}",
+      "RelativeMoniker": "D:0:0:{E536B243-99BD-442C-97CC-07DB471FD4D8}|ArchiveApp\\ArchiveApp.csproj|solutionrelative:archiveapp\\documentpage.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}"
+    }
+  ],
   "DocumentGroupContainers": [
     {
       "Orientation": 0,
       "VerticalTabListWidth": 256,
-      "DocumentGroups": []
+      "DocumentGroups": [
+        {
+          "DockedWidth": 200,
+          "SelectedChildIndex": 0,
+          "Children": [
+            {
+              "$type": "Document",
+              "DocumentIndex": 0,
+              "Title": "DocumentPage.xaml",
+              "DocumentMoniker": "D:\\Kursach\\ArchiveApp\\ArchiveApp\\DocumentPage.xaml",
+              "RelativeDocumentMoniker": "ArchiveApp\\DocumentPage.xaml",
+              "ToolTip": "D:\\Kursach\\ArchiveApp\\ArchiveApp\\DocumentPage.xaml",
+              "RelativeToolTip": "ArchiveApp\\DocumentPage.xaml",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003549|",
+              "WhenOpened": "2025-04-07T10:59:21.697Z",
+              "EditorCaption": ""
+            }
+          ]
+        }
+      ]
     }
   ]
 }

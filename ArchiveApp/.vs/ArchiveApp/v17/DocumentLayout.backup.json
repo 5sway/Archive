@@ -1,37 +1,12 @@
 {
   "Version": 1,
   "WorkspaceRootPath": "D:\\Kursach\\ArchiveApp\\",
-  "Documents": [
-    {
-      "AbsoluteMoniker": "D:0:0:{E536B243-99BD-442C-97CC-07DB471FD4D8}|ArchiveApp\\ArchiveApp.csproj|d:\\kursach\\archiveapp\\archiveapp\\captchagenerator.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{E536B243-99BD-442C-97CC-07DB471FD4D8}|ArchiveApp\\ArchiveApp.csproj|solutionrelative:archiveapp\\captchagenerator.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    }
-  ],
+  "Documents": [],
   "DocumentGroupContainers": [
     {
       "Orientation": 0,
       "VerticalTabListWidth": 256,
-      "DocumentGroups": [
-        {
-          "DockedWidth": 200,
-          "SelectedChildIndex": 0,
-          "Children": [
-            {
-              "$type": "Document",
-              "DocumentIndex": 0,
-              "Title": "CaptchaGenerator.cs",
-              "DocumentMoniker": "D:\\Kursach\\ArchiveApp\\ArchiveApp\\CaptchaGenerator.cs",
-              "RelativeDocumentMoniker": "ArchiveApp\\CaptchaGenerator.cs",
-              "ToolTip": "D:\\Kursach\\ArchiveApp\\ArchiveApp\\CaptchaGenerator.cs",
-              "RelativeToolTip": "ArchiveApp\\CaptchaGenerator.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAA0AAAAAAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-04-07T10:07:35.328Z",
-              "EditorCaption": ""
-            }
-          ]
-        }
-      ]
+      "DocumentGroups": []
     }
   ]
 }
