@@ -21,7 +21,7 @@
                     Width="30" Height="30" VerticalAlignment="Center" HorizontalAlignment="Center" Margin="200,0,0,25">
                 <Image Source="/Resources/UpdateIcon.png"/>
             </Button>
-            <Button Content="Проверить" Background="#bae3e8" FontSize="16" Click="CaptchaSubmitBtn_Click"
+            <Button Name="CaptchaSubmitBtn" Content="Проверить" Background="#bae3e8" FontSize="16" Click="CaptchaSubmitBtn_Click"
                     Width="160" Height="30" VerticalAlignment="Center" HorizontalAlignment="Center" Margin="0,50,0,0"/>
         </Grid>
         <TextBox Name="LoginBox" VerticalContentAlignment="Center" HorizontalAlignment="Center" VerticalAlignment="Center" Width="300"

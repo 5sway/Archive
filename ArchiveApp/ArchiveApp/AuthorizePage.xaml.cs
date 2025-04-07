@@ -26,7 +26,7 @@ namespace ArchiveApp
         private int _failedAttempts = 0;           // Счетчик неудачных попыток входа
         private DateTime? _captchaGraceUntil = null; // Время окончания режима милосердия капчи
         private readonly TimeSpan _captchaGracePeriod = TimeSpan.FromMinutes(1); // Длительность режима милосердия
-        private DispatcherTimer _errorTimer;       // Таймер для скрытия сообщений об ошибках
+        private DispatcherTimer _errorTimer;       // Таймер для скрытия сообщений об ошибок
 
         public AuthorizePage()
         {
@@ -58,8 +58,26 @@ namespace ArchiveApp
             ErrorMessage.Visibility = Visibility.Visible; // Показ сообщения об ошибке
 
             double baseFontSize = 14;           // Базовый размер шрифта
-            double baseMarginTop = 160;         // Базовый отступ сверху
-            double buttonHeight = LoginBtn.ActualHeight; // Высота кнопки входа
+            Button activeButton;                // Активная кнопка (LoginBtn или CaptchaSubmitBtn)
+            double buttonBottomPosition;        // Позиция нижней границы активной кнопки
+
+            // Определяем активную кнопку и её положение
+            if (LoginBtn.Visibility == Visibility.Visible)
+            {
+                activeButton = LoginBtn;
+                buttonBottomPosition = activeButton.Margin.Top + activeButton.ActualHeight;
+            }
+            else if (CaptchaSubmitBtn.Visibility == Visibility.Visible)
+            {
+                activeButton = CaptchaSubmitBtn;
+                // Учитываем смещение CaptchaContainer и его дочерних элементов
+                buttonBottomPosition = CaptchaContainer.Margin.Top + activeButton.Margin.Top + activeButton.ActualHeight;
+            }
+            else
+            {
+                activeButton = LoginBtn;        // По умолчанию используем LoginBtn
+                buttonBottomPosition = activeButton.Margin.Top + activeButton.ActualHeight;
+            }
 
             int lineCount = message.Split('\n').Length; // Подсчет строк в сообщении
             double newFontSize = baseFontSize;  // Новый размер шрифта
@@ -68,7 +86,7 @@ namespace ArchiveApp
             ErrorMessage.FontSize = newFontSize;// Применение нового размера шрифта
 
             double textHeight = newFontSize * lineCount * 1.2; // Высота текста с учетом строк
-            double newMarginTop = baseMarginTop + (buttonHeight / 2) + 10; // Расчет нового отступа
+            double newMarginTop = buttonBottomPosition + 20; // Отступ под кнопкой + увеличенный зазор (было 10, стало 20)
             if (textHeight > 20)                // Корректировка отступа для длинного текста
                 newMarginTop += textHeight - 20;
 
@@ -83,7 +101,7 @@ namespace ArchiveApp
             ErrorMessage.Visibility = Visibility.Collapsed; // Скрытие сообщения об ошибке
             ErrorMessage.Text = "";             // Очистка текста ошибки
             ErrorMessage.FontSize = 14;         // Сброс размера шрифта
-            ErrorMessage.Margin = new Thickness(0, 160, 140, 0); // Сброс отступов
+            ErrorMessage.Margin = new Thickness(0, 160, 140, 0); // Сброс отступов на начальные значения
         }
 
         private void GenerateNewCaptcha()
@@ -160,6 +178,7 @@ namespace ArchiveApp
             PasswordBox.Visibility = Visibility.Visible; // Показ поля пароля
             PasswordText.Visibility = Visibility.Visible; // Показ подсказки пароля
             LoginBtn.Visibility = Visibility.Visible; // Показ кнопки входа
+            HideError();                        // Скрытие сообщения об ошибке
             UpdatePlaceholderVisibility();      // Обновление видимости подсказок
         }
 
@@ -283,7 +302,7 @@ namespace ArchiveApp
 
         private void CaptchaSubmitBtn_Click(object sender, RoutedEventArgs e)
         {
-            AuthorizeWithCaptcha();             // Авторизация с капчей при нажатии кнопки
+            AuthorizeWithCaptcha();             // Авторизация с капчей при押すボタン
         }
 
         private void RefreshCaptcha_Click(object sender, RoutedEventArgs e)

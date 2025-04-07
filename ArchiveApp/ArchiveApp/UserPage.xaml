@@ -9,7 +9,7 @@
       Title="UserPage"
       IsVisibleChanged="Page_IsVisibleChanged">
 
-    <Grid>
+    <Grid Background="White">
         <Grid.RowDefinitions>
             <RowDefinition Height="*"/>
             <RowDefinition Height="50"/>

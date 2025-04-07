@@ -17,7 +17,7 @@ namespace ArchiveApp
 
         public static string GenerateCaptchaText(int length = 5)
         {
-            const string chars = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789"; // Допустимые символы без похожих (I, O, 1, 0)
+            const string chars = "ABCDEFGHJKLMNPQRSTUVWXYZ123456789abcdefghjklmnpqrstuvwxyz!@#$%^&*()-_=+"; // Допустимые символы без похожих (I, O, 1, 0)
             char[] captcha = new char[length];      // Массив для хранения символов капчи
             for (int i = 0; i < length; i++)        // Заполнение массива случайными символами
                 captcha[i] = chars[_random.Next(chars.Length)]; // Выбор случайного символа
