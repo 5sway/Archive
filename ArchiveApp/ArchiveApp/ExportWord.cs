@@ -160,7 +160,7 @@ namespace ArchiveApp
                     item.Id.ToString(),
                     item.Login,
                     item.Name,
-                    item.Full_Name,
+                    item.Last_Name,
                     item.First_Name,
                     item.Role?.Name ?? "Неизвестно",
                     item.Email,
@@ -181,7 +181,7 @@ namespace ArchiveApp
                     item.Id.ToString(),
                     item.Registration_Date.ToShortDateString(),
                     item.Signature ? "Подписан" : "Не подписан",
-                    item.User?.Full_Name ?? "Неизвестно",
+                    item.User?.Last_Name ?? "Неизвестно",
                     item.Document?.Title ?? "Неизвестно"
                 });
             }

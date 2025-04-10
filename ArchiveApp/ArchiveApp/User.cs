@@ -26,7 +26,7 @@ namespace ArchiveApp
         public string Login { get; set; }
         public string Password { get; set; }
         public string Name { get; set; }
-        public string Full_Name { get; set; }
+        public string Last_Name { get; set; }
         public string First_Name { get; set; }
         public string Phone_Number { get; set; }
         public string Email { get; set; }

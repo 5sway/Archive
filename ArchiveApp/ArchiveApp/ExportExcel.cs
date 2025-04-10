@@ -13,7 +13,7 @@ namespace ArchiveApp
 {
     class ExportExcel
     {
-        public static void ExportToExcel(string filePath)
+        public static void ExportToExcel(string filePath, string userRole)
         {
             try
             {
@@ -32,9 +32,13 @@ namespace ArchiveApp
                     while (workbook.Sheets.Count > 1)   // Удаление лишних листов
                         ((Excel.Worksheet)workbook.Sheets[2]).Delete();
 
-                    ExportDocumentsToExcel(workbook, documents); // Экспорт документов
-                    ExportRequestsToExcel(workbook, requests); // Экспорт запросов
-                    ExportRegistrationCardsToExcel(workbook, regCards); // Экспорт карточек
+                    // Экспорт в зависимости от роли пользователя
+                    ExportDocumentsToExcel(workbook, documents); // Лист "Документы" доступен всем
+
+                    if (userRole != "Делопроизводитель") // Лист "Запросы" только для не-делопроизводителей
+                        ExportRequestsToExcel(workbook, requests);
+
+                    ExportRegistrationCardsToExcel(workbook, regCards); // Лист "Рег. карты" доступен всем
 
                     workbook.SaveAs(filePath);          // Сохранение книги
                     workbook.Close();                   // Закрытие книги

@@ -103,12 +103,12 @@ namespace ArchiveApp
             {
                 FileName = "Простой отчет",     // Имя файла по умолчанию
                 DefaultExt = ".xlsx",           // Расширение по умолчанию
-                Filter = "Excel files (.xlsx)|*.xlsx" // Фильтр файлов
+                Filter = "Excel files (*.xlsx)|*.xlsx" // Фильтр файлов
             };
 
             if (saveFileDialog.ShowDialog() == true) // Открытие диалога и проверка выбора
             {
-                ExportExcel.ExportToExcel(saveFileDialog.FileName); // Экспорт данных в Excel
+                ExportExcel.ExportToExcel(saveFileDialog.FileName, _Role); // Экспорт данных в Excel с учетом роли
             }
         }
 

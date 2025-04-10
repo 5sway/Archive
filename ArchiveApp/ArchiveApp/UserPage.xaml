@@ -48,7 +48,7 @@
                 <DataGridTextColumn Header="Логин" Binding="{Binding Login}" Width="*"/>
                 <DataGridTextColumn Header="Пароль" Binding="{Binding Password}" Width="*"/>
                 <DataGridTextColumn Header="Имя" Binding="{Binding Name}" Width="*"/>
-                <DataGridTextColumn Header="Фамилия" Binding="{Binding Full_Name}" Width="*"/>
+                <DataGridTextColumn Header="Фамилия" Binding="{Binding Last_Name}" Width="*"/>
                 <DataGridTextColumn Header="Отчество" Binding="{Binding First_Name}" Width="*"/>
                 <DataGridTextColumn Header="Номер телефона" Binding="{Binding Phone_Number}" Width="*"/>
                 <DataGridTextColumn Header="Эл.Почта" Binding="{Binding Email}" Width="*"/>

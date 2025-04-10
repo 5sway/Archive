@@ -271,11 +271,11 @@
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
+    <None Include="ArchiveApp_TemporaryKey.pfx" />
     <EntityDeploy Include="ArchiveModel.edmx">
       <Generator>EntityModelCodeGenerator</Generator>
       <LastGenOutput>ArchiveModel.Designer.cs</LastGenOutput>
     </EntityDeploy>
-    <None Include="ArchiveApp_TemporaryKey.pfx" />
     <None Include="ArchiveModel.edmx.diagram">
       <DependentUpon>ArchiveModel.edmx</DependentUpon>
     </None>
@@ -299,18 +299,6 @@
     <Resource Include="Resources\SearchIcon.png" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="ArchiveModel.Context.tt">
-      <Generator>TextTemplatingFileGenerator</Generator>
-      <LastGenOutput>ArchiveModel.Context.cs</LastGenOutput>
-      <DependentUpon>ArchiveModel.edmx</DependentUpon>
-    </Content>
-    <Content Include="ArchiveModel.tt">
-      <Generator>TextTemplatingFileGenerator</Generator>
-      <DependentUpon>ArchiveModel.edmx</DependentUpon>
-      <LastGenOutput>ArchiveModel.cs</LastGenOutput>
-    </Content>
-  </ItemGroup>
-  <ItemGroup>
     <BootstrapperPackage Include=".NETFramework,Version=v4.8">
       <Visible>False</Visible>
       <ProductName>Microsoft .NET Framework 4.8 %28x86 и x64%29</ProductName>
@@ -321,6 +309,18 @@
       <ProductName>.NET Framework 3.5 SP1</ProductName>
       <Install>false</Install>
     </BootstrapperPackage>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="ArchiveModel.Context.tt">
+      <Generator>TextTemplatingFileGenerator</Generator>
+      <LastGenOutput>ArchiveModel.Context.cs</LastGenOutput>
+      <DependentUpon>ArchiveModel.edmx</DependentUpon>
+    </Content>
+    <Content Include="ArchiveModel.tt">
+      <Generator>TextTemplatingFileGenerator</Generator>
+      <DependentUpon>ArchiveModel.edmx</DependentUpon>
+      <LastGenOutput>ArchiveModel.cs</LastGenOutput>
+    </Content>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">

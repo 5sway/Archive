@@ -12,7 +12,7 @@ namespace ArchiveApp
     using System;
     using System.Data.Entity;
     using System.Data.Entity.Infrastructure;
-    
+
     public partial class ArchiveBaseEntities : DbContext
     {
         private static ArchiveBaseEntities _context;
@@ -28,6 +28,11 @@ namespace ArchiveApp
             return _context;
         }
 
+        protected override void OnModelCreating(DbModelBuilder modelBuilder)
+        {
+            throw new UnintentionalCodeFirstException();
+        }
+    
         public virtual DbSet<Document> Document { get; set; }
         public virtual DbSet<Registration_Card> Registration_Card { get; set; }
         public virtual DbSet<Request> Request { get; set; }

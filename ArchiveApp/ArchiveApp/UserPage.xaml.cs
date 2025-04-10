@@ -134,7 +134,7 @@ namespace ArchiveApp
                             usrToUpdate.Login = usr.Login;
                             usrToUpdate.Password = usr.Password;
                             usrToUpdate.Name = usr.Name;
-                            usrToUpdate.Full_Name = usr.Full_Name;
+                            usrToUpdate.Last_Name = usr.Last_Name;
                             usrToUpdate.First_Name = usr.First_Name;
                             usrToUpdate.Phone_Number = usr.Phone_Number;
                             usrToUpdate.Email = usr.Email;
@@ -202,7 +202,7 @@ namespace ArchiveApp
                 Login = "",                        // Пустой логин
                 Password = "",                     // Пустой пароль
                 Name = "",                         // Пустое имя
-                Full_Name = "",                    // Пустая фамилия
+                Last_Name = "",                    // Пустая фамилия
                 First_Name = "",                   // Пустое отчество
                 Phone_Number = "",                 // Пустой номер телефона
                 Email = "",                        // Пустой email

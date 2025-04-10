@@ -3,8 +3,16 @@
   "WorkspaceRootPath": "D:\\Kursach\\ArchiveApp\\",
   "Documents": [
     {
-      "AbsoluteMoniker": "D:0:0:{E536B243-99BD-442C-97CC-07DB471FD4D8}|ArchiveApp\\ArchiveApp.csproj|d:\\kursach\\archiveapp\\archiveapp\\documentpage.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}",
-      "RelativeMoniker": "D:0:0:{E536B243-99BD-442C-97CC-07DB471FD4D8}|ArchiveApp\\ArchiveApp.csproj|solutionrelative:archiveapp\\documentpage.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}"
+      "AbsoluteMoniker": "D:0:0:{E536B243-99BD-442C-97CC-07DB471FD4D8}|ArchiveApp\\ArchiveApp.csproj|d:\\kursach\\archiveapp\\archiveapp\\exportexcel.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{E536B243-99BD-442C-97CC-07DB471FD4D8}|ArchiveApp\\ArchiveApp.csproj|solutionrelative:archiveapp\\exportexcel.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{E536B243-99BD-442C-97CC-07DB471FD4D8}|ArchiveApp\\ArchiveApp.csproj|d:\\kursach\\archiveapp\\archiveapp\\mainmenupage.xaml.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{E536B243-99BD-442C-97CC-07DB471FD4D8}|ArchiveApp\\ArchiveApp.csproj|solutionrelative:archiveapp\\mainmenupage.xaml.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{E536B243-99BD-442C-97CC-07DB471FD4D8}|ArchiveApp\\ArchiveApp.csproj|d:\\kursach\\archiveapp\\archiveapp\\mainwindow.xaml.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{E536B243-99BD-442C-97CC-07DB471FD4D8}|ArchiveApp\\ArchiveApp.csproj|solutionrelative:archiveapp\\mainwindow.xaml.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     }
   ],
   "DocumentGroupContainers": [
@@ -14,18 +22,53 @@
       "DocumentGroups": [
         {
           "DockedWidth": 200,
-          "SelectedChildIndex": 0,
+          "SelectedChildIndex": 4,
           "Children": [
+            {
+              "$type": "Bookmark",
+              "Name": "ST:0:0:{e1b7d1f8-9b3c-49b1-8f4f-bfc63a88835d}"
+            },
+            {
+              "$type": "Bookmark",
+              "Name": "ST:0:0:{d78612c7-9962-4b83-95d9-268046dad23a}"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 1,
+              "Title": "MainMenuPage.xaml.cs",
+              "DocumentMoniker": "D:\\Kursach\\ArchiveApp\\ArchiveApp\\MainMenuPage.xaml.cs",
+              "RelativeDocumentMoniker": "ArchiveApp\\MainMenuPage.xaml.cs",
+              "ToolTip": "D:\\Kursach\\ArchiveApp\\ArchiveApp\\MainMenuPage.xaml.cs",
+              "RelativeToolTip": "ArchiveApp\\MainMenuPage.xaml.cs",
+              "ViewState": "AgIAAE8AAAAAAAAAAAAQwG4AAAAkAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-04-10T10:34:07.942Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 2,
+              "Title": "MainWindow.xaml.cs",
+              "DocumentMoniker": "D:\\Kursach\\ArchiveApp\\ArchiveApp\\MainWindow.xaml.cs",
+              "RelativeDocumentMoniker": "ArchiveApp\\MainWindow.xaml.cs",
+              "ToolTip": "D:\\Kursach\\ArchiveApp\\ArchiveApp\\MainWindow.xaml.cs",
+              "RelativeToolTip": "ArchiveApp\\MainWindow.xaml.cs",
+              "ViewState": "AgIAADsAAAAAAAAAAAAIwAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-04-10T10:34:05.729Z",
+              "EditorCaption": ""
+            },
             {
               "$type": "Document",
               "DocumentIndex": 0,
-              "Title": "DocumentPage.xaml",
-              "DocumentMoniker": "D:\\Kursach\\ArchiveApp\\ArchiveApp\\DocumentPage.xaml",
-              "RelativeDocumentMoniker": "ArchiveApp\\DocumentPage.xaml",
-              "ToolTip": "D:\\Kursach\\ArchiveApp\\ArchiveApp\\DocumentPage.xaml",
-              "RelativeToolTip": "ArchiveApp\\DocumentPage.xaml",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003549|",
-              "WhenOpened": "2025-04-07T10:59:21.697Z",
+              "Title": "ExportExcel.cs",
+              "DocumentMoniker": "D:\\Kursach\\ArchiveApp\\ArchiveApp\\ExportExcel.cs",
+              "RelativeDocumentMoniker": "ArchiveApp\\ExportExcel.cs",
+              "ToolTip": "D:\\Kursach\\ArchiveApp\\ArchiveApp\\ExportExcel.cs",
+              "RelativeToolTip": "ArchiveApp\\ExportExcel.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAMcAAAABAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-04-10T10:30:35.633Z",
               "EditorCaption": ""
             }
           ]
