@@ -9,6 +9,23 @@
         ResizeMode="CanResizeWithGrip" WindowStyle="SingleBorderWindow"
         ShowInTaskbar="True" Background="White"
         MinHeight="450" MinWidth="800" MaxHeight="700" MaxWidth="1400">
+    <Window.Resources>
+        <Storyboard x:Key="RotateAnimation">
+            <DoubleAnimation
+                Storyboard.TargetProperty="(UIElement.RenderTransform).(RotateTransform.Angle)"
+                From="0" To="360" Duration="0:0:0.5" />
+        </Storyboard>
+        <Storyboard x:Key="ReloadAnimation">
+            <DoubleAnimation
+                Storyboard.TargetProperty="Opacity"
+                From="1" To="0" Duration="0:0:0.3"
+                BeginTime="0:0:0.1" />
+            <DoubleAnimation
+                Storyboard.TargetProperty="Opacity"
+                From="0" To="1" Duration="0:0:0.3"
+                BeginTime="0:0:0.2" />
+        </Storyboard>
+    </Window.Resources>
     <Grid x:Name="MainGrid">
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="160"/>
@@ -55,7 +72,10 @@
         <Button Name="RefreshBtn" Background="Transparent" BorderThickness="0" Grid.Column="1"
                 VerticalAlignment="Center" HorizontalAlignment="Right" Height="25"
                 Width="25" Margin="0,0,20,0" Click="RefreshButton_Click">
-            <Image Source="/Resources/UpdateIcon.png" ></Image>
+            <Button.RenderTransform>
+                <RotateTransform CenterX="12.5" CenterY="12.5" />
+            </Button.RenderTransform>
+            <Image Source="/Resources/UpdateIcon.png"></Image>
         </Button>
         <Image Source="/Resources/ArchiveIcon.png" VerticalAlignment="Center" HorizontalAlignment="Left" Height="30"
                Width="30" Margin="15,0,0,0"></Image>
@@ -71,6 +91,6 @@
                  LostFocus="SearchBox_LostFocus" TextChanged="SearchBox_TextChanged" ></TextBox>
         <TextBlock Name="SearchText" Text="Поиск" Grid.Column="1" VerticalAlignment="Center"
                    HorizontalAlignment="Right" TextAlignment="Left" FontSize="14"
-                   Margin="0,0,303,0"></TextBlock>
+                   Margin="0,0,303,0" IsHitTestVisible="True" MouseDown="SearchText_MouseDown"></TextBlock>
     </Grid>
 </Window>

@@ -17,6 +17,7 @@ using System.Windows.Navigation;
 using System.Windows.Shapes;
 using System.Windows.Threading;
 using System.Timers;
+using System.Windows.Media.Animation;
 
 namespace ArchiveApp
 {
@@ -175,7 +176,37 @@ namespace ArchiveApp
 
         private void RefreshButton_Click(object sender, RoutedEventArgs e)
         {
-            UpdateData();
+            // Запускаем анимацию вращения кнопки
+            var rotateAnimation = (Storyboard)Resources["RotateAnimation"];
+            Storyboard.SetTarget(rotateAnimation, RefreshBtn);
+            rotateAnimation.Begin();
+
+            // Запускаем анимацию затемнения и восстановления
+            var reloadAnimation = (Storyboard)Resources["ReloadAnimation"];
+            Storyboard.SetTarget(reloadAnimation, MainGrid);
+            reloadAnimation.Completed += (s, args) =>
+            {
+                // После завершения анимации обновляем данные и сбрасываем состояние
+                UpdateData();
+                ResetAppState();
+            };
+            reloadAnimation.Begin();
+        }
+        private void ResetAppState()
+        {
+            // Сбрасываем состояние приложения
+            string role = UserData.CurrentUserRole; // Переходим на главную страницу
+            SearchBox.Text = ""; // Очищаем поле поиска
+            SearchText.Visibility = Visibility.Visible; // Показываем подсказку поиска
+            isMenuVisible = true; // Показываем меню
+            MenuGrid.Visibility = Visibility.Visible;
+            DocBtn.Visibility = Visibility.Visible;
+            ReqBtn.Visibility = UserData.CurrentUserRole == "Делопроизводитель" ? Visibility.Collapsed : Visibility.Visible;
+            CardBtn.Visibility = Visibility.Visible;
+            MainBtn.Visibility = Visibility.Visible;
+            ExitBtn.Visibility = Visibility.Visible;
+            HighlightActiveButton(); // Обновляем подсветку активной кнопки
+            CloseNotificationPopup(); // Закрываем уведомление, если оно открыто
         }
 
         private void UpdateData()
@@ -412,6 +443,12 @@ namespace ArchiveApp
                     CloseNotificationPopup();
                 }
             }
+        }
+
+        private void SearchText_MouseDown(object sender, MouseButtonEventArgs e)
+        {
+            SearchText.Visibility = Visibility.Collapsed; // Скрытие подсказки
+            SearchBox.Focus();                           // Перевод фокуса на поле поиска
         }
     }
 }

@@ -7,7 +7,7 @@
       mc:Ignorable="d" 
       d:DesignHeight="450" d:DesignWidth="800"
       Title="AuthorizePage">
-    
+
     <Grid>
         <Grid Name="CaptchaContainer" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="0,0,140,0" Panel.ZIndex="2">
             <Image Name="CaptchaImage" Width="230" Height="70" Margin="0,0,0,150" />
@@ -28,15 +28,18 @@
                  Height="50" GotFocus="LoginBox_GotFocus"
                  LostFocus="LoginBox_LostFocus" FontSize="20" Margin="0,0,140,120" Padding="10,0,0,0" KeyDown="LoginBox_KeyDown"></TextBox>
         <TextBlock Name="LoginText" Text="Логин" VerticalAlignment="Center" HorizontalAlignment="Center" TextAlignment="Left"
-                   FontSize="20" Margin="0,0,360,120"></TextBlock>
+                   FontSize="20" Margin="0,0,360,120" IsHitTestVisible="True" MouseDown="LoginText_MouseDown"></TextBlock>
         <TextBlock Name="PasswordText" Text="Пароль" VerticalAlignment="Center" HorizontalAlignment="Center" TextAlignment="Left"
-                   FontSize="20" Margin="0,0,350,0" Panel.ZIndex="1"></TextBlock>
+                   FontSize="20" Margin="0,0,350,0" Panel.ZIndex="1" IsHitTestVisible="True" MouseDown="PasswordText_MouseDown"></TextBlock>
         <PasswordBox Name="PasswordBox" VerticalContentAlignment="Center" HorizontalAlignment="Center" VerticalAlignment="Center"
                      Width="300" Height="50" GotFocus="PasswordBox_GotFocus" Margin="0,0,140,0"
                      LostFocus="PasswordBox_LostFocus" FontSize="20" Padding="10,0,0,0" KeyDown="PasswordBox_KeyDown"></PasswordBox>
         <Button Name="LoginBtn" Content="Войти" VerticalContentAlignment="Center" Background="#bae3e8" HorizontalAlignment="Center"
-                VerticalAlignment="Center" Width="150" Height="40"
-                Margin="0,110,140,0" Click="LoginBtn_Click" FontSize="18"></Button>
+                VerticalAlignment="Center" Width="140" Height="40"
+                Margin="0,110,300,0" Click="LoginBtn_Click" FontSize="18"></Button>
+        <Button Name="CancelBtn" Content="Отмена" VerticalContentAlignment="Center" Background="#bae3e8" HorizontalAlignment="Center"
+        VerticalAlignment="Center" Width="140" Height="40"
+        Margin="20,110,0,0" Click="CancelBtn_Click" FontSize="18"></Button>
         <TextBlock Name="ErrorMessage" VerticalAlignment="Center" HorizontalAlignment="Center"
                    Margin="0,160,140,0" Foreground="Red" FontSize="14" TextAlignment="Center"
                    Visibility="Collapsed" TextWrapping="Wrap" MaxWidth="300"/>

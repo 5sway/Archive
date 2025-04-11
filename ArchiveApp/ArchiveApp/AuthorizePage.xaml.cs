@@ -178,6 +178,7 @@ namespace ArchiveApp
             PasswordBox.Visibility = Visibility.Visible; // Показ поля пароля
             PasswordText.Visibility = Visibility.Visible; // Показ подсказки пароля
             LoginBtn.Visibility = Visibility.Visible; // Показ кнопки входа
+            CancelBtn.Visibility = Visibility.Visible; // Показ кнопки отмена
             HideError();                        // Скрытие сообщения об ошибке
             UpdatePlaceholderVisibility();      // Обновление видимости подсказок
         }
@@ -200,6 +201,7 @@ namespace ArchiveApp
             PasswordBox.Visibility = Visibility.Collapsed; // Скрытие поля пароля
             PasswordText.Visibility = Visibility.Collapsed; // Скрытие подсказки пароля
             LoginBtn.Visibility = Visibility.Collapsed; // Скрытие кнопки входа
+            CancelBtn.Visibility = Visibility.Collapsed; // Скрытие кнопки отмена
             CaptchaContainer.Visibility = Visibility.Visible; // Показ контейнера капчи
         }
 
@@ -369,6 +371,25 @@ namespace ArchiveApp
             _failedAttempts = 0;                // Сброс счетчика неудач
             ResetLoginUI(true);                 // Полный сброс интерфейса
             UpdatePlaceholderVisibility();      // Обновление видимости подсказок
+        }
+        private void LoginText_MouseDown(object sender, MouseButtonEventArgs e)
+        {
+            LoginText.Visibility = Visibility.Collapsed; // Скрытие подсказки
+            LoginBox.Focus();                           // Перевод фокуса на поле логина
+        }
+
+        private void PasswordText_MouseDown(object sender, MouseButtonEventArgs e)
+        {
+            PasswordText.Visibility = Visibility.Collapsed; // Скрытие подсказки
+            PasswordBox.Focus();                           // Перевод фокуса на поле пароля
+        }
+
+        private void CancelBtn_Click(object sender, RoutedEventArgs e)
+        {
+            LoginBox.Clear(); // Очистка поля логина
+            PasswordBox.Clear(); // Очистка поля пароля
+            UpdatePlaceholderVisibility();      // Обновление видимости подсказок (показ LoginText и PasswordText)
+
         }
     }
 }

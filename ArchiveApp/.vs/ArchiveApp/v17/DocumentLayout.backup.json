@@ -3,16 +3,16 @@
   "WorkspaceRootPath": "D:\\Kursach\\ArchiveApp\\",
   "Documents": [
     {
-      "AbsoluteMoniker": "D:0:0:{E536B243-99BD-442C-97CC-07DB471FD4D8}|ArchiveApp\\ArchiveApp.csproj|d:\\kursach\\archiveapp\\archiveapp\\exportexcel.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{E536B243-99BD-442C-97CC-07DB471FD4D8}|ArchiveApp\\ArchiveApp.csproj|solutionrelative:archiveapp\\exportexcel.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{E536B243-99BD-442C-97CC-07DB471FD4D8}|ArchiveApp\\ArchiveApp.csproj|d:\\kursach\\archiveapp\\archiveapp\\mainmenupage.xaml.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{E536B243-99BD-442C-97CC-07DB471FD4D8}|ArchiveApp\\ArchiveApp.csproj|solutionrelative:archiveapp\\mainmenupage.xaml.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
       "AbsoluteMoniker": "D:0:0:{E536B243-99BD-442C-97CC-07DB471FD4D8}|ArchiveApp\\ArchiveApp.csproj|d:\\kursach\\archiveapp\\archiveapp\\mainwindow.xaml.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{E536B243-99BD-442C-97CC-07DB471FD4D8}|ArchiveApp\\ArchiveApp.csproj|solutionrelative:archiveapp\\mainwindow.xaml.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{E536B243-99BD-442C-97CC-07DB471FD4D8}|ArchiveApp\\ArchiveApp.csproj|d:\\kursach\\archiveapp\\archiveapp\\authorizepage.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}",
+      "RelativeMoniker": "D:0:0:{E536B243-99BD-442C-97CC-07DB471FD4D8}|ArchiveApp\\ArchiveApp.csproj|solutionrelative:archiveapp\\authorizepage.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{E536B243-99BD-442C-97CC-07DB471FD4D8}|ArchiveApp\\ArchiveApp.csproj|d:\\kursach\\archiveapp\\archiveapp\\authorizepage.xaml.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{E536B243-99BD-442C-97CC-07DB471FD4D8}|ArchiveApp\\ArchiveApp.csproj|solutionrelative:archiveapp\\authorizepage.xaml.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     }
   ],
   "DocumentGroupContainers": [
@@ -22,53 +22,52 @@
       "DocumentGroups": [
         {
           "DockedWidth": 200,
-          "SelectedChildIndex": 4,
+          "SelectedChildIndex": 2,
           "Children": [
-            {
-              "$type": "Bookmark",
-              "Name": "ST:0:0:{e1b7d1f8-9b3c-49b1-8f4f-bfc63a88835d}"
-            },
             {
               "$type": "Bookmark",
               "Name": "ST:0:0:{d78612c7-9962-4b83-95d9-268046dad23a}"
             },
             {
+              "$type": "Bookmark",
+              "Name": "ST:0:0:{34e76e81-ee4a-11d0-ae2e-00a0c90fffc3}"
+            },
+            {
               "$type": "Document",
-              "DocumentIndex": 1,
-              "Title": "MainMenuPage.xaml.cs",
-              "DocumentMoniker": "D:\\Kursach\\ArchiveApp\\ArchiveApp\\MainMenuPage.xaml.cs",
-              "RelativeDocumentMoniker": "ArchiveApp\\MainMenuPage.xaml.cs",
-              "ToolTip": "D:\\Kursach\\ArchiveApp\\ArchiveApp\\MainMenuPage.xaml.cs*",
-              "RelativeToolTip": "ArchiveApp\\MainMenuPage.xaml.cs*",
-              "ViewState": "AgIAAE8AAAAAAAAAAAAQwG4AAAAkAAAAAAAAAA==",
+              "DocumentIndex": 0,
+              "Title": "MainWindow.xaml.cs",
+              "DocumentMoniker": "D:\\Kursach\\ArchiveApp\\ArchiveApp\\MainWindow.xaml.cs",
+              "RelativeDocumentMoniker": "ArchiveApp\\MainWindow.xaml.cs",
+              "ToolTip": "D:\\Kursach\\ArchiveApp\\ArchiveApp\\MainWindow.xaml.cs*",
+              "RelativeToolTip": "ArchiveApp\\MainWindow.xaml.cs*",
+              "ViewState": "AgIAAL8AAAAAAAAAAADwv8UAAAAzAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-04-10T10:34:07.942Z",
+              "WhenOpened": "2025-04-11T09:39:35.841Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
               "DocumentIndex": 2,
-              "Title": "MainWindow.xaml.cs",
-              "DocumentMoniker": "D:\\Kursach\\ArchiveApp\\ArchiveApp\\MainWindow.xaml.cs",
-              "RelativeDocumentMoniker": "ArchiveApp\\MainWindow.xaml.cs",
-              "ToolTip": "D:\\Kursach\\ArchiveApp\\ArchiveApp\\MainWindow.xaml.cs",
-              "RelativeToolTip": "ArchiveApp\\MainWindow.xaml.cs",
-              "ViewState": "AgIAADsAAAAAAAAAAAAIwAAAAAAAAAAAAAAAAA==",
+              "Title": "AuthorizePage.xaml.cs",
+              "DocumentMoniker": "D:\\Kursach\\ArchiveApp\\ArchiveApp\\AuthorizePage.xaml.cs",
+              "RelativeDocumentMoniker": "ArchiveApp\\AuthorizePage.xaml.cs",
+              "ToolTip": "D:\\Kursach\\ArchiveApp\\ArchiveApp\\AuthorizePage.xaml.cs",
+              "RelativeToolTip": "ArchiveApp\\AuthorizePage.xaml.cs",
+              "ViewState": "AgIAAHYBAAAAAAAAAAAYwIoBAAABAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-04-10T10:34:05.729Z",
+              "WhenOpened": "2025-04-11T09:28:01.285Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 0,
-              "Title": "ExportExcel.cs",
-              "DocumentMoniker": "D:\\Kursach\\ArchiveApp\\ArchiveApp\\ExportExcel.cs",
-              "RelativeDocumentMoniker": "ArchiveApp\\ExportExcel.cs",
-              "ToolTip": "D:\\Kursach\\ArchiveApp\\ArchiveApp\\ExportExcel.cs*",
-              "RelativeToolTip": "ArchiveApp\\ExportExcel.cs*",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAMcAAAABAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-04-10T10:30:35.633Z",
+              "DocumentIndex": 1,
+              "Title": "AuthorizePage.xaml",
+              "DocumentMoniker": "D:\\Kursach\\ArchiveApp\\ArchiveApp\\AuthorizePage.xaml",
+              "RelativeDocumentMoniker": "ArchiveApp\\AuthorizePage.xaml",
+              "ToolTip": "D:\\Kursach\\ArchiveApp\\ArchiveApp\\AuthorizePage.xaml",
+              "RelativeToolTip": "ArchiveApp\\AuthorizePage.xaml",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003549|",
+              "WhenOpened": "2025-04-11T09:27:26.72Z",
               "EditorCaption": ""
             }
           ]
