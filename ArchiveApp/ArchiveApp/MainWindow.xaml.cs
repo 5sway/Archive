@@ -35,11 +35,10 @@ namespace ArchiveApp
         private TextBlock _timeText;                 // Текст с текущим временем
         private TextBlock _userNameText;             // Текст с именем пользователя
         private TextBlock _userRoleText;             // Текст с ролью пользователя
-        private string currentUserName = UserData.CurrentUserName; // Имя текущего пользователя
         private bool isMenuVisible = true;           // Флаг видимости меню
         private AuthorizePage _authorizePage;        // Страница авторизации
-        private bool _isWindowActive = true;         // Флаг активности окна
         private System.Timers.Timer _highPrecisionTimer; // Высокоточный таймер для времени
+        private string currentUserRole = UserData.CurrentUserRole;
 
         public MainWindow()
         {
@@ -48,11 +47,75 @@ namespace ArchiveApp
             Manager.MainFrame = MainFrame;           // Назначение главного фрейма для навигации
             _authorizePage = new AuthorizePage();    // Создание страницы авторизации
             _authorizePage.OnUserAuthorized += ShowElements; // Подписка на событие успешной авторизации
-            MainFrame.Navigate(_authorizePage);      // Переход на страницу авторизации
+            MainFrame.Navigate(_authorizePage);     // Переход на страницу авторизации
             HideElements();                          // Скрытие элементов интерфейса до авторизации
             MainFrame.Navigated += MainFrame_Navigated; // Подписка на событие смены страницы
             Closed += (s, e) => timeEndPeriod(1);    // Отключение высокой точности таймера при закрытии окна
+            MouseDown += Window_MouseDown;
             MainGrid.MouseDown += MainGrid_MouseDown; // Подписка на событие клика по пустому месту
+
+            // Подписка на события фокуса для SearchBox
+            SearchBox.GotFocus += SearchBox_GotFocus;
+            SearchBox.LostFocus += SearchBox_LostFocus;
+        }
+
+        private void SearchBox_GotFocus(object sender, RoutedEventArgs e)
+        {
+            UpdateSearchTextVisibility();
+        }
+
+        private void SearchBox_LostFocus(object sender, RoutedEventArgs e)
+        {
+            UpdateSearchTextVisibility();
+        }
+
+        private void UpdateSearchTextVisibility()
+        {
+            if (MainFrame.Content is AuthorizePage) return;
+
+            // Подсказка видна, если SearchBox пуст и не в фокусе
+            SearchText.Visibility = (string.IsNullOrWhiteSpace(SearchBox.Text) && !SearchBox.IsFocused)
+                ? Visibility.Visible
+                : Visibility.Collapsed;
+        }
+
+        private void Window_MouseDown(object sender, MouseButtonEventArgs e)
+        {
+            // Проверяем, находимся ли мы на странице авторизации
+            if (MainFrame.Content is AuthorizePage) return;
+
+            // Проверяем, был ли клик вне SearchBox
+            if (!IsMouseOverSearchBox(e.GetPosition(this)))
+            {
+                ClearSearchBox();
+            }
+        }
+
+        private bool IsMouseOverSearchBox(Point position)
+        {
+            // Проверяем, находится ли точка в пределах SearchBox или SearchText
+            var searchBoxBounds = new Rect(
+                SearchBox.TranslatePoint(new Point(0, 0), this),
+                new Size(SearchBox.ActualWidth, SearchBox.ActualHeight));
+
+            var searchTextBounds = new Rect(
+                SearchText.TranslatePoint(new Point(0, 0), this),
+                new Size(SearchText.ActualWidth, SearchText.ActualHeight));
+
+            return searchBoxBounds.Contains(position) || searchTextBounds.Contains(position);
+        }
+
+        private void ClearSearchBox()
+        {
+            // Проверяем, находимся ли мы на странице авторизации
+            if (MainFrame.Content is AuthorizePage) return;
+
+            if (!string.IsNullOrEmpty(SearchBox.Text))
+            {
+                SearchBox.Text = "";
+            }
+
+            UpdateSearchTextVisibility();
         }
 
         private async void SearchBox_TextChanged(object sender, TextChangedEventArgs e)
@@ -60,9 +123,9 @@ namespace ArchiveApp
             await Task.Delay(50);                    // Задержка для предотвращения частых обновлений поиска
             if (SearchBox.Text != ((TextBox)sender).Text) return; // Проверка актуальности текста
 
-            string searchText = SearchBox.Text.Trim().ToLower(); // Получение текста поиска в нижнем регистре
-            SearchText.Visibility = string.IsNullOrEmpty(searchText) ? Visibility.Visible : Visibility.Collapsed; // Управление видимостью подсказки поиска
+            UpdateSearchTextVisibility();
 
+            string searchText = SearchBox.Text.Trim().ToLower(); // Получение текста поиска в нижнем регистре
             if (string.IsNullOrEmpty(searchText)) return; // Выход, если поиск пустой
 
             string currentRole = UserData.CurrentUserRole; // Текущая роль пользователя
@@ -112,12 +175,26 @@ namespace ArchiveApp
 
         private void MainFrame_Navigated(object sender, NavigationEventArgs e)
         {
+            if (e.Content is AuthorizePage)
+            {
+                HideElements();
+            }
+            else
+            {
+                ShowElements();
+                // Проверяем роль пользователя и скрываем кнопки для "Аудитор" и "Менеджер"
+                string role = UserData.CurrentUserRole;
+                if (role == "Делопроизводитель")
+                {
+                    ReqBtn.Visibility = Visibility.Collapsed;
+                }
+                else
+                {
+                    ReqBtn.Visibility = Visibility.Visible;
+                }
+            }
             HighlightActiveButton();
-        }
-
-        public void Initialize(AuthorizePage authorizePage)
-        {
-            authorizePage.OnUserAuthorized += ShowElements;
+            UpdateSearchTextVisibility();
         }
 
         private void HideElements()
@@ -138,6 +215,7 @@ namespace ArchiveApp
 
         private void ShowElements()
         {
+
             MainBtn.Visibility = Visibility.Visible;
             DocBtn.Visibility = Visibility.Visible;
             ReqBtn.Visibility = Visibility.Visible;
@@ -148,24 +226,8 @@ namespace ArchiveApp
             NotBtn.Visibility = Visibility.Visible;
             ExitBtn.Visibility = Visibility.Visible;
             SearchBox.Visibility = Visibility.Visible;
-            SearchText.Visibility = string.IsNullOrWhiteSpace(SearchBox.Text) ? Visibility.Visible : Visibility.Collapsed;
+            UpdateSearchTextVisibility();
             SearchBox.Text = "";
-
-            if (UserData.CurrentUserRole == "Делопроизводитель")
-                ReqBtn.Visibility = Visibility.Collapsed;
-            else
-                ReqBtn.Visibility = Visibility.Visible;
-        }
-
-        private void SearchBox_GotFocus(object sender, RoutedEventArgs e)
-        {
-            SearchText.Visibility = Visibility.Collapsed;
-        }
-
-        private void SearchBox_LostFocus(object sender, RoutedEventArgs e)
-        {
-            if (string.IsNullOrWhiteSpace(SearchBox.Text))
-                SearchText.Visibility = Visibility.Visible;
         }
 
         private void SearchBtn_Click(object sender, RoutedEventArgs e)
@@ -192,12 +254,13 @@ namespace ArchiveApp
             };
             reloadAnimation.Begin();
         }
+
         private void ResetAppState()
         {
             // Сбрасываем состояние приложения
             string role = UserData.CurrentUserRole; // Переходим на главную страницу
             SearchBox.Text = ""; // Очищаем поле поиска
-            SearchText.Visibility = Visibility.Visible; // Показываем подсказку поиска
+            UpdateSearchTextVisibility();
             isMenuVisible = true; // Показываем меню
             MenuGrid.Visibility = Visibility.Visible;
             DocBtn.Visibility = Visibility.Visible;
@@ -227,6 +290,8 @@ namespace ArchiveApp
             CardBtn.Visibility = newVisibility;
             MainBtn.Visibility = newVisibility;
             ExitBtn.Visibility = newVisibility;
+
+            UpdateSearchTextVisibility();
         }
 
         private void MainBtn_Click(object sender, RoutedEventArgs e)
@@ -235,24 +300,28 @@ namespace ArchiveApp
             string role = UserData.CurrentUserRole;
             MainFrame.Navigate(new MainMenuPage(role));
             HighlightActiveButton();
+            UpdateSearchTextVisibility();
         }
 
         private void DocBtn_Click(object sender, RoutedEventArgs e)
         {
             MainFrame.Navigate(new DocumentPage());
             HighlightActiveButton();
+            UpdateSearchTextVisibility();
         }
 
         private void ReqBtn_Click(object sender, RoutedEventArgs e)
         {
             MainFrame.Navigate(new RequestPage());
             HighlightActiveButton();
+            UpdateSearchTextVisibility();
         }
 
         private void CardBtn_Click(object sender, RoutedEventArgs e)
         {
             MainFrame.Navigate(new RegCardPage());
             HighlightActiveButton();
+            UpdateSearchTextVisibility();
         }
 
         private void HighlightActiveButton()
@@ -393,6 +462,8 @@ namespace ArchiveApp
                 _isNotificationVisible = true;
                 SizeChanged += MainWindow_SizeChanged;
             }
+
+            UpdateSearchTextVisibility();
         }
 
         private void MainWindow_SizeChanged(object sender, SizeChangedEventArgs e)
@@ -415,7 +486,6 @@ namespace ArchiveApp
             };
         }
 
-        // Новый метод для закрытия всплывающего окна
         private void CloseNotificationPopup()
         {
             if (_isNotificationVisible)
@@ -428,7 +498,6 @@ namespace ArchiveApp
             }
         }
 
-        // Обработчик клика по пустому месту
         private void MainGrid_MouseDown(object sender, MouseButtonEventArgs e)
         {
             if (_isNotificationVisible)
@@ -443,6 +512,8 @@ namespace ArchiveApp
                     CloseNotificationPopup();
                 }
             }
+
+            UpdateSearchTextVisibility();
         }
 
         private void SearchText_MouseDown(object sender, MouseButtonEventArgs e)

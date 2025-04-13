@@ -231,14 +231,5 @@ namespace ArchiveApp
             DataGridTable.IsReadOnly = false;       // Разрешение редактирования
             EditBtn.Content = "Сохранить";          // Изменение текста кнопки
         }
-
-        private void Page_IsVisibleChanged(object sender, DependencyPropertyChangedEventArgs e)
-        {
-            if (Visibility == Visibility.Visible)   // Обновление данных при отображении страницы
-            {
-                ArchiveBaseEntities.GetContext().ChangeTracker.Entries().ToList().ForEach(p => p.Reload()); // Перезагрузка данных
-                DataGridTable.ItemsSource = ArchiveBaseEntities.GetContext().User.ToList(); // Обновление источника данных
-            }
-        }
     }
 }

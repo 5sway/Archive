@@ -16,7 +16,7 @@
                      LostFocus="CaptchaTextBox_LostFocus" KeyDown="CaptchaTextBox_KeyDown"/>
             <TextBlock Name="CaptchaText" Text="Введите капчу..." Panel.ZIndex="2" Margin="0,0,120,25"
                        VerticalAlignment="Center" HorizontalAlignment="Center" FontSize="14"
-                       TextAlignment="Left"></TextBlock>
+                       TextAlignment="Left" IsHitTestVisible="True" MouseDown="CaptchaText_MouseDown"></TextBlock>
             <Button Name="RefreshCaptcha" Background="Transparent" BorderThickness="0" FontSize="16" Click="RefreshCaptcha_Click"
                     Width="30" Height="30" VerticalAlignment="Center" HorizontalAlignment="Center" Margin="200,0,0,25">
                 <Image Source="/Resources/UpdateIcon.png"/>

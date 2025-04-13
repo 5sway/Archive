@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics.Contracts;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -120,7 +121,8 @@ namespace ArchiveApp
             {
                 if (newDocument != null && isAddingNewRow) // Добавление нового документа
                 {
-                    if (string.IsNullOrWhiteSpace(newDocument.Title) || // Проверка обязательных полей
+                    // Проверка обязательных полей
+                    if (string.IsNullOrWhiteSpace(newDocument.Title) ||
                         string.IsNullOrWhiteSpace(newDocument.Number) ||
                         string.IsNullOrWhiteSpace(newDocument.Source) ||
                         string.IsNullOrWhiteSpace(newDocument.Storage_Type))
@@ -128,6 +130,15 @@ namespace ArchiveApp
                         RemoveEmptyRow();           // Удаление пустой строки при ошибке
                         return;
                     }
+
+                    // Проверка Copies_Count
+                    if (newDocument.Copies_Count <= 0)
+                    {
+                        RemoveEmptyRow();
+                        MessageBox.Show("Количество копий должно быть больше 0. Строка удалена.", "Предупреждение", MessageBoxButton.OK, MessageBoxImage.Warning);
+                        return;
+                    }
+
                     context.Document.Add(newDocument); // Добавление нового документа в базу
                 }
 
@@ -169,6 +180,35 @@ namespace ArchiveApp
             newDocument = null;                     // Очистка нового документа
             DataGridTable.IsReadOnly = true;        // Установка режима "только чтение"
             EditBtn.Content = "Изменить";           // Восстановление текста кнопки
+        }
+
+        private void DataGridTable_RowEditEnding(object sender, DataGridRowEditEndingEventArgs e)
+        {
+            if (isAddingNewRow && e.Row.Item == newDocument) // Проверяем, что это новая строка
+            {
+                var document = e.Row.Item as Document;
+                if (document != null)
+                {
+                    // Проверка обязательных полей
+                    if (string.IsNullOrWhiteSpace(document.Title) ||
+                        string.IsNullOrWhiteSpace(document.Number) ||
+                        string.IsNullOrWhiteSpace(document.Source) ||
+                        string.IsNullOrWhiteSpace(document.Storage_Type))
+                    {
+                        RemoveEmptyRow();
+                        MessageBox.Show("Обязательные поля не заполнены. Строка удалена.", "Предупреждение", MessageBoxButton.OK, MessageBoxImage.Warning);
+                        return;
+                    }
+
+                    // Проверка Copies_Count
+                    if (document.Copies_Count <= 0)
+                    {
+                        RemoveEmptyRow();
+                        MessageBox.Show("Количество копий должно быть больше 0. Строка удалена.", "Предупреждение", MessageBoxButton.OK, MessageBoxImage.Warning);
+                        return;
+                    }
+                }
+            }
         }
 
         private void DataGridTable_PreviewKeyDown(object sender, KeyEventArgs e)
@@ -236,15 +276,6 @@ namespace ArchiveApp
 
             DataGridTable.IsReadOnly = false;       // Разрешение редактирования
             EditBtn.Content = "Сохранить";          // Изменение текста кнопки
-        }
-
-        private void Page_IsVisibleChanged(object sender, DependencyPropertyChangedEventArgs e)
-        {
-            if (Visibility == Visibility.Visible)   // Обновление данных при отображении страницы
-            {
-                ArchiveBaseEntities.GetContext().ChangeTracker.Entries().ToList().ForEach(p => p.Reload()); // Перезагрузка данных
-                DataGridTable.ItemsSource = ArchiveBaseEntities.GetContext().Document.ToList(); // Обновление источника данных
-            }
         }
     }
 }

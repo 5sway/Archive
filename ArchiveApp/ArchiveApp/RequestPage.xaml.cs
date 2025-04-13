@@ -212,11 +212,32 @@ namespace ArchiveApp
             DataGridTable.IsReadOnly = false;       // Разрешение редактирования
             EditBtn.Content = "Сохранить";          // Изменение текста кнопки
         }
-
-        private void Page_IsVisibleChanged(object sender, DependencyPropertyChangedEventArgs e)
+        private void DataGridTable_PreviewKeyDown(object sender, KeyEventArgs e)
         {
-            if (Visibility == Visibility.Visible)   // Обновление данных при отображении страницы
-                LoadData();
+            if (e.Key == Key.Enter)                 // Обработка нажатия Enter
+            {
+                e.Handled = true;                   // Отмена стандартного поведения
+                DataGrid dataGrid = sender as DataGrid; // Получение DataGrid
+                if (dataGrid == null) return;
+
+                var currentCell = dataGrid.CurrentCell; // Текущая ячейка
+                if (currentCell.Column == null) return;
+
+                int currentColumnIndex = currentCell.Column.DisplayIndex; // Индекс текущей колонки
+                int nextColumnIndex = currentColumnIndex + 1; // Следующий индекс колонки
+                int currentRowIndex = dataGrid.Items.IndexOf(currentCell.Item); // Индекс текущей строки
+
+                if (nextColumnIndex < dataGrid.Columns.Count) // Переход к следующей колонке
+                {
+                    dataGrid.CurrentCell = new DataGridCellInfo(dataGrid.Items[currentRowIndex], dataGrid.Columns[nextColumnIndex]);
+                }
+                else if (currentRowIndex < dataGrid.Items.Count - 1) // Переход к следующей строке
+                {
+                    dataGrid.CurrentCell = new DataGridCellInfo(dataGrid.Items[currentRowIndex + 1], dataGrid.Columns[0]);
+                }
+
+                dataGrid.Dispatcher.InvokeAsync(() => dataGrid.BeginEdit(), System.Windows.Threading.DispatcherPriority.Input); // Запуск редактирования
+            }
         }
     }
 }

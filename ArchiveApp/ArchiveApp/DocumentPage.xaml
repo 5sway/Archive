@@ -6,7 +6,7 @@
       xmlns:local="clr-namespace:ArchiveApp"
       mc:Ignorable="d" 
       d:DesignHeight="450" d:DesignWidth="800"
-      Title="DocumentPage" IsVisibleChanged="Page_IsVisibleChanged">
+      Title="DocumentPage">
 
     <Grid Background="White">
         <Grid.RowDefinitions>
@@ -25,7 +25,7 @@
                   GridLinesVisibility="All"
                   BorderThickness="1"
                   Margin="5,5,5,0"
-                  IsReadOnly="True">
+                  IsReadOnly="True" PreviewKeyDown="DataGridTable_PreviewKeyDown">
             <DataGrid.Columns>
                 <DataGridTextColumn Header="Дата" Binding="{Binding Receipt_Date, StringFormat={}{0:dd.MM.yyyy}}" Width="*"/>
                 <DataGridTextColumn Header="Архивный шифр" Binding="{Binding Number}" Width="*"/>
