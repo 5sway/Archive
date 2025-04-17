@@ -3,12 +3,16 @@
   "WorkspaceRootPath": "D:\\Kursach\\ArchiveApp\\",
   "Documents": [
     {
-      "AbsoluteMoniker": "D:0:0:{E536B243-99BD-442C-97CC-07DB471FD4D8}|ArchiveApp\\ArchiveApp.csproj|d:\\kursach\\archiveapp\\archiveapp\\mainmenupage.xaml.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{E536B243-99BD-442C-97CC-07DB471FD4D8}|ArchiveApp\\ArchiveApp.csproj|solutionrelative:archiveapp\\mainmenupage.xaml.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+      "AbsoluteMoniker": "D:0:0:{E536B243-99BD-442C-97CC-07DB471FD4D8}|ArchiveApp\\ArchiveApp.csproj|d:\\kursach\\archiveapp\\archiveapp\\captchagenerator.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{E536B243-99BD-442C-97CC-07DB471FD4D8}|ArchiveApp\\ArchiveApp.csproj|solutionrelative:archiveapp\\captchagenerator.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{E536B243-99BD-442C-97CC-07DB471FD4D8}|ArchiveApp\\ArchiveApp.csproj|d:\\kursach\\archiveapp\\archiveapp\\exportexcel.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{E536B243-99BD-442C-97CC-07DB471FD4D8}|ArchiveApp\\ArchiveApp.csproj|solutionrelative:archiveapp\\exportexcel.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+      "AbsoluteMoniker": "D:0:0:{E536B243-99BD-442C-97CC-07DB471FD4D8}|ArchiveApp\\ArchiveApp.csproj|d:\\kursach\\archiveapp\\archiveapp\\authorizepage.xaml.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{E536B243-99BD-442C-97CC-07DB471FD4D8}|ArchiveApp\\ArchiveApp.csproj|solutionrelative:archiveapp\\authorizepage.xaml.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{E536B243-99BD-442C-97CC-07DB471FD4D8}|ArchiveApp\\ArchiveApp.csproj|d:\\kursach\\archiveapp\\archiveapp\\authorizepage.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}",
+      "RelativeMoniker": "D:0:0:{E536B243-99BD-442C-97CC-07DB471FD4D8}|ArchiveApp\\ArchiveApp.csproj|solutionrelative:archiveapp\\authorizepage.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}"
     }
   ],
   "DocumentGroupContainers": [
@@ -18,40 +22,48 @@
       "DocumentGroups": [
         {
           "DockedWidth": 200,
-          "SelectedChildIndex": 3,
+          "SelectedChildIndex": 1,
           "Children": [
             {
               "$type": "Bookmark",
               "Name": "ST:0:0:{e1b7d1f8-9b3c-49b1-8f4f-bfc63a88835d}"
             },
             {
-              "$type": "Bookmark",
-              "Name": "ST:0:0:{d78612c7-9962-4b83-95d9-268046dad23a}"
-            },
-            {
               "$type": "Document",
-              "DocumentIndex": 1,
-              "Title": "ExportExcel.cs",
-              "DocumentMoniker": "D:\\Kursach\\ArchiveApp\\ArchiveApp\\ExportExcel.cs",
-              "RelativeDocumentMoniker": "ArchiveApp\\ExportExcel.cs",
-              "ToolTip": "D:\\Kursach\\ArchiveApp\\ArchiveApp\\ExportExcel.cs",
-              "RelativeToolTip": "ArchiveApp\\ExportExcel.cs",
-              "ViewState": "AgIAAAcBAAAAAAAAAAAuwAAAAAAAAAAAAAAAAA==",
+              "DocumentIndex": 0,
+              "Title": "CaptchaGenerator.cs",
+              "DocumentMoniker": "D:\\Kursach\\ArchiveApp\\ArchiveApp\\CaptchaGenerator.cs",
+              "RelativeDocumentMoniker": "ArchiveApp\\CaptchaGenerator.cs",
+              "ToolTip": "D:\\Kursach\\ArchiveApp\\ArchiveApp\\CaptchaGenerator.cs",
+              "RelativeToolTip": "ArchiveApp\\CaptchaGenerator.cs",
+              "ViewState": "AgIAAAMAAAAAAAAAAAAAAE8AAAAFAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-04-17T19:10:55.499Z",
+              "WhenOpened": "2025-04-17T19:21:59.668Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 0,
-              "Title": "MainMenuPage.xaml.cs",
-              "DocumentMoniker": "D:\\Kursach\\ArchiveApp\\ArchiveApp\\MainMenuPage.xaml.cs",
-              "RelativeDocumentMoniker": "ArchiveApp\\MainMenuPage.xaml.cs",
-              "ToolTip": "D:\\Kursach\\ArchiveApp\\ArchiveApp\\MainMenuPage.xaml.cs*",
-              "RelativeToolTip": "ArchiveApp\\MainMenuPage.xaml.cs*",
-              "ViewState": "AgIAALQAAAAAAAAAAAAAANIAAAAJAAAAAAAAAA==",
+              "DocumentIndex": 1,
+              "Title": "AuthorizePage.xaml.cs",
+              "DocumentMoniker": "D:\\Kursach\\ArchiveApp\\ArchiveApp\\AuthorizePage.xaml.cs",
+              "RelativeDocumentMoniker": "ArchiveApp\\AuthorizePage.xaml.cs",
+              "ToolTip": "D:\\Kursach\\ArchiveApp\\ArchiveApp\\AuthorizePage.xaml.cs",
+              "RelativeToolTip": "ArchiveApp\\AuthorizePage.xaml.cs",
+              "ViewState": "AgIAADoBAAAAAAAAAAAowFABAAAJAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-04-17T19:10:33.61Z",
+              "WhenOpened": "2025-04-17T19:20:20.32Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 2,
+              "Title": "AuthorizePage.xaml",
+              "DocumentMoniker": "D:\\Kursach\\ArchiveApp\\ArchiveApp\\AuthorizePage.xaml",
+              "RelativeDocumentMoniker": "ArchiveApp\\AuthorizePage.xaml",
+              "ToolTip": "D:\\Kursach\\ArchiveApp\\ArchiveApp\\AuthorizePage.xaml",
+              "RelativeToolTip": "ArchiveApp\\AuthorizePage.xaml",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003549|",
+              "WhenOpened": "2025-04-17T19:20:14.034Z",
               "EditorCaption": ""
             }
           ]
