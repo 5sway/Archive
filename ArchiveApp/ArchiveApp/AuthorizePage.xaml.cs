@@ -206,8 +206,8 @@ namespace ArchiveApp
             string password = PasswordBox.Password.Trim(); // Получение пароля без пробелов
 
             StringBuilder errorMessage = new StringBuilder(); // Сбор ошибок ввода
-            if (string.IsNullOrWhiteSpace(password)) errorMessage.AppendLine("Введите пароль!");
             if (string.IsNullOrWhiteSpace(login)) errorMessage.AppendLine("Введите логин!");
+            if (string.IsNullOrWhiteSpace(password)) errorMessage.AppendLine("Введите пароль!");
 
             if (errorMessage.Length > 0)          // Показ ошибки, если поля пустые
             {

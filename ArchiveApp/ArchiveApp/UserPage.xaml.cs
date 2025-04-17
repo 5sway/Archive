@@ -219,45 +219,45 @@ namespace ArchiveApp
             }
         }
 
-        private void AddBtn_Click(object sender, RoutedEventArgs e)
-        {
-            if (isAddingNewRow) return;             // Защита от повторного добавления
-
-            isAddingNewRow = true;                  // Установка флага добавления
-            newUser = new User                      // Создание нового пользователя
+            private void AddBtn_Click(object sender, RoutedEventArgs e)
             {
-                Role_Id = (int)(Roles.FirstOrDefault()?.Id), // ID первой роли по умолчанию
-                Login = "",                        // Пустой логин
-                Password = "",                     // Пустой пароль
-                Name = "",                         // Пустое имя
-                Last_Name = "",                    // Пустая фамилия
-                First_Name = "",                   // Пустое отчество
-                Phone_Number = "",                 // Пустой номер телефона
-                Email = "",                        // Пустой email
-                Role = Roles.FirstOrDefault()      // Первая роль по умолчанию
-            };
+                if (isAddingNewRow) return;             // Защита от повторного добавления
 
-            var items = DataGridTable.ItemsSource as List<User>; // Получение текущего списка
-            if (items != null)                      // Добавление нового пользователя
-            {
-                items.Add(newUser);
-                DataGridTable.ItemsSource = null;   // Сброс источника данных
-                DataGridTable.ItemsSource = items;  // Переустановка источника данных
-            }
-
-            DataGridTable.SelectedItem = newUser;   // Установка фокуса на новую строку
-
-            foreach (var item in DataGridTable.Items) // Блокировка других строк
-            {
-                if (item is User usr && usr != newUser)
+                isAddingNewRow = true;                  // Установка флага добавления
+                newUser = new User                      // Создание нового пользователя
                 {
-                    var row = DataGridTable.ItemContainerGenerator.ContainerFromItem(usr) as DataGridRow;
-                    if (row != null) row.IsEnabled = false; // Отключение строки
-                }
-            }
+                    Role_Id = (int)(Roles.FirstOrDefault()?.Id), // ID первой роли по умолчанию
+                    Login = "",                        // Пустой логин
+                    Password = "",                     // Пустой пароль
+                    Name = "",                         // Пустое имя
+                    Last_Name = "",                    // Пустая фамилия
+                    First_Name = "",                   // Пустое отчество
+                    Phone_Number = "",                 // Пустой номер телефона
+                    Email = "",                        // Пустой email
+                    Role = Roles.FirstOrDefault()      // Первая роль по умолчанию
+                };
 
-            DataGridTable.IsReadOnly = false;       // Разрешение редактирования
-            EditBtn.Content = "Сохранить";          // Изменение текста кнопки
-        }
+                var items = DataGridTable.ItemsSource as List<User>; // Получение текущего списка
+                if (items != null)                      // Добавление нового пользователя
+                {
+                    items.Add(newUser);
+                    DataGridTable.ItemsSource = null;   // Сброс источника данных
+                    DataGridTable.ItemsSource = items;  // Переустановка источника данных
+                }
+
+                DataGridTable.SelectedItem = newUser;   // Установка фокуса на новую строку
+
+                foreach (var item in DataGridTable.Items) // Блокировка других строк
+                {
+                    if (item is User usr && usr != newUser)
+                    {
+                        var row = DataGridTable.ItemContainerGenerator.ContainerFromItem(usr) as DataGridRow;
+                        if (row != null) row.IsEnabled = false; // Отключение строки
+                    }
+                }
+
+                DataGridTable.IsReadOnly = false;       // Разрешение редактирования
+                EditBtn.Content = "Сохранить";          // Изменение текста кнопки
+            }
     }
 }
