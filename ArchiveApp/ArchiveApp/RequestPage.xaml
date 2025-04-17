@@ -68,6 +68,11 @@
             </DataGrid.Columns>
         </DataGrid>
 
+        <TextBox Name="ReqSearchBox" Width="300" Height="20" Grid.Row="1" Margin="0,-15,250,0"
+                 VerticalAlignment="Center" TextAlignment="Left" VerticalContentAlignment="Center"
+                 Padding="5,0,0,0" HorizontalAlignment="Right" FontSize="12" TextChanged="ReqSearchBox_TextChanged"></TextBox>
+        <Button Name="ClearSearchBtn" Content="Очистить" Background="#bae3e8" VerticalAlignment="Center"
+                HorizontalAlignment="Right" Margin="0,-15,210,0" Width="55" Height="20" Grid.Row="1" Click="ClearSearchBtn_Click"/>
         <Button Name="AddBtn" Content="Добавить" Background="#bae3e8" VerticalAlignment="Center"
                 HorizontalAlignment="Left" Margin="5,0,0,0" Width="120" Height="40" Grid.Row="1" Click="AddBtn_Click"/>
         <Button Name="DelBtn" Content="Удалить" Background="#bae3e8" VerticalAlignment="Center"

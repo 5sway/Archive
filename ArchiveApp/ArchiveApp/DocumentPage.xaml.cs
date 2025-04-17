@@ -22,6 +22,7 @@ namespace ArchiveApp
         private Document newDocument;               // Новый документ для добавления
         private List<string> _storageTypes;         // Список типов хранения
         private string currentUserRole = UserData.CurrentUserRole; // Роль текущего пользователя
+        private List<Document> _allDocuments;       // Поле для хранения полного списка документов
 
         public List<string> StorageTypes            // Свойство для доступа к типам хранения
         {
@@ -57,7 +58,8 @@ namespace ArchiveApp
         {
             using (var context = new ArchiveBaseEntities()) // Подключение к базе данных
             {
-                DataGridTable.ItemsSource = context.Document.ToList(); // Загрузка документов в DataGrid
+                _allDocuments = context.Document.ToList(); // Загрузка документов в DataGrid
+                DataGridTable.ItemsSource = _allDocuments; // Установка источника данных
             }
             DataGridTable.IsReadOnly = true;        // Установка режима "только чтение"
         }
@@ -276,6 +278,38 @@ namespace ArchiveApp
 
             DataGridTable.IsReadOnly = false;       // Разрешение редактирования
             EditBtn.Content = "Сохранить";          // Изменение текста кнопки
+        }
+
+        private void DocSearchBox_TextChanged(object sender, TextChangedEventArgs e)
+        {
+            string searchText = DocSearchBox.Text.ToLower(); // Получение текста поиска (в нижнем регистре)
+
+            if (string.IsNullOrWhiteSpace(searchText))
+            {
+                // Если поле поиска пустое, показываем все документы
+                DataGridTable.ItemsSource = _allDocuments;
+            }
+            else
+            {
+                // Фильтрация документов по всем полям
+                var filteredDocuments = _allDocuments
+                    .Where(doc =>
+                        // Проверка всех полей (преобразование в строку и нижний регистр)
+                        doc.Receipt_Date.ToString("dd.MM.yyyy").ToLower().Contains(searchText) || (doc.Number?.ToLower().Contains(searchText) == true) ||
+                        (doc.Title?.ToLower().Contains(searchText) == true) ||
+                        (doc.Annotation?.ToLower().Contains(searchText) == true) ||
+                        (doc.Source?.ToLower().Contains(searchText) == true) ||
+                        (doc.Copies_Count.ToString().ToLower().Contains(searchText)) ||
+                        (doc.Storage_Type?.ToLower().Contains(searchText) == true)
+                    )
+                    .ToList();
+                DataGridTable.ItemsSource = filteredDocuments;
+            }
+        }
+        private void ClearSearchBtn_Click(object sender, RoutedEventArgs e)
+        {
+            DocSearchBox.Text = string.Empty; // Очистка поля поиска
+            DataGridTable.ItemsSource = _allDocuments; // Восстановление полного списка
         }
     }
 }

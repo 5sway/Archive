@@ -27,6 +27,7 @@ namespace ArchiveApp
         public List<KeyValuePair<bool?, string>> StatusList { get; set; } // Список статусов
         public List<Document> Documents { get; set; } // Список документов
         public List<User> Users { get; set; }       // Список пользователей
+        private List<Request> _allRequests;         // Поле для хранения полного списка запросов
 
         public RequestPage()
         {
@@ -68,17 +69,48 @@ namespace ArchiveApp
         {
             using (var context = new ArchiveBaseEntities()) // Подключение к базе данных
             {
-                var requests = context.Request      // Загрузка запросов с связанными данными
+                _allRequests = context.Request      // Загрузка запросов с связанными данными
                     .Include(r => r.User)           // Включение данных пользователей
                     .Include(r => r.Document)       // Включение данных документов
                     .ToList();
 
                 Requests.Clear();                   // Очистка текущей коллекции
-                foreach (var req in requests)       // Заполнение коллекции
+                foreach (var req in _allRequests)   // Заполнение коллекции
                     Requests.Add(req);
             }
             DataGridTable.ItemsSource = Requests;   // Установка источника данных для DataGrid
             DataGridTable.IsReadOnly = true;        // Установка режима "только чтение"
+        }
+
+        private void ReqSearchBox_TextChanged(object sender, TextChangedEventArgs e)
+        {
+            string searchText = ReqSearchBox.Text.ToLower(); // Получение текста поиска (в нижнем регистре)
+
+            if (string.IsNullOrWhiteSpace(searchText))
+            {
+                // Если поле поиска пустое, показываем все запросы
+                Requests.Clear();
+                foreach (var req in _allRequests)
+                    Requests.Add(req);
+            }
+            else
+            {
+                // Фильтрация запросов по всем полям
+                var filteredRequests = _allRequests
+                    .Where(req =>
+                        // Проверка всех полей (преобразование в строку и нижний регистр)
+                        req.Request_Date.ToString("dd.MM.yyyy").ToLower().Contains(searchText) ||
+                        (req.Reason?.ToLower().Contains(searchText) == true) ||
+                        (req.Status.HasValue && (req.Status.Value ? "принято" : "отклонено").Contains(searchText)) ||
+                        (req.User?.Name?.ToLower().Contains(searchText) == true) ||
+                        (req.Document?.Title?.ToLower().Contains(searchText) == true)
+                    )
+                    .ToList();
+
+                Requests.Clear();
+                foreach (var req in filteredRequests)
+                    Requests.Add(req);
+            }
         }
 
         private void DelBtn_Click(object sender, RoutedEventArgs e)
@@ -212,6 +244,7 @@ namespace ArchiveApp
             DataGridTable.IsReadOnly = false;       // Разрешение редактирования
             EditBtn.Content = "Сохранить";          // Изменение текста кнопки
         }
+
         private void DataGridTable_PreviewKeyDown(object sender, KeyEventArgs e)
         {
             if (e.Key == Key.Enter)                 // Обработка нажатия Enter
@@ -238,6 +271,11 @@ namespace ArchiveApp
 
                 dataGrid.Dispatcher.InvokeAsync(() => dataGrid.BeginEdit(), System.Windows.Threading.DispatcherPriority.Input); // Запуск редактирования
             }
+        }
+        private void ClearSearchBtn_Click(object sender, RoutedEventArgs e)
+        {
+            ReqSearchBox.Text = string.Empty; // Очистка поля поиска
+            DataGridTable.ItemsSource = _allRequests; // Восстановление полного списка
         }
     }
 }

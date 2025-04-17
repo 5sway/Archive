@@ -1,129 +1,212 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
+using Microsoft.Win32;
 
 namespace ArchiveApp
 {
     public partial class MainMenuPage : Page
     {
-        private string _Role;                    // Роль текущего пользователя
-        public event Action OnRoleChanged;      // Событие изменения роли
+        private string _Role;
+        public event Action OnRoleChanged;
 
         public MainMenuPage(string role)
         {
-            InitializeComponent();               // Инициализация компонентов страницы
-            _Role = role;                       // Установка роли пользователя
-            SetPermissionsBasedOnRole();        // Настройка видимости элементов по роли
-            OnRoleChanged?.Invoke();            // Вызов события изменения роли
+            InitializeComponent();
+            _Role = role ?? throw new ArgumentNullException(nameof(role), "Роль пользователя не может быть null");
+            SetPermissionsBasedOnRole();
+            OnRoleChanged?.Invoke();
         }
 
         private void SetPermissionsBasedOnRole()
         {
-            switch (_Role)                      // Настройка интерфейса в зависимости от роли
+            switch (_Role)
             {
-                case "Администратор":           // Полный доступ для администратора
+                case "Администратор":
                     AdminControlsVisibility(true);
                     ClerkControlsVisibility(true);
                     ArchivariusControlsVisibility(true);
                     break;
-                case "Делопроизводитель":       // Ограниченный доступ для делопроизводителя
+                case "Делопроизводитель":
                     AdminControlsVisibility(false);
                     ClerkControlsVisibility(true);
                     ArchivariusControlsVisibility(false);
                     break;
-                case "Архивариус":              // Ограниченный доступ для архивариуса
+                case "Архивариус":
                     AdminControlsVisibility(false);
                     ClerkControlsVisibility(true);
                     ArchivariusControlsVisibility(true);
                     break;
-                default:                        // Обработка неизвестной роли
-                    MessageBox.Show("Неизвестная роль!");
+                default:
+                    MessageBox.Show($"Неизвестная роль: {_Role}", "Ошибка", MessageBoxButton.OK, MessageBoxImage.Error);
                     break;
             }
         }
 
         private void AdminControlsVisibility(bool isVisible)
         {
-            Visibility visibility = isVisible ? Visibility.Visible : Visibility.Collapsed; // Установка видимости
-            ReportBtn.Visibility = visibility;  // Кнопка отчета
-            UserBtn.Visibility = visibility;    // Кнопка пользователей
-            RegCardBtn.Visibility = visibility; // Кнопка карточек
-            RequestBtn.Visibility = visibility; // Кнопка запросов
+            Visibility visibility = isVisible ? Visibility.Visible : Visibility.Collapsed;
+            ReportBtn.Visibility = visibility;
+            UserBtn.Visibility = visibility;
+            RegCardBtn.Visibility = visibility;
+            RequestBtn.Visibility = visibility;
         }
 
         private void ClerkControlsVisibility(bool isVisible)
         {
-            Visibility visibility = isVisible ? Visibility.Visible : Visibility.Collapsed; // Установка видимости
-            RegCardBtn.Visibility = visibility; // Кнопка карточек
-            DocumentBtn.Visibility = visibility;// Кнопка документов
-            SimpleRepBtn.Visibility = visibility;// Кнопка простого отчета
+            Visibility visibility = isVisible ? Visibility.Visible : Visibility.Collapsed;
+            RegCardBtn.Visibility = visibility;
+            DocumentBtn.Visibility = visibility;
+            SimpleRepBtn.Visibility = visibility;
         }
 
         private void ArchivariusControlsVisibility(bool isVisible)
         {
-            Visibility visibility = isVisible ? Visibility.Visible : Visibility.Collapsed; // Установка видимости
-            RequestBtn.Visibility = visibility; // Кнопка запросов
+            Visibility visibility = isVisible ? Visibility.Visible : Visibility.Collapsed;
+            RequestBtn.Visibility = visibility;
         }
 
         private void DocumentBtn_Click(object sender, RoutedEventArgs e)
         {
-            Manager.MainFrame.Navigate(new DocumentPage()); // Переход на страницу документов
+            Manager.MainFrame.Navigate(new DocumentPage());
         }
 
         private void UserBtn_Click(object sender, RoutedEventArgs e)
         {
-            Manager.MainFrame.Navigate(new UserPage()); // Переход на страницу пользователей
+            Manager.MainFrame.Navigate(new UserPage());
         }
 
         private void RegCardBtn_Click(object sender, RoutedEventArgs e)
         {
-            Manager.MainFrame.Navigate(new RegCardPage()); // Переход на страницу карточек
+            Manager.MainFrame.Navigate(new RegCardPage());
         }
 
         private void RequestBtn_Click(object sender, RoutedEventArgs e)
         {
-            Manager.MainFrame.Navigate(new RequestPage()); // Переход на страницу запросов
+            Manager.MainFrame.Navigate(new RequestPage());
         }
 
         private void SimpleRepBtn_Click(object sender, RoutedEventArgs e)
         {
-            var saveFileDialog = new Microsoft.Win32.SaveFileDialog // Диалог сохранения файла Excel
+            try
             {
-                FileName = "Простой отчет",     // Имя файла по умолчанию
-                DefaultExt = ".xlsx",           // Расширение по умолчанию
-                Filter = "Excel files (*.xlsx)|*.xlsx" // Фильтр файлов
-            };
-
-            if (saveFileDialog.ShowDialog() == true) // Открытие диалога и проверка выбора
+                var optionsPage = new ReportOptionsPage(false, _Role);
+                optionsPage.ReportOptionsSelected += (format, tables, startDate, endDate) =>
+                {
+                    HandleReportOptions(format, tables, startDate, endDate, "Простой отчет");
+                };
+                Manager.MainFrame.Navigate(optionsPage);
+            }
+            catch (Exception ex)
             {
-                ExportExcel.ExportToExcel(saveFileDialog.FileName, _Role); // Экспорт данных в Excel с учетом роли
+                MessageBox.Show($"Ошибка в SimpleRepBtn_Click: {ex.Message}\nStackTrace: {ex.StackTrace}", "Ошибка", MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
 
         private void ReportBtn_Click(object sender, RoutedEventArgs e)
         {
-            var saveFileDialog = new Microsoft.Win32.SaveFileDialog // Диалог сохранения файла Word
+            try
             {
-                FileName = "Отчет",             // Имя файла по умолчанию
-                DefaultExt = ".docx",           // Расширение по умолчанию
-                Filter = "Word documents (.docx)|*.docx" // Фильтр файлов
-            };
+                var optionsPage = new ReportOptionsPage(true, _Role);
+                optionsPage.ReportOptionsSelected += (format, tables, startDate, endDate) =>
+                {
+                    HandleReportOptions(format, tables, startDate, endDate, "Отчет");
+                };
+                Manager.MainFrame.Navigate(optionsPage);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Ошибка в ReportBtn_Click: {ex.Message}\nStackTrace: {ex.StackTrace}", "Ошибка", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
+        }
 
-            if (saveFileDialog.ShowDialog() == true) // Открытие диалога и проверка выбора
+        private void HandleReportOptions(string format, List<string> tables, DateTime? startDate, DateTime? endDate, string defaultFileName)
+        {
+            try
             {
-                ExportWord.ExportToWord(saveFileDialog.FileName); // Экспорт данных в Word
+                if (string.IsNullOrEmpty(format) || tables == null)
+                {
+                    MessageBox.Show("Ошибка: параметры отчета не выбраны!", "Ошибка", MessageBoxButton.OK, MessageBoxImage.Error);
+                    return;
+                }
+
+                var saveFileDialog = new SaveFileDialog
+                {
+                    FileName = defaultFileName,
+                    DefaultExt = GetDefaultExtension(format),
+                    Filter = GetFileFilter(format)
+                };
+
+                if (saveFileDialog.ShowDialog() == true)
+                {
+                    string filePath = saveFileDialog.FileName;
+                    // Убедимся, что файл имеет правильное расширение
+                    string correctExtension = GetDefaultExtension(format);
+                    if (!filePath.EndsWith(correctExtension, StringComparison.OrdinalIgnoreCase))
+                    {
+                        filePath = Path.ChangeExtension(filePath, correctExtension);
+                    }
+
+                    ExportReport(filePath, format, tables, _Role, startDate, endDate);
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Ошибка в HandleReportOptions: {ex.Message}\nStackTrace: {ex.StackTrace}", "Ошибка", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
+        }
+
+        private string GetDefaultExtension(string format)
+        {
+            switch (format.ToLower())
+            {
+                case "word": return ".docx";
+                case "excel": return ".xlsx";
+                case "pdf": return ".pdf";
+                default: return ".docx";
+            }
+        }
+
+        private string GetFileFilter(string format)
+        {
+            switch (format.ToLower())
+            {
+                case "word": return "Word documents (*.docx)|*.docx";
+                case "excel": return "Excel files (*.xlsx)|*.xlsx";
+                case "pdf": return "PDF files (*.pdf)|*.pdf";
+                default: return "Word documents (*.docx)|*.docx";
+            }
+        }
+
+        private void ExportReport(string filePath, string format, List<string> tables, string role, DateTime? startDate, DateTime? endDate)
+        {
+            try
+            {
+                if (string.IsNullOrEmpty(filePath) || string.IsNullOrEmpty(format) || tables == null || string.IsNullOrEmpty(role))
+                {
+                    MessageBox.Show("Ошибка: некорректные параметры для экспорта!", "Ошибка", MessageBoxButton.OK, MessageBoxImage.Error);
+                    return;
+                }
+
+                switch (format.ToLower())
+                {
+                    case "word":
+                    case "pdf":
+                        ExportWord.ExportToWord(filePath, tables, startDate, endDate, role, format);
+                        break;
+                    case "excel":
+                        ExportExcel.ExportToExcel(filePath, tables, role, startDate, endDate);
+                        break;
+                    default:
+                        MessageBox.Show($"Неподдерживаемый формат: {format}", "Ошибка", MessageBoxButton.OK, MessageBoxImage.Error);
+                        break;
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Ошибка в ExportReport: {ex.Message}\nStackTrace: {ex.StackTrace}", "Ошибка", MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
     }

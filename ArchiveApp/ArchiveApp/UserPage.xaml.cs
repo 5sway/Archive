@@ -1,17 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
 using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 using System.Data.Entity;
 
 namespace ArchiveApp
@@ -20,6 +12,14 @@ namespace ArchiveApp
     {
         private bool isAddingNewRow = false;        // Флаг добавления новой строки
         private User newUser;                       // Новый пользователь для добавления
+        private List<User> _allUsers;               // Поле для хранения полного списка пользователей
+
+        private List<Role> _roles;                  // Список ролей
+        public List<Role> Roles
+        {
+            get { return _roles; }
+            set { _roles = value; }
+        }
 
         public UserPage()
         {
@@ -32,17 +32,11 @@ namespace ArchiveApp
         {
             using (var context = new ArchiveBaseEntities()) // Подключение к базе данных
             {
-                DataGridTable.ItemsSource = context.User.Include(u => u.Role).ToList(); // Загрузка пользователей с ролями
+                _allUsers = context.User.Include(u => u.Role).ToList(); // Загрузка пользователей с ролями
+                DataGridTable.ItemsSource = _allUsers; // Установка источника данных
             }
             LoadRoles();                            // Загрузка списка ролей
             DataGridTable.IsReadOnly = true;        // Установка режима "только чтение"
-        }
-
-        private List<Role> _roles;                  // Список ролей
-        public List<Role> Roles
-        {
-            get { return _roles; }
-            set { _roles = value; }
         }
 
         private void LoadRoles()
@@ -51,6 +45,40 @@ namespace ArchiveApp
             {
                 Roles = context.Role.ToList();      // Загрузка всех ролей
             }
+        }
+
+        private void UserSearchBox_TextChanged(object sender, TextChangedEventArgs e)
+        {
+            string searchText = UserSearchBox.Text.ToLower(); // Получение текста поиска (в нижнем регистре)
+
+            if (string.IsNullOrWhiteSpace(searchText))
+            {
+                // Если поле поиска пустое, показываем всех пользователей
+                DataGridTable.ItemsSource = _allUsers;
+            }
+            else
+            {
+                // Фильтрация пользователей по всем полям
+                var filteredUsers = _allUsers
+                    .Where(user =>
+                        (user.Role?.Name?.ToLower().Contains(searchText) == true) ||
+                        (user.Login?.ToLower().Contains(searchText) == true) ||
+                        (user.Password?.ToLower().Contains(searchText) == true) ||
+                        (user.Name?.ToLower().Contains(searchText) == true) ||
+                        (user.Last_Name?.ToLower().Contains(searchText) == true) ||
+                        (user.First_Name?.ToLower().Contains(searchText) == true) ||
+                        (user.Phone_Number?.ToLower().Contains(searchText) == true) ||
+                        (user.Email?.ToLower().Contains(searchText) == true)
+                    )
+                    .ToList();
+                DataGridTable.ItemsSource = filteredUsers;
+            }
+        }
+
+        private void ClearSearchBtn_Click(object sender, RoutedEventArgs e)
+        {
+            UserSearchBox.Text = string.Empty; // Очистка поля поиска
+            DataGridTable.ItemsSource = _allUsers; // Восстановление полного списка
         }
 
         private void DelBtn_Click(object sender, RoutedEventArgs e)

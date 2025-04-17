@@ -1,11 +1,10 @@
-﻿using Microsoft.Office.Interop.Word;
+﻿using DocumentFormat.OpenXml.ExtendedProperties;
+using Microsoft.Office.Interop.Word;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 using Word = Microsoft.Office.Interop.Word;
 
@@ -13,60 +12,120 @@ namespace ArchiveApp
 {
     class ExportWord
     {
-        public static void ExportToWord(string filePath)
+        public static void ExportToWord(string filePath, List<string> selectedTables, DateTime? startDate, DateTime? endDate, string userRole, string format)
         {
+            Word.Application wordApp = null;
+            Word.Document doc = null;
             try
             {
-                using (var context = new ArchiveBaseEntities()) // Подключение к базе данных
+                if (string.IsNullOrEmpty(filePath) || selectedTables == null || string.IsNullOrEmpty(userRole) || string.IsNullOrEmpty(format))
                 {
-                    var data = new                     // Загрузка всех данных из базы
+                    MessageBox.Show("Ошибка: некорректные параметры экспорта!", "Ошибка", MessageBoxButton.OK, MessageBoxImage.Error);
+                    return;
+                }
+
+                using (var context = new ArchiveBaseEntities())
+                {
+                    var data = new
                     {
-                        Documents = context.Document.ToList(),
-                        Requests = context.Request.Include("User").Include("Document").ToList(),
-                        Users = context.User.Include("Role").ToList(),
-                        RegistrationCards = context.Registration_Card.Include("User").Include("Document").ToList()
+                        Documents = context.Document.ToList() ?? new List<Document>(),
+                        Requests = context.Request.Include("User").Include("Document").ToList() ?? new List<Request>(),
+                        Users = context.User.Include("Role").ToList() ?? new List<User>(),
+                        RegistrationCards = context.Registration_Card.Include("User").Include("Document").ToList() ?? new List<Registration_Card>()
                     };
 
-                    if (File.Exists(filePath)) File.Delete(filePath); // Удаление существующего файла
-
-                    Word.Application wordApp = new Word.Application(); // Создание приложения Word
-                    wordApp.Visible = false;           // Скрытие интерфейса Word
-                    Word.Document doc = wordApp.Documents.Add(); // Создание нового документа
-
-                    SetDocumentStyles(doc);            // Настройка стилей документа
-                    AddTitle(doc, "Полный отчет архива документов"); // Добавление заголовка
-
-                    ExportDocumentsToWord(doc, data.Documents); // Экспорт документов
-
-                    if (data.Requests.Any() || data.Users.Any() || data.RegistrationCards.Any()) // Условный разрыв страницы
-                        AddPageBreak(doc);
-
-                    if (data.Requests.Any())           // Экспорт запросов
+                    // Фильтрация по периоду, если указан
+                    if (startDate.HasValue && endDate.HasValue)
                     {
-                        ExportRequestsToWord(doc, data.Requests);
-                        if (data.Users.Any() || data.RegistrationCards.Any()) AddPageBreak(doc);
+                        data = new
+                        {
+                            Documents = data.Documents.Where(d => d.Receipt_Date >= startDate && d.Receipt_Date <= endDate).ToList(),
+                            Requests = data.Requests.Where(r => r.Request_Date >= startDate && r.Request_Date <= endDate).ToList(),
+                            Users = data.Users, // Пользователи не фильтруются по дате
+                            RegistrationCards = data.RegistrationCards.Where(c => c.Registration_Date >= startDate && c.Registration_Date <= endDate).ToList()
+                        };
                     }
 
-                    if (data.Users.Any())              // Экспорт пользователей
+                    // Учет роли: делопроизводитель не видит запросы
+                    if (userRole == "Делопроизводитель")
                     {
-                        ExportUsersToWord(doc, data.Users);
-                        if (data.RegistrationCards.Any()) AddPageBreak(doc);
+                        selectedTables.Remove("Requests");
                     }
 
-                    if (data.RegistrationCards.Any())  // Экспорт регистрационных карточек
-                        ExportRegistrationCardsToWord(doc, data.RegistrationCards);
+                    // Удаляем существующий файл, если он есть
+                    if (File.Exists(filePath))
+                        File.Delete(filePath);
 
-                    doc.SaveAs2(filePath);             // Сохранение документа
-                    doc.Close();                       // Закрытие документа
-                    wordApp.Quit();                    // Закрытие приложения Word
+                    wordApp = new Word.Application();
+                    wordApp.Visible = false;
+                    wordApp.DisplayAlerts = Word.WdAlertLevel.wdAlertsNone; // Отключаем предупреждения
 
-                    ReleaseWordObjects(doc, wordApp);  // Освобождение ресурсов
-                    OpenExportedFile(filePath);        // Открытие файла
+                    doc = wordApp.Documents.Add();
+
+                    SetDocumentStyles(doc);
+                    AddTitle(doc, startDate.HasValue ? $"Отчет за период {startDate.Value:dd.MM.yyyy} - {endDate.Value:dd.MM.yyyy}" : "Отчет");
+
+                    bool isFirstTable = true;
+                    foreach (var table in selectedTables)
+                    {
+                        if (!isFirstTable && doc.Paragraphs.Count > 1)
+                            AddPageBreak(doc);
+
+                        switch (table)
+                        {
+                            case "Documents":
+                                if (data.Documents.Any())
+                                    ExportDocumentsToWord(doc, data.Documents);
+                                break;
+                            case "Requests":
+                                if (data.Requests.Any())
+                                    ExportRequestsToWord(doc, data.Requests);
+                                break;
+                            case "Users":
+                                if (data.Users.Any())
+                                    ExportUsersToWord(doc, data.Users);
+                                break;
+                            case "RegistrationCards":
+                                if (data.RegistrationCards.Any())
+                                    ExportRegistrationCardsToWord(doc, data.RegistrationCards);
+                                break;
+                            default:
+                                MessageBox.Show($"Неизвестная таблица: {table}", "Ошибка", MessageBoxButton.OK, MessageBoxImage.Warning);
+                                break;
+                        }
+                        isFirstTable = false;
+                    }
+
+                    // Определяем формат сохранения
+                    Word.WdSaveFormat saveFormat = format.Equals("PDF", StringComparison.OrdinalIgnoreCase)
+                        ? Word.WdSaveFormat.wdFormatPDF
+                        : Word.WdSaveFormat.wdFormatDocumentDefault;
+
+                    // Сохраняем только один раз
+                    doc.SaveAs2(filePath, saveFormat);
+
+                    // Закрываем без сохранения изменений
+                    object doNotSave = Word.WdSaveOptions.wdDoNotSaveChanges;
+                    doc.Close(ref doNotSave);
+                    wordApp.Quit();
+
+                    // Освобождаем ресурсы
+                    ReleaseWordObjects(doc, wordApp);
+
+                    OpenExportedFile(filePath);
                 }
             }
-            catch (Exception ex)                        // Обработка ошибок
+            catch (Exception ex)
             {
-                MessageBox.Show($"Ошибка при экспорте в Word: {ex.Message}", "Ошибка", MessageBoxButton.OK, MessageBoxImage.Error);
+                // Закрываем при ошибке
+                if (doc != null)
+                {
+                    object doNotSave = Word.WdSaveOptions.wdDoNotSaveChanges;
+                    doc.Close(ref doNotSave);
+                }
+                if (wordApp != null) wordApp.Quit();
+
+                MessageBox.Show($"Ошибка: {ex.Message}", "Ошибка экспорта", MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
 
@@ -74,108 +133,113 @@ namespace ArchiveApp
         {
             try
             {
-                Process.Start(new ProcessStartInfo(filePath) { UseShellExecute = true }); // Открытие файла через оболочку
+                if (!File.Exists(filePath))
+                {
+                    MessageBox.Show("Файл отчета не найден!", "Ошибка", MessageBoxButton.OK, MessageBoxImage.Error);
+                    return;
+                }
+                Process.Start(new ProcessStartInfo(filePath) { UseShellExecute = true });
             }
-            catch (Exception ex)                    // Обработка ошибок открытия
+            catch (Exception ex)
             {
-                MessageBox.Show($"Не удалось открыть файл: {ex.Message}", "Ошибка", MessageBoxButton.OK, MessageBoxImage.Warning);
+                MessageBox.Show($"Не удалось открыть файл: {ex.Message}\nStackTrace: {ex.StackTrace}", "Ошибка", MessageBoxButton.OK, MessageBoxImage.Warning);
             }
         }
 
         private static void SetDocumentStyles(Word.Document doc)
         {
-            doc.Content.Font.Name = "Times New Roman"; // Установка шрифта
-            doc.Content.Font.Size = 14;             // Установка размера шрифта
-            doc.Content.ParagraphFormat.LineSpacing = 18f; // Межстрочный интервал
-            doc.Content.ParagraphFormat.SpaceBefore = 0; // Отступ перед абзацем
-            doc.Content.ParagraphFormat.SpaceAfter = 0; // Отступ после абзаца
-            doc.Content.ParagraphFormat.Alignment = Word.WdParagraphAlignment.wdAlignParagraphCenter; // Выравнивание по центру
+            doc.Content.Font.Name = "Times New Roman";
+            doc.Content.Font.Size = 14;
+            doc.Content.ParagraphFormat.LineSpacing = 18f;
+            doc.Content.ParagraphFormat.SpaceBefore = 0;
+            doc.Content.ParagraphFormat.SpaceAfter = 0;
+            doc.Content.ParagraphFormat.Alignment = Word.WdParagraphAlignment.wdAlignParagraphCenter;
         }
 
         private static void AddTitle(Word.Document doc, string text)
         {
-            Word.Paragraph title = doc.Paragraphs.Add(); // Добавление абзаца для заголовка
-            title.Range.Text = text;                // Установка текста заголовка
-            title.Range.Font.Bold = 1;              // Жирный шрифт
-            title.Range.Font.Size = 16;             // Размер шрифта заголовка
-            title.Format.SpaceBefore = 0;           // Отступ перед заголовком
-            title.Format.SpaceAfter = 0;            // Отступ после заголовка
-            title.Format.Alignment = Word.WdParagraphAlignment.wdAlignParagraphCenter; // Выравнивание по центру
-            title.Range.InsertParagraphAfter();     // Добавление пустого абзаца после
+            Word.Paragraph title = doc.Paragraphs.Add();
+            title.Range.Text = text + "\r\n";
+            title.Range.Font.Bold = 1;
+            title.Range.Font.Size = 16;
+            title.Format.SpaceBefore = 0;
+            title.Format.SpaceAfter = 0;
+            title.Format.Alignment = Word.WdParagraphAlignment.wdAlignParagraphCenter;
         }
 
         private static void AddPageBreak(Word.Document doc)
         {
-            Word.Paragraph lastParagraph = doc.Paragraphs.Add(); // Добавление абзаца для разрыва
-            lastParagraph.Range.InsertBreak(Word.WdBreakType.wdPageBreak); // Вставка разрыва страницы
+            Word.Paragraph lastParagraph = doc.Paragraphs.Add();
+            lastParagraph.Range.InsertBreak(Word.WdBreakType.wdPageBreak);
         }
 
         private static void ExportDocumentsToWord(Word.Document doc, List<Document> documents)
         {
-            AddTableTitle(doc, "Документы");        // Добавление заголовка таблицы
-            Word.Table table = CreateWordTable(doc, new string[] { "ID", "Номер", "Название", "Источник", "Копии", "Тип хранения" }); // Создание таблицы
+            AddTableTitle(doc, "Документы");
+            Word.Table table = CreateWordTable(doc, new string[] { "ID", "Номер", "Дата", "Название", "Источник", "Копии", "Тип хранения" });
 
-            foreach (var item in documents)         // Заполнение таблицы данными документов
+            foreach (var item in documents)
             {
                 AddRowToWordTable(table, new string[] {
                     item.Id.ToString(),
-                    item.Number,
-                    item.Title,
-                    item.Source,
+                    item.Number ?? "",
+                    item.Receipt_Date.ToShortDateString() ?? "",
+                    item.Title ?? "",
+                    item.Source ?? "",
                     item.Copies_Count.ToString(),
-                    item.Storage_Type
+                    item.Storage_Type ?? ""
                 });
             }
-            FinalizeWordTable(table);               // Финальное форматирование таблицы
+            FinalizeWordTable(table);
         }
 
         private static void ExportRequestsToWord(Word.Document doc, List<Request> requests)
         {
-            AddTableTitle(doc, "Запросы");          // Добавление заголовка таблицы
-            Word.Table table = CreateWordTable(doc, new string[] { "ID", "Дата", "Причина", "Статус", "Запросил", "Документ" }); // Создание таблицы
+            AddTableTitle(doc, "Запросы");
+            Word.Table table = CreateWordTable(doc, new string[] { "ID", "Дата", "Причина", "Статус", "Запросил", "Документ" });
 
-            foreach (var item in requests)          // Заполнение таблицы данными запросов
+            foreach (var item in requests)
             {
-                string status = item.Status == true ? "Подтвержден" : "Отклонен"; // Форматирование статуса
+                string status = item.Status == true ? "Подтвержден" : "Отклонен";
                 AddRowToWordTable(table, new string[] {
                     item.Id.ToString(),
-                    item.Request_Date.ToShortDateString(),
-                    item.Reason,
+                    item.Request_Date.ToShortDateString() ?? "",
+                    item.Reason ?? "",
                     status,
                     item.User?.Name ?? "Неизвестно",
                     item.Document?.Title ?? "Неизвестно"
                 });
             }
-            FinalizeWordTable(table);               // Финальное форматирование таблицы
+            FinalizeWordTable(table);
         }
 
         private static void ExportUsersToWord(Word.Document doc, List<User> users)
         {
-            AddTableTitle(doc, "Пользователи");     // Добавление заголовка таблицы
-            Word.Table table = CreateWordTable(doc, new string[] { "ID", "Логин", "Имя", "Фамилия", "Отчество", "Роль", "Email", "Телефон" }); // Создание таблицы
+            AddTableTitle(doc, "Пользователи");
+            Word.Table table = CreateWordTable(doc, new string[] { "ID", "Логин", "Имя", "Фамилия", "Отчество", "Роль", "Email", "Телефон" });
 
-            foreach (var item in users)             // Заполнение таблицы данными пользователей
+            foreach (var item in users)
             {
                 AddRowToWordTable(table, new string[] {
                     item.Id.ToString(),
-                    item.Login,
-                    item.Name,
-                    item.Last_Name,
-                    item.First_Name,
+                    item.Login ?? "",
+                    item.Name ?? "",
+                    item.Last_Name ?? "",
+                    item.First_Name ?? "",
                     item.Role?.Name ?? "Неизвестно",
-                    item.Email,
-                    item.Phone_Number
+                    item.Email ?? "",
+                    item.Phone_Number ?? ""
                 });
             }
-            FinalizeWordTable(table);               // Финальное форматирование таблицы
+            FinalizeWordTable(table);
         }
 
         private static void ExportRegistrationCardsToWord(Word.Document doc, List<Registration_Card> cards)
         {
-            AddTableTitle(doc, "Регистрационные карты"); // Добавление заголовка таблицы
-            Word.Table table = CreateWordTable(doc, new string[] { "ID", "Дата регистрации", "Подпись", "Кем подписан", "Документ" }); // Создание таблицы
+            AddTableTitle(doc, "Регистрационные карты");
+            Word.Table table = CreateWordTable(doc, new string[] { "ID", "Дата регистрации", "Подпись", "Кем подписан", "Документ" });
 
-            foreach (var item in cards)             // Заполнение таблицы данными карточек
+            foreach (var item in cards)
             {
                 AddRowToWordTable(table, new string[] {
                     item.Id.ToString(),
@@ -185,72 +249,92 @@ namespace ArchiveApp
                     item.Document?.Title ?? "Неизвестно"
                 });
             }
-            FinalizeWordTable(table);               // Финальное форматирование таблицы
+            FinalizeWordTable(table);
         }
 
         private static void AddTableTitle(Word.Document doc, string title)
         {
-            Word.Paragraph tableTitle = doc.Paragraphs.Add(); // Добавление абзаца для заголовка таблицы
-            tableTitle.Range.Text = title;          // Установка текста заголовка
-            tableTitle.Range.Font.Bold = 1;         // Жирный шрифт
-            tableTitle.Range.Font.Size = 14;        // Размер шрифта
-            tableTitle.Format.SpaceBefore = 0;      // Отступ перед заголовком
-            tableTitle.Format.SpaceAfter = 0;       // Отступ после заголовка
-            tableTitle.Format.Alignment = Word.WdParagraphAlignment.wdAlignParagraphCenter; // Выравнивание по центру
-            tableTitle.Range.InsertParagraphAfter(); // Добавление пустого абзаца после
+            Word.Paragraph tableTitle = doc.Paragraphs.Add();
+            tableTitle.Range.Text = title + "\r\n";
+            tableTitle.Range.Font.Bold = 1;
+            tableTitle.Range.Font.Size = 14;
+            tableTitle.Format.SpaceBefore = 0;
+            tableTitle.Format.SpaceAfter = 0;
+            tableTitle.Format.Alignment = Word.WdParagraphAlignment.wdAlignParagraphCenter;
         }
 
         private static Word.Table CreateWordTable(Word.Document doc, string[] headers)
         {
-            Word.Table table = doc.Tables.Add(doc.Range(doc.Content.End - 1), 1, headers.Length); // Создание таблицы с одной строкой
-            for (int i = 0; i < headers.Length; i++) // Заполнение заголовков
+            Word.Table table = doc.Tables.Add(doc.Range(doc.Content.End - 1), 1, headers.Length);
+            for (int i = 0; i < headers.Length; i++)
             {
-                table.Cell(1, i + 1).Range.Text = headers[i]; // Установка текста заголовка
-                table.Cell(1, i + 1).Range.Font.Bold = 1; // Жирный шрифт для заголовков
-                table.Cell(1, i + 1).Range.ParagraphFormat.Alignment = Word.WdParagraphAlignment.wdAlignParagraphCenter; // Выравнивание по центру
+                table.Cell(1, i + 1).Range.Text = headers[i];
+                table.Cell(1, i + 1).Range.Font.Bold = 1;
+                table.Cell(1, i + 1).Range.ParagraphFormat.Alignment = Word.WdParagraphAlignment.wdAlignParagraphCenter;
             }
-            return table;                           // Возврат созданной таблицы
+            return table;
         }
 
         private static void AddRowToWordTable(Word.Table table, string[] values)
         {
-            table.Rows.Add();                       // Добавление новой строки
-            int rowIndex = table.Rows.Count;        // Индекс новой строки
-            for (int i = 0; i < values.Length; i++) // Заполнение ячеек строки
+            table.Rows.Add();
+            int rowIndex = table.Rows.Count;
+            for (int i = 0; i < values.Length; i++)
             {
-                table.Cell(rowIndex, i + 1).Range.Text = values[i] ?? ""; // Установка текста ячейки
-                table.Cell(rowIndex, i + 1).Range.Font.Bold = 0; // Обычный шрифт
-                table.Cell(rowIndex, i + 1).Range.ParagraphFormat.Alignment = Word.WdParagraphAlignment.wdAlignParagraphCenter; // Выравнивание по центру
+                table.Cell(rowIndex, i + 1).Range.Text = values[i] ?? "";
+                table.Cell(rowIndex, i + 1).Range.Font.Bold = 0;
+                table.Cell(rowIndex, i + 1).Range.ParagraphFormat.Alignment = Word.WdParagraphAlignment.wdAlignParagraphCenter;
             }
         }
 
         private static void FinalizeWordTable(Word.Table table)
         {
-            table.Columns.AutoFit();                // Автоматическая подгонка ширины колонок
-            table.Borders.Enable = 1;               // Включение границ таблицы
-            foreach (Word.Row row in table.Rows)    // Настройка выравнивания ячеек
+            table.Columns.AutoFit();
+            table.Borders.Enable = 1;
+            foreach (Word.Row row in table.Rows)
             {
                 foreach (Word.Cell cell in row.Cells)
                 {
-                    cell.VerticalAlignment = Word.WdCellVerticalAlignment.wdCellAlignVerticalCenter; // Вертикальное выравнивание по центру
+                    cell.VerticalAlignment = Word.WdCellVerticalAlignment.wdCellAlignVerticalCenter;
                 }
             }
         }
 
         private static void ReleaseWordObjects(params object[] objects)
         {
-            foreach (var obj in objects)            // Освобождение COM-объектов
+            if (objects == null) return;
+
+            foreach (var obj in objects)
             {
                 try
                 {
-                    System.Runtime.InteropServices.Marshal.ReleaseComObject(obj); // Освобождение объекта
+                    if (obj != null && System.Runtime.InteropServices.Marshal.IsComObject(obj))
+                    {
+                        // Освобождаем COM-объект
+                        while (System.Runtime.InteropServices.Marshal.ReleaseComObject(obj) > 0)
+                        {
+                            // Продолжаем Release, пока счетчик ссылок не станет 0
+                        }
+                    }
                 }
-                catch { }                           // Игнорирование ошибок
+                catch (Exception ex)
+                {
+                    // Логируем ошибку, но не прерываем выполнение
+                    Debug.WriteLine($"Ошибка при освобождении COM-объекта: {ex.Message}");
+                }
                 finally
                 {
-                    GC.Collect();                   // Принудительный сбор мусора
+                    // Для managed объектов просто убеждаемся, что они доступны для GC
+                    if (obj != null && !System.Runtime.InteropServices.Marshal.IsComObject(obj))
+                    {
+                    }
                 }
             }
+
+            // Принудительный сбор мусора
+            GC.Collect();
+            GC.WaitForPendingFinalizers();
+            GC.Collect(); // Дополнительный сбор для надежности
         }
     }
 }
