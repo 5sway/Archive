@@ -12,7 +12,7 @@
         <local:BoolToStatusConverter x:Key="BoolToStatusConverter"/>
     </Page.Resources>
 
-    <Grid Background="White">
+    <Grid Name="MainGrid" MouseDown="MainGrid_MouseDown" KeyDown="MainGrid_KeyDown" Background="White">
         <Grid.RowDefinitions>
             <RowDefinition Height="*"/>
             <RowDefinition Height="50"/>
@@ -32,8 +32,21 @@
               IsReadOnly="True"
               PreviewKeyDown="DataGridTable_PreviewKeyDown">
             <DataGrid.Columns>
-                <DataGridTextColumn Header="Дата запроса" Binding="{Binding Request_Date, StringFormat={}{0:dd.MM.yyyy}}" Width="*"/>
-                <DataGridTextColumn Header="Причина" Binding="{Binding Reason}" Width="*"/>
+                <DataGridTemplateColumn Header="Дата запроса" SortMemberPath="Request_Date" Width="*">
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <TextBlock Text="{Binding Request_Date, StringFormat={}{0:dd.MM.yyyy}}"/>
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                    <DataGridTemplateColumn.CellEditingTemplate>
+                        <DataTemplate>
+                            <DatePicker SelectedDate="{Binding Request_Date, UpdateSourceTrigger=PropertyChanged, ValidatesOnDataErrors=True}"
+                                        BorderThickness="0"
+                                        ToolTip="Выберите дату в формате дд.ММ.гггг"/>
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellEditingTemplate>
+                </DataGridTemplateColumn>
+                <DataGridTextColumn Header="Причина" Binding="{Binding Reason, UpdateSourceTrigger=PropertyChanged}" Width="*"/>
                 <DataGridTemplateColumn Header="Статус" Width="*" SortMemberPath="Status">
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
@@ -68,6 +81,7 @@
             </DataGrid.Columns>
         </DataGrid>
 
+        <!-- Остальная разметка без изменений -->
         <TextBox Name="ReqSearchBox" Width="300" Height="20" Grid.Row="1" Margin="0,-15,250,0"
                  VerticalAlignment="Center" TextAlignment="Left" VerticalContentAlignment="Center"
                  Padding="5,0,0,0" HorizontalAlignment="Right" FontSize="12" TextChanged="ReqSearchBox_TextChanged"></TextBox>

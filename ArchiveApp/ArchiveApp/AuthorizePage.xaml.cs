@@ -6,6 +6,7 @@ using System.Text;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
+using System.Windows.Media;
 using System.Windows.Threading;
 
 namespace ArchiveApp
@@ -34,6 +35,10 @@ namespace ArchiveApp
             SetupInitialState();                  // Настройка начального состояния интерфейса
             ResetLoginUI();                       // Сброс UI до начального состояния
             timeBeginPeriod(1);                   // Установка высокой точности таймера (1 мс)
+            // Подписка на событие PreviewMouseDown для обработки кликов вне полей
+            PreviewMouseDown += Page_PreviewMouseDown;
+            // Подписка на событие PreviewTextInput для автофокуса
+            PreviewTextInput += Page_PreviewTextInput;
         }
 
         ~AuthorizePage()
@@ -198,6 +203,7 @@ namespace ArchiveApp
         {
             LoginText.Visibility = string.IsNullOrWhiteSpace(LoginBox.Text) ? Visibility.Visible : Visibility.Collapsed;
             PasswordText.Visibility = string.IsNullOrWhiteSpace(PasswordBox.Password) ? Visibility.Visible : Visibility.Collapsed;
+            CaptchaText.Visibility = string.IsNullOrWhiteSpace(CaptchaTextBox.Text) ? Visibility.Visible : Visibility.Collapsed;
         }
 
         private void VerifyCredentials()
@@ -378,62 +384,119 @@ namespace ArchiveApp
                 AuthorizeWithCaptcha();
         }
 
-        private void LoginBox_GotFocus(object sender, RoutedEventArgs e)
+        private void LoginBox_TextChanged(object sender, TextChangedEventArgs e)
         {
-            LoginText.Visibility = Visibility.Collapsed; // Скрытие подсказки при фокусе на логине
+            UpdatePlaceholderVisibility();      // Скрытие placeholder'а при вводе текста
+        }
+
+        private void PasswordBox_PasswordChanged(object sender, RoutedEventArgs e)
+        {
+            UpdatePlaceholderVisibility();      // Скрытие placeholder'а при вводе пароля
+        }
+
+        private void CaptchaTextBox_TextChanged(object sender, TextChangedEventArgs e)
+        {
+            UpdatePlaceholderVisibility();      // Скрытие placeholder'а при вводе текста в капчу
         }
 
         private void LoginBox_LostFocus(object sender, RoutedEventArgs e)
         {
-            UpdatePlaceholderVisibility();      // Обновление видимости подсказок
-        }
-
-        private void PasswordBox_GotFocus(object sender, RoutedEventArgs e)
-        {
-            PasswordText.Visibility = Visibility.Collapsed; // Скрытие подсказки при фокусе на пароле
+            UpdatePlaceholderVisibility();      // Обновление видимости placeholder'а
         }
 
         private void PasswordBox_LostFocus(object sender, RoutedEventArgs e)
         {
-            UpdatePlaceholderVisibility();      // Обновление видимости подсказок
-        }
-
-        private void CaptchaTextBox_GotFocus(object sender, RoutedEventArgs e)
-        {
-            CaptchaText.Visibility = Visibility.Collapsed; // Скрытие подсказки при фокусе на капче
+            UpdatePlaceholderVisibility();      // Обновление видимости placeholder'а
         }
 
         private void CaptchaTextBox_LostFocus(object sender, RoutedEventArgs e)
         {
-            CaptchaText.Visibility = string.IsNullOrWhiteSpace(CaptchaTextBox.Text) ?
-                Visibility.Visible : Visibility.Collapsed;
+            UpdatePlaceholderVisibility();      // Обновление видимости placeholder'а
         }
 
         private void LoginText_MouseDown(object sender, MouseButtonEventArgs e)
         {
-            LoginText.Visibility = Visibility.Collapsed; // Скрытие подсказки
-            LoginBox.Focus();                           // Перевод фокуса на поле логина
+            LoginBox.Focus();                   // Перевод фокуса на поле логина
         }
 
         private void PasswordText_MouseDown(object sender, MouseButtonEventArgs e)
         {
-            PasswordText.Visibility = Visibility.Collapsed; // Скрытие подсказки
-            PasswordBox.Focus();                           // Перевод фокуса на поле пароля
+            PasswordBox.Focus();                // Перевод фокуса на поле пароля
         }
 
         private void CancelBtn_Click(object sender, RoutedEventArgs e)
         {
-            LoginBox.Clear();                     // Очистка поля логина
-            PasswordBox.Clear();                  // Очистка поля пароля
-            UpdatePlaceholderVisibility();        // Обновление видимости подсказок
+            LoginBox.Clear();                   // Очистка поля логина
+            PasswordBox.Clear();                // Очистка поля пароля
+            UpdatePlaceholderVisibility();      // Обновление видимости подсказок
         }
 
         private void CaptchaText_MouseDown(object sender, MouseButtonEventArgs e)
         {
-            CaptchaText.Visibility = Visibility.Collapsed; // Скрытие подсказки
-            CaptchaTextBox.Focus();                           // Перевод фокуса на поле капчи
+            CaptchaTextBox.Focus();             // Перевод фокуса на поле капчи
         }
-        
+
+        private void Page_PreviewMouseDown(object sender, MouseButtonEventArgs e)
+        {
+            // Получаем элемент, на который был произведён клик
+            var clickedElement = e.OriginalSource as DependencyObject;
+
+            // Проверяем, является ли клик по корневому Grid или его прямой области
+            bool isEmptySpace = false;
+            while (clickedElement != null)
+            {
+                // Если клик был на корневом Grid (без других элементов)
+                if (clickedElement is Grid grid && grid.Name == "MainGrid")
+                {
+                    isEmptySpace = true;
+                    break;
+                }
+                // Если клик был на другом элементе (например, кнопка, TextBlock, Image), выходим
+                if (clickedElement is Button || clickedElement is TextBlock ||
+                    clickedElement is Image || clickedElement is TextBox ||
+                    clickedElement is PasswordBox)
+                {
+                    break;
+                }
+                clickedElement = VisualTreeHelper.GetParent(clickedElement);
+            }
+
+            // Если клик был на пустом месте (корневой Grid) и есть фокус на поле ввода
+            if (isEmptySpace)
+            {
+                var focusedElement = Keyboard.FocusedElement;
+                if (focusedElement == LoginBox || focusedElement == PasswordBox || focusedElement == CaptchaTextBox)
+                {
+                    Keyboard.ClearFocus(); // Снимаем фокус
+                    UpdatePlaceholderVisibility(); // Обновляем видимость placeholder'ов
+                }
+            }
+        }
+
+        private void Page_PreviewTextInput(object sender, TextCompositionEventArgs e)
+        {
+            // Если нет фокуса на полях ввода, переводим фокус на LoginBox
+            if (!(LoginBox.IsFocused || PasswordBox.IsFocused || CaptchaTextBox.IsFocused))
+            {
+                LoginBox.Focus();
+            }
+        }
+
+        private void MainGrid_KeyDown(object sender, KeyEventArgs e)
+        {
+            // Проверяем, нажата ли клавиша Esc
+            if (e.Key == Key.Escape)
+            {
+                // Если один из DatePicker в фокусе, снимаем фокус
+                if (Keyboard.FocusedElement == LoginBox || Keyboard.FocusedElement == PasswordBox ||Keyboard.FocusedElement == CaptchaTextBox)
+                {
+                    Keyboard.ClearFocus();
+                    e.Handled = true; // Предотвращаем дальнейшую обработку события
+                }
+            }
+        }
+
         public event Action OnUserAuthorized;     // Событие успешной авторизации
     }
+
 }

@@ -210,5 +210,50 @@ namespace ArchiveApp
                 }
             }
         }
+
+        private void MainGrid_MouseDown(object sender, MouseButtonEventArgs e)
+        {
+            // Получаем элемент, на который был произведён клик
+            var clickedElement = e.OriginalSource as DependencyObject;
+
+            // Проверяем, является ли клик по корневому Grid (RootGrid)
+            bool isEmptySpace = false;
+            while (clickedElement != null)
+            {
+                if (clickedElement is Grid grid && grid.Name == "MainGrid")
+                {
+                    isEmptySpace = true;
+                    break;
+                }
+                // Игнорируем клики по интерактивным элементам
+                if (clickedElement is Button || clickedElement is TextBox ||
+                    clickedElement is TextBlock || clickedElement is Image ||
+                    clickedElement is DataGrid || clickedElement is ComboBox)
+                {
+                    break;
+                }
+                clickedElement = VisualTreeHelper.GetParent(clickedElement);
+            }
+
+            // Если клик был на пустом месте и DocSearchBox в фокусе, снимаем фокус
+            if (isEmptySpace && Keyboard.FocusedElement == TitleTextBox || Keyboard.FocusedElement == RegistrationDatePicker)
+            {
+                Keyboard.ClearFocus();
+            }
+        }
+
+        private void MainGrid_KeyDown(object sender, KeyEventArgs e)
+        {
+            // Проверяем, нажата ли клавиша Esc или Enter
+            if (e.Key == Key.Escape || e.Key == Key.Enter)
+            {
+                // Если один из DatePicker в фокусе, снимаем фокус
+                if (Keyboard.FocusedElement == TitleTextBox || Keyboard.FocusedElement == RegistrationDatePicker)
+                {
+                    Keyboard.ClearFocus();
+                    e.Handled = true; // Предотвращаем дальнейшую обработку события
+                }
+            }
+        }
     }
 }

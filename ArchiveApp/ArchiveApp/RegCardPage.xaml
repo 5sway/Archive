@@ -41,7 +41,7 @@
         </Style>
     </Page.Resources>
 
-    <Grid Margin="10" Background="White">
+    <Grid Name="MainGrid" Margin="10" Background="White" MouseDown="MainGrid_MouseDown" KeyDown="MainGrid_KeyDown">
         <ComboBox x:Name="DocumentComboBox"
                   Width="auto" Height="25"
                   VerticalAlignment="Top" HorizontalAlignment="Left"

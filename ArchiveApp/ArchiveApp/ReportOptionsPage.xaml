@@ -8,7 +8,7 @@
     <Page.Resources>
         <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter"/>
     </Page.Resources>
-    <Grid Margin="10">
+    <Grid Margin="10" Name="MainGrid" MouseDown="MainGrid_MouseDown" KeyDown="MainGrid_KeyDown">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>

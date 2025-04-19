@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Input;
+using System.Windows.Media;
 
 namespace ArchiveApp
 {
@@ -181,6 +183,53 @@ namespace ArchiveApp
             catch (Exception ex)
             {
                 MessageBox.Show($"Ошибка при создании отчета: {ex.Message}", "Ошибка", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
+        }
+
+        private void MainGrid_MouseDown(object sender, System.Windows.Input.MouseButtonEventArgs e)
+        {
+            // Получаем элемент, на который был произведён клик
+            var clickedElement = e.OriginalSource as DependencyObject;
+
+            // Проверяем, является ли клик по корневому Grid (MainGrid)
+            bool isEmptySpace = false;
+            while (clickedElement != null)
+            {
+                if (clickedElement is Grid grid && grid.Name == "MainGrid")
+                {
+                    isEmptySpace = true;
+                    break;
+                }
+                // Игнорируем клики по интерактивным элементам, включая DatePicker
+                if (clickedElement is Button || clickedElement is TextBox ||
+                    clickedElement is TextBlock || clickedElement is Image ||
+                    clickedElement is DataGrid || clickedElement is ComboBox ||
+                    clickedElement is CheckBox || clickedElement is RadioButton ||
+                    clickedElement is DatePicker)
+                {
+                    break;
+                }
+                clickedElement = VisualTreeHelper.GetParent(clickedElement);
+            }
+
+            // Если клик был на пустом месте и один из DatePicker в фокусе, снимаем фокус
+            if (isEmptySpace && (Keyboard.FocusedElement == StartDatePicker || Keyboard.FocusedElement == EndDatePicker))
+            {
+                Keyboard.ClearFocus();
+            }
+        }
+
+        private void MainGrid_KeyDown(object sender, KeyEventArgs e)
+        {
+            // Проверяем, нажата ли клавиша Esc или Enter
+            if (e.Key == Key.Escape || e.Key == Key.Enter)
+            {
+                // Если один из DatePicker в фокусе, снимаем фокус
+                if (Keyboard.FocusedElement == StartDatePicker || Keyboard.FocusedElement == EndDatePicker)
+                {
+                    Keyboard.ClearFocus();
+                    e.Handled = true; // Предотвращаем дальнейшую обработку события
+                }
             }
         }
     }

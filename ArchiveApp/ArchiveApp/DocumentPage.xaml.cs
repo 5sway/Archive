@@ -1,18 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics.Contracts;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 
 namespace ArchiveApp
 {
@@ -43,6 +35,8 @@ namespace ArchiveApp
                 EditBtn.Visibility = Visibility.Collapsed; // Скрытие кнопки редактирования
                 return;
             }
+            // Регистрируем обработчик события BeginningEdit
+            DataGridTable.BeginningEdit += DataGridTable_BeginningEdit;
         }
 
         private void LoadStorageTypes()
@@ -64,7 +58,7 @@ namespace ArchiveApp
             DataGridTable.IsReadOnly = true;        // Установка режима "только чтение"
         }
 
-        private void DelBtn_Click(object sender, RoutedEventArgs e)
+        private void DeleteSelectedDocuments()
         {
             var documentsForRemoving = DataGridTable.SelectedItems.Cast<Document>().ToList(); // Получение выбранных документов
             if (documentsForRemoving.Count == 0)    // Проверка наличия выбранных элементов
@@ -102,7 +96,12 @@ namespace ArchiveApp
             }
         }
 
-        private void EditBtn_Click(object sender, RoutedEventArgs e)
+        private void DelBtn_Click(object sender, RoutedEventArgs e)
+        {
+            DeleteSelectedDocuments(); // Вызываем метод удаления
+        }
+
+        private void ToggleEditMode()
         {
             if (DataGridTable.IsReadOnly)           // Переключение в режим редактирования
             {
@@ -115,6 +114,11 @@ namespace ArchiveApp
                 EditBtn.Content = "Изменить";       // Восстановление текста кнопки
                 SaveChanges();                     // Сохранение изменений
             }
+        }
+
+        private void EditBtn_Click(object sender, RoutedEventArgs e)
+        {
+            ToggleEditMode(); // Вызываем метод переключения режима
         }
 
         private void SaveChanges()
@@ -130,6 +134,7 @@ namespace ArchiveApp
                         string.IsNullOrWhiteSpace(newDocument.Storage_Type))
                     {
                         RemoveEmptyRow();           // Удаление пустой строки при ошибке
+                        MessageBox.Show("Обязательные поля не заполнены. Строка удалена.", "Предупреждение", MessageBoxButton.OK, MessageBoxImage.Warning);
                         return;
                     }
 
@@ -186,38 +191,47 @@ namespace ArchiveApp
 
         private void DataGridTable_RowEditEnding(object sender, DataGridRowEditEndingEventArgs e)
         {
-            if (isAddingNewRow && e.Row.Item == newDocument) // Проверяем, что это новая строка
+            if (isAddingNewRow && e.Row.Item == newDocument)
             {
-                var document = e.Row.Item as Document;
-                if (document != null)
+                // Даём время на обновление данных перед проверкой
+                Dispatcher.BeginInvoke(new Action(() =>
                 {
-                    // Проверка обязательных полей
-                    if (string.IsNullOrWhiteSpace(document.Title) ||
-                        string.IsNullOrWhiteSpace(document.Number) ||
-                        string.IsNullOrWhiteSpace(document.Source) ||
-                        string.IsNullOrWhiteSpace(document.Storage_Type))
+                    var document = e.Row.Item as Document;
+                    if (document != null)
                     {
-                        RemoveEmptyRow();
-                        MessageBox.Show("Обязательные поля не заполнены. Строка удалена.", "Предупреждение", MessageBoxButton.OK, MessageBoxImage.Warning);
-                        return;
-                    }
+                        // Проверка обязательных полей
+                        if (string.IsNullOrWhiteSpace(document.Title) ||
+                            string.IsNullOrWhiteSpace(document.Number) ||
+                            string.IsNullOrWhiteSpace(document.Source) ||
+                            string.IsNullOrWhiteSpace(document.Storage_Type))
+                        {
+                            RemoveEmptyRow();
+                            MessageBox.Show("Обязательные поля не заполнены. Строка удалена.", "Предупреждение", MessageBoxButton.OK, MessageBoxImage.Warning);
+                            return;
+                        }
 
-                    // Проверка Copies_Count
-                    if (document.Copies_Count <= 0)
-                    {
-                        RemoveEmptyRow();
-                        MessageBox.Show("Количество копий должно быть больше 0. Строка удалена.", "Предупреждение", MessageBoxButton.OK, MessageBoxImage.Warning);
-                        return;
+                        // Проверка Copies_Count
+                        if (document.Copies_Count <= 0)
+                        {
+                            RemoveEmptyRow();
+                            MessageBox.Show("Количество копий должно быть больше 0. Строка удалена.", "Предупреждение", MessageBoxButton.OK, MessageBoxImage.Warning);
+                            return;
+                        }
                     }
-                }
+                }), System.Windows.Threading.DispatcherPriority.Background);
             }
         }
 
         private void DataGridTable_PreviewKeyDown(object sender, KeyEventArgs e)
         {
-            if (e.Key == Key.Enter)                 // Обработка нажатия Enter
+            if (e.Key == Key.Delete && currentUserRole != "Делопроизводитель") // Обработка нажатия Delete
             {
-                e.Handled = true;                   // Отмена стандартного поведения
+                e.Handled = true; // Предотвращаем стандартное поведение
+                DeleteSelectedDocuments(); // Вызываем метод удаления
+            }
+            else if (e.Key == Key.Enter) // Обработка нажатия Enter
+            {
+                e.Handled = true; // Отмена стандартного поведения
                 DataGrid dataGrid = sender as DataGrid; // Получение DataGrid
                 if (dataGrid == null) return;
 
@@ -225,10 +239,39 @@ namespace ArchiveApp
                 if (currentCell.Column == null) return;
 
                 int currentColumnIndex = currentCell.Column.DisplayIndex; // Индекс текущей колонки
+                int totalColumns = dataGrid.Columns.Count; // Общее количество столбцов
+
+                // Проверяем, является ли текущий столбец последним (Storage_Type)
+                if (currentColumnIndex == totalColumns - 1 && currentUserRole != "Делопроизводитель")
+                {
+                    try
+                    {
+                        dataGrid.CommitEdit(DataGridEditingUnit.Cell, true);
+                        dataGrid.CommitEdit(DataGridEditingUnit.Row, true);
+                        ToggleEditMode(); // Вызываем логику кнопки Edit
+                    }
+                    catch (Exception ex)
+                    {
+                        MessageBox.Show($"Ошибка валидации данных: {ex.Message}", "Ошибка", MessageBoxButton.OK, MessageBoxImage.Warning);
+                    }
+                    return;
+                }
+
+                // Попытка завершить редактирование текущей ячейки
+                try
+                {
+                    dataGrid.CommitEdit(DataGridEditingUnit.Cell, true);
+                }
+                catch (Exception ex)
+                {
+                    System.Diagnostics.Debug.WriteLine($"Validation error: {ex.Message}");
+                    MessageBox.Show("Некорректный формат даты. Пожалуйста, исправьте значение.", "Ошибка", MessageBoxButton.OK, MessageBoxImage.Warning);
+                }
+
                 int nextColumnIndex = currentColumnIndex + 1; // Следующий индекс колонки
                 int currentRowIndex = dataGrid.Items.IndexOf(currentCell.Item); // Индекс текущей строки
 
-                if (nextColumnIndex < dataGrid.Columns.Count) // Переход к следующей колонке
+                if (nextColumnIndex < totalColumns) // Переход к следующей колонке
                 {
                     dataGrid.CurrentCell = new DataGridCellInfo(dataGrid.Items[currentRowIndex], dataGrid.Columns[nextColumnIndex]);
                 }
@@ -238,6 +281,15 @@ namespace ArchiveApp
                 }
 
                 dataGrid.Dispatcher.InvokeAsync(() => dataGrid.BeginEdit(), System.Windows.Threading.DispatcherPriority.Input); // Запуск редактирования
+            }
+        }
+
+        private void DataGridTable_BeginningEdit(object sender, DataGridBeginningEditEventArgs e)
+        {
+            if (isAddingNewRow && e.Row.Item != newDocument && currentUserRole != "Делопроизводитель")
+            {
+                // Отменяем редактирование для всех строк, кроме новой
+                e.Cancel = true;
             }
         }
 
@@ -266,17 +318,7 @@ namespace ArchiveApp
             }
 
             DataGridTable.SelectedItem = newDocument; // Установка фокуса на новую строку
-
-            foreach (var item in DataGridTable.Items) // Блокировка других строк
-            {
-                if (item is Document doc && doc != newDocument)
-                {
-                    var row = DataGridTable.ItemContainerGenerator.ContainerFromItem(doc) as DataGridRow;
-                    if (row != null) row.IsEnabled = false; // Отключение строки
-                }
-            }
-
-            DataGridTable.IsReadOnly = false;       // Разрешение редактирования
+            DataGridTable.IsReadOnly = false;       // Разрешение редактирования для новой строки
             EditBtn.Content = "Сохранить";          // Изменение текста кнопки
         }
 
@@ -295,7 +337,8 @@ namespace ArchiveApp
                 var filteredDocuments = _allDocuments
                     .Where(doc =>
                         // Проверка всех полей (преобразование в строку и нижний регистр)
-                        doc.Receipt_Date.ToString("dd.MM.yyyy").ToLower().Contains(searchText) || (doc.Number?.ToLower().Contains(searchText) == true) ||
+                        doc.Receipt_Date.ToString("dd.MM.yyyy").ToLower().Contains(searchText) ||
+                        (doc.Number?.ToLower().Contains(searchText) == true) ||
                         (doc.Title?.ToLower().Contains(searchText) == true) ||
                         (doc.Annotation?.ToLower().Contains(searchText) == true) ||
                         (doc.Source?.ToLower().Contains(searchText) == true) ||
@@ -306,10 +349,56 @@ namespace ArchiveApp
                 DataGridTable.ItemsSource = filteredDocuments;
             }
         }
+
         private void ClearSearchBtn_Click(object sender, RoutedEventArgs e)
         {
             DocSearchBox.Text = string.Empty; // Очистка поля поиска
             DataGridTable.ItemsSource = _allDocuments; // Восстановление полного списка
+        }
+
+        private void MainGrid_MouseDown(object sender, MouseButtonEventArgs e)
+        {
+            // Получаем элемент, на который был произведён клик
+            var clickedElement = e.OriginalSource as DependencyObject;
+
+            // Проверяем, является ли клик по корневому Grid (MainGrid)
+            bool isEmptySpace = false;
+            while (clickedElement != null)
+            {
+                if (clickedElement is Grid grid && grid.Name == "MainGrid")
+                {
+                    isEmptySpace = true;
+                    break;
+                }
+                // Игнорируем клики по интерактивным элементам
+                if (clickedElement is Button || clickedElement is TextBox ||
+                    clickedElement is TextBlock || clickedElement is Image ||
+                    clickedElement is DataGrid || clickedElement is ComboBox)
+                {
+                    break;
+                }
+                clickedElement = VisualTreeHelper.GetParent(clickedElement);
+            }
+
+            // Если клик был на пустом месте и DocSearchBox в фокусе, снимаем фокус
+            if (isEmptySpace && Keyboard.FocusedElement == DocSearchBox)
+            {
+                Keyboard.ClearFocus();
+            }
+        }
+
+        private void MainGrid_KeyDown(object sender, KeyEventArgs e)
+        {
+            // Проверяем, нажата ли клавиша Esc или Enter
+            if (e.Key == Key.Escape || e.Key == Key.Enter)
+            {
+                // Если DocSearchBox в фокусе, снимаем фокус
+                if (Keyboard.FocusedElement == DocSearchBox)
+                {
+                    Keyboard.ClearFocus();
+                    e.Handled = true; // Предотвращаем дальнейшую обработку события
+                }
+            }
         }
     }
 }

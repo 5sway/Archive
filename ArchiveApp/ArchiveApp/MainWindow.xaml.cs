@@ -52,16 +52,6 @@ namespace ArchiveApp
             MainFrame.Navigated += MainFrame_Navigated; // Подписка на событие смены страницы
             Closed += (s, e) => timeEndPeriod(1);    // Отключение высокой точности таймера при закрытии окна
             MouseDown += Window_MouseDown;
-            MainGrid.MouseDown += MainGrid_MouseDown; // Подписка на событие клика по пустому месту
-
-            // Подписка на события фокуса для SearchBox
-            SearchBox.GotFocus += SearchBox_GotFocus;
-            SearchBox.LostFocus += SearchBox_LostFocus;
-        }
-
-        private void SearchBox_GotFocus(object sender, RoutedEventArgs e)
-        {
-            UpdateSearchTextVisibility();
         }
 
         private void SearchBox_LostFocus(object sender, RoutedEventArgs e)
@@ -73,8 +63,8 @@ namespace ArchiveApp
         {
             if (MainFrame.Content is AuthorizePage) return;
 
-            // Подсказка видна, если SearchBox пуст и не в фокусе
-            SearchText.Visibility = (string.IsNullOrWhiteSpace(SearchBox.Text) && !SearchBox.IsFocused)
+            // Подсказка видна, если SearchBox пуст
+            SearchText.Visibility = string.IsNullOrWhiteSpace(SearchBox.Text)
                 ? Visibility.Visible
                 : Visibility.Collapsed;
         }
@@ -146,7 +136,11 @@ namespace ArchiveApp
                 { t => t.StartsWith("д") && t.Length > 2, () => NavigateIfNotCurrent<DocumentPage>() },
                 { t => t.StartsWith("к") && t.Length > 2, () => NavigateIfNotCurrent<RegCardPage>() },
                 { t => t.StartsWith("р") && t.Length > 2, () => NavigateIfNotCurrent(() => new MainMenuPage(currentRole)) },
-                { t => t.StartsWith("п") && t.Length > 2 && currentRole == "Администратор", () => NavigateIfNotCurrent<UserPage>() }
+                { t => t.StartsWith("п") && t.Length > 2 && currentRole == "Администратор", () => NavigateIfNotCurrent<UserPage>() },
+                { t => t.StartsWith("о") && t.Length > 2 && currentRole == "Администратор", () => NavigateIfNotCurrent(() => new ReportOptionsPage(true, currentRole)) },
+                { t => t.StartsWith("о") && t.Length > 2, () => NavigateIfNotCurrent(() => new ReportOptionsPage(false, currentRole)) }
+
+
             };
 
             foreach (var route in pageRoutes)
@@ -182,7 +176,7 @@ namespace ArchiveApp
             else
             {
                 ShowElements();
-                // Проверяем роль пользователя и скрываем кнопки для "Аудитор" и "Менеджер"
+                // Проверяем роль пользователя и скрываем кнопки для "Делопроизводитель"
                 string role = UserData.CurrentUserRole;
                 if (role == "Делопроизводитель")
                 {
@@ -195,6 +189,7 @@ namespace ArchiveApp
             }
             HighlightActiveButton();
             UpdateSearchTextVisibility();
+            Keyboard.ClearFocus(); // Сбрасываем фокус после навигации
         }
 
         private void HideElements()
@@ -210,7 +205,10 @@ namespace ArchiveApp
             ExitBtn.Visibility = Visibility.Collapsed;
             SearchBox.Visibility = Visibility.Collapsed;
             SearchText.Visibility = Visibility.Collapsed;
+            RepBtn.Visibility = Visibility.Collapsed;
             SearchBox.Text = "";
+            Keyboard.ClearFocus();
+            MenuGrid.ClearValue(FrameworkElement.FocusVisualStyleProperty);
         }
 
         private void ShowElements()
@@ -226,8 +224,19 @@ namespace ArchiveApp
             NotBtn.Visibility = Visibility.Visible;
             ExitBtn.Visibility = Visibility.Visible;
             SearchBox.Visibility = Visibility.Visible;
+            RepBtn.Visibility = Visibility.Visible;
+            string role = UserData.CurrentUserRole;
+            if (role == "Делопроизводитель")
+            {
+                ReqBtn.Visibility = Visibility.Collapsed;
+            }
+
             UpdateSearchTextVisibility();
             SearchBox.Text = "";
+
+            // Сбрасываем фокус
+            Keyboard.ClearFocus();
+            MenuGrid.ClearValue(FrameworkElement.FocusVisualStyleProperty);
         }
 
         private void SearchBtn_Click(object sender, RoutedEventArgs e)
@@ -500,6 +509,7 @@ namespace ArchiveApp
 
         private void MainGrid_MouseDown(object sender, MouseButtonEventArgs e)
         {
+            // Закрытие уведомления, если оно открыто
             if (_isNotificationVisible)
             {
                 var popupPosition = _notificationPopup.TransformToAncestor(MainGrid).Transform(new Point(0, 0));
@@ -513,13 +523,110 @@ namespace ArchiveApp
                 }
             }
 
-            UpdateSearchTextVisibility();
+            // Проверяем, находимся ли мы на странице авторизации
+            if (MainFrame.Content is AuthorizePage) return;
+
+            // Получаем элемент, на который был произведён клик
+            var clickedElement = e.OriginalSource as DependencyObject;
+
+            // Проверяем, является ли клик по корневому Grid (MainGrid)
+            bool isEmptySpace = false;
+            while (clickedElement != null)
+            {
+                if (clickedElement is Grid grid && grid.Name == "MainGrid")
+                {
+                    isEmptySpace = true;
+                    break;
+                }
+                // Игнорируем клики по другим элементам (например, Button, TextBox, TextBlock)
+                if (clickedElement is Button || clickedElement is TextBox ||
+                    clickedElement is TextBlock || clickedElement is Image ||
+                    clickedElement is Frame || clickedElement is Border)
+                {
+                    break;
+                }
+                clickedElement = VisualTreeHelper.GetParent(clickedElement);
+            }
+
+            // Если клик был на пустом месте и SearchBox в фокусе, снимаем фокус
+            if (isEmptySpace && Keyboard.FocusedElement == SearchBox)
+            {
+                Keyboard.ClearFocus();
+                UpdateSearchTextVisibility();
+            }
         }
 
         private void SearchText_MouseDown(object sender, MouseButtonEventArgs e)
         {
-            SearchText.Visibility = Visibility.Collapsed; // Скрытие подсказки
             SearchBox.Focus();                           // Перевод фокуса на поле поиска
+        }
+
+        private void RepBtn_Click(object sender, RoutedEventArgs e)
+        {
+            string userRole = UserData.CurrentUserRole;
+            if (userRole == "Администратор")
+            {
+                MainFrame.Navigate(new ReportOptionsPage(true, userRole));
+                HighlightActiveButton();
+                UpdateSearchTextVisibility();
+            }
+            else
+            {
+                MainFrame.Navigate(new ReportOptionsPage(false, userRole));
+                HighlightActiveButton();
+                UpdateSearchTextVisibility();
+            }
+
+        }
+        private void MainFrame_MouseDown(object sender, MouseButtonEventArgs e)
+        {
+            // Проверяем, находимся ли мы на странице авторизации
+            if (MainFrame.Content is AuthorizePage) return;
+
+            // Получаем элемент, на который был произведён клик
+            var clickedElement = e.OriginalSource as DependencyObject;
+
+            // Проверяем, является ли клик по корневому элементу страницы (обычно Grid)
+            bool isEmptySpace = false;
+            while (clickedElement != null)
+            {
+                // Если клик был на корневом Grid страницы (без имени, чтобы исключить вложенные Grid)
+                if (clickedElement is Grid grid && string.IsNullOrEmpty(grid.Name))
+                {
+                    isEmptySpace = true;
+                    break;
+                }
+                // Игнорируем клики по другим элементам (например, Button, TextBox, TextBlock)
+                if (clickedElement is Button || clickedElement is TextBox ||
+                    clickedElement is TextBlock || clickedElement is Image ||
+                    clickedElement is Border || clickedElement is DataGrid ||
+                    clickedElement is ListBox || clickedElement is ComboBox)
+                {
+                    break;
+                }
+                clickedElement = VisualTreeHelper.GetParent(clickedElement);
+            }
+
+            // Если клик был на пустом месте и SearchBox в фокусе, снимаем фокус
+            if (isEmptySpace && Keyboard.FocusedElement == SearchBox)
+            {
+                Keyboard.ClearFocus();
+                UpdateSearchTextVisibility();
+            }
+        }
+
+        private void MainGrid_KeyDown(object sender, KeyEventArgs e)
+        {
+            // Проверяем, нажата ли клавиша Esc или Enter
+            if (e.Key == Key.Escape || e.Key == Key.Enter)
+            {
+                // Если один из DatePicker в фокусе, снимаем фокус
+                if (Keyboard.FocusedElement == SearchBox)
+                {
+                    Keyboard.ClearFocus();
+                    e.Handled = true; // Предотвращаем дальнейшую обработку события
+                }
+            }
         }
     }
 }

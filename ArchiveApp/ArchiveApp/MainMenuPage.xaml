@@ -6,7 +6,7 @@
       xmlns:local="clr-namespace:ArchiveApp"
       mc:Ignorable="d" 
       d:DesignHeight="450" d:DesignWidth="1000"
-      Title="MainMenuPage">
+      Title="MainMenuPage" Background="White">
 
     <Grid Background="White">
         <Grid.RowDefinitions>

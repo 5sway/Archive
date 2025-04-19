@@ -1,20 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Globalization;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
 using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 using System.Data.Entity;
+using System.Windows.Media;
 
 namespace ArchiveApp
 {
@@ -38,6 +30,8 @@ namespace ArchiveApp
             LoadDocuments();                       // Загрузка списка документов
             LoadUsers();                           // Загрузка списка пользователей
             LoadData();                            // Загрузка данных запросов
+            // Регистрируем обработчик события BeginningEdit
+            DataGridTable.BeginningEdit += DataGridTable_BeginningEdit;
         }
 
         private void LoadStatusList()
@@ -82,38 +76,7 @@ namespace ArchiveApp
             DataGridTable.IsReadOnly = true;        // Установка режима "только чтение"
         }
 
-        private void ReqSearchBox_TextChanged(object sender, TextChangedEventArgs e)
-        {
-            string searchText = ReqSearchBox.Text.ToLower(); // Получение текста поиска (в нижнем регистре)
-
-            if (string.IsNullOrWhiteSpace(searchText))
-            {
-                // Если поле поиска пустое, показываем все запросы
-                Requests.Clear();
-                foreach (var req in _allRequests)
-                    Requests.Add(req);
-            }
-            else
-            {
-                // Фильтрация запросов по всем полям
-                var filteredRequests = _allRequests
-                    .Where(req =>
-                        // Проверка всех полей (преобразование в строку и нижний регистр)
-                        req.Request_Date.ToString("dd.MM.yyyy").ToLower().Contains(searchText) ||
-                        (req.Reason?.ToLower().Contains(searchText) == true) ||
-                        (req.Status.HasValue && (req.Status.Value ? "принято" : "отклонено").Contains(searchText)) ||
-                        (req.User?.Name?.ToLower().Contains(searchText) == true) ||
-                        (req.Document?.Title?.ToLower().Contains(searchText) == true)
-                    )
-                    .ToList();
-
-                Requests.Clear();
-                foreach (var req in filteredRequests)
-                    Requests.Add(req);
-            }
-        }
-
-        private void DelBtn_Click(object sender, RoutedEventArgs e)
+        private void DeleteSelectedRequests()
         {
             var selectedRequests = DataGridTable.SelectedItems.Cast<Request>().ToList(); // Получение выбранных запросов
             if (selectedRequests.Count == 0)        // Проверка наличия выбранных элементов
@@ -147,18 +110,28 @@ namespace ArchiveApp
             }
         }
 
+        private void DelBtn_Click(object sender, RoutedEventArgs e)
+        {
+            DeleteSelectedRequests(); // Вызываем метод удаления
+        }
+
         private void EditBtn_Click(object sender, RoutedEventArgs e)
         {
-            if (DataGridTable.IsReadOnly)           // Переключение в режим редактирования
+            ToggleEditMode();
+        }
+
+        private void ToggleEditMode()
+        {
+            if (DataGridTable.IsReadOnly)
             {
-                DataGridTable.IsReadOnly = false;   // Разрешение редактирования
-                EditBtn.Content = "Сохранить";      // Изменение текста кнопки
+                DataGridTable.IsReadOnly = false;
+                EditBtn.Content = "Сохранить";
             }
-            else                                    // Сохранение изменений
+            else
             {
-                DataGridTable.IsReadOnly = true;    // Блокировка редактирования
-                EditBtn.Content = "Изменить";       // Восстановление текста кнопки
-                SaveChanges();                     // Сохранение изменений
+                DataGridTable.IsReadOnly = true;
+                EditBtn.Content = "Изменить";
+                SaveChanges();
             }
         }
 
@@ -166,31 +139,31 @@ namespace ArchiveApp
         {
             try
             {
-                using (var context = new ArchiveBaseEntities()) // Подключение к базе данных
+                using (var context = new ArchiveBaseEntities())
                 {
-                    if (isAddingNewRow && newRequest != null) // Добавление нового запроса
+                    if (isAddingNewRow && newRequest != null)
                     {
-                        if (string.IsNullOrWhiteSpace(newRequest.Reason) || newRequest.Document_Id == 0) // Проверка обязательных полей
+                        if (string.IsNullOrWhiteSpace(newRequest.Reason) || newRequest.Document_Id == 0)
                         {
-                            RemoveEmptyRow();       // Удаление пустой строки при ошибке
+                            RemoveEmptyRow();
+                            MessageBox.Show("Обязательные поля не заполнены. Строка удалена.", "Предупреждение", MessageBoxButton.OK, MessageBoxImage.Warning);
                             return;
                         }
-                        var requestToAdd = new Request // Создание нового запроса
+
+                        context.Request.Add(new Request
                         {
                             Request_Date = newRequest.Request_Date,
                             Reason = newRequest.Reason,
                             Status = newRequest.Status,
                             User_Id = newRequest.User_Id,
                             Document_Id = newRequest.Document_Id
-                        };
-                        context.Request.Add(requestToAdd); // Добавление запроса в базу
-                        context.SaveChanges();      // Сохранение изменений
+                        });
                     }
 
-                    foreach (var req in Requests.Where(r => r.Id != 0)) // Обновление существующих запросов
+                    foreach (var req in Requests.Where(r => r.Id != 0))
                     {
-                        var reqToUpdate = context.Request.Find(req.Id); // Поиск запроса в базе
-                        if (reqToUpdate != null)    // Обновление полей
+                        var reqToUpdate = context.Request.Find(req.Id);
+                        if (reqToUpdate != null)
                         {
                             reqToUpdate.Request_Date = req.Request_Date;
                             reqToUpdate.Reason = req.Reason;
@@ -198,13 +171,14 @@ namespace ArchiveApp
                             reqToUpdate.Document_Id = req.Document_Id;
                         }
                     }
-                    context.SaveChanges();          // Сохранение всех изменений
+                    context.SaveChanges();
                 }
-                isAddingNewRow = false;             // Сброс флага добавления
-                newRequest = null;                  // Очистка нового запроса
-                LoadData();                        // Перезагрузка данных
+
+                isAddingNewRow = false;
+                newRequest = null;
+                LoadData();
             }
-            catch (Exception ex)                    // Обработка ошибок
+            catch (Exception ex)
             {
                 MessageBox.Show($"Ошибка при сохранении: {ex.Message}", "Ошибка", MessageBoxButton.OK, MessageBoxImage.Error);
             }
@@ -212,70 +186,191 @@ namespace ArchiveApp
 
         private void RemoveEmptyRow()
         {
-            if (newRequest != null && Requests.Contains(newRequest)) // Удаление пустой строки
+            if (newRequest != null && Requests.Contains(newRequest))
                 Requests.Remove(newRequest);
-            isAddingNewRow = false;                 // Сброс флага добавления
-            newRequest = null;                      // Очистка нового запроса
-            DataGridTable.IsReadOnly = true;        // Установка режима "только чтение"
-            EditBtn.Content = "Изменить";           // Восстановление текста кнопки
+            isAddingNewRow = false;
+            newRequest = null;
+            DataGridTable.IsReadOnly = true;
+            EditBtn.Content = "Изменить";
         }
 
         private void AddBtn_Click(object sender, RoutedEventArgs e)
         {
-            if (isAddingNewRow) return;             // Защита от повторного добавления
+            if (isAddingNewRow) return;
 
-            isAddingNewRow = true;                  // Установка флага добавления
-            var currentUser = Users.FirstOrDefault(u => u.Id == currentUserId); // Поиск текущего пользователя
-            newRequest = new Request                // Создание нового запроса
+            isAddingNewRow = true;
+            var currentUser = Users.FirstOrDefault(u => u.Id == currentUserId);
+            newRequest = new Request
             {
-                Id = 0,                            // ID=0 для новой записи
-                Request_Date = DateTime.Now,       // Текущая дата
-                Reason = "",                       // Пустое основание
-                Status = null,                     // Статус не установлен
-                User_Id = currentUserId,           // ID текущего пользователя
-                Document_Id = 0,                   // Документ не выбран
-                Document = null,                   // Связанный документ не установлен
-                User = currentUser                 // Данные текущего пользователя
+                Id = 0,
+                Request_Date = DateTime.Now,
+                Reason = "",
+                Status = null,
+                User_Id = currentUserId,
+                Document_Id = 0,
+                Document = null,
+                User = currentUser
             };
 
-            Requests.Add(newRequest);               // Добавление в коллекцию
-            DataGridTable.SelectedItem = newRequest; // Установка фокуса на новую строку
-            DataGridTable.ScrollIntoView(newRequest); // Прокрутка к новой строке
-            DataGridTable.IsReadOnly = false;       // Разрешение редактирования
-            EditBtn.Content = "Сохранить";          // Изменение текста кнопки
+            Requests.Add(newRequest);
+            DataGridTable.SelectedItem = newRequest;
+            DataGridTable.ScrollIntoView(newRequest);
+            DataGridTable.IsReadOnly = false;
+            EditBtn.Content = "Сохранить";
         }
 
         private void DataGridTable_PreviewKeyDown(object sender, KeyEventArgs e)
         {
-            if (e.Key == Key.Enter)                 // Обработка нажатия Enter
+            if (e.Key == Key.Delete)
             {
-                e.Handled = true;                   // Отмена стандартного поведения
-                DataGrid dataGrid = sender as DataGrid; // Получение DataGrid
+                e.Handled = true;
+                DeleteSelectedRequests();
+            }
+            else if (e.Key == Key.Enter)
+            {
+                e.Handled = true;
+                DataGrid dataGrid = sender as DataGrid;
                 if (dataGrid == null) return;
 
-                var currentCell = dataGrid.CurrentCell; // Текущая ячейка
+                var currentCell = dataGrid.CurrentCell;
                 if (currentCell.Column == null) return;
 
-                int currentColumnIndex = currentCell.Column.DisplayIndex; // Индекс текущей колонки
-                int nextColumnIndex = currentColumnIndex + 1; // Следующий индекс колонки
-                int currentRowIndex = dataGrid.Items.IndexOf(currentCell.Item); // Индекс текущей строки
+                int currentColumnIndex = currentCell.Column.DisplayIndex;
+                int totalColumns = dataGrid.Columns.Count;
 
-                if (nextColumnIndex < dataGrid.Columns.Count) // Переход к следующей колонке
+                // Проверяем, является ли текущий столбец последним (Документ)
+                if (currentColumnIndex == totalColumns - 1)
+                {
+                    try
+                    {
+                        dataGrid.CommitEdit(DataGridEditingUnit.Cell, true);
+                        dataGrid.CommitEdit(DataGridEditingUnit.Row, true);
+                        ToggleEditMode(); // Вызываем логику кнопки Edit (сохранение)
+                    }
+                    catch (Exception ex)
+                    {
+                        MessageBox.Show($"Ошибка валидации данных: {ex.Message}", "Ошибка", MessageBoxButton.OK, MessageBoxImage.Warning);
+                    }
+                    return;
+                }
+
+                // Обычная обработка Enter для перехода между ячейками
+                try
+                {
+                    dataGrid.CommitEdit(DataGridEditingUnit.Cell, true);
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show("Некорректные данные. Пожалуйста, исправьте значение.", "Ошибка", MessageBoxButton.OK, MessageBoxImage.Warning);
+                }
+
+                int nextColumnIndex = currentColumnIndex + 1;
+                int currentRowIndex = dataGrid.Items.IndexOf(currentCell.Item);
+
+                if (nextColumnIndex < totalColumns)
                 {
                     dataGrid.CurrentCell = new DataGridCellInfo(dataGrid.Items[currentRowIndex], dataGrid.Columns[nextColumnIndex]);
                 }
-                else if (currentRowIndex < dataGrid.Items.Count - 1) // Переход к следующей строке
+                else if (currentRowIndex < dataGrid.Items.Count - 1)
                 {
                     dataGrid.CurrentCell = new DataGridCellInfo(dataGrid.Items[currentRowIndex + 1], dataGrid.Columns[0]);
                 }
 
-                dataGrid.Dispatcher.InvokeAsync(() => dataGrid.BeginEdit(), System.Windows.Threading.DispatcherPriority.Input); // Запуск редактирования
+                dataGrid.Dispatcher.InvokeAsync(() => dataGrid.BeginEdit(), System.Windows.Threading.DispatcherPriority.Input);
             }
         }
+
+        private void DataGridTable_BeginningEdit(object sender, DataGridBeginningEditEventArgs e)
+        {
+            if (isAddingNewRow && e.Row.Item != newRequest)
+            {
+                // Отменяем редактирование для всех строк, кроме новой
+                e.Cancel = true;
+            }
+        }
+
+        private void ReqSearchBox_TextChanged(object sender, TextChangedEventArgs e)
+        {
+            string searchText = ReqSearchBox.Text.ToLower(); // Получение текста поиска (в нижнем регистре)
+
+            if (string.IsNullOrWhiteSpace(searchText))
+            {
+                // Если поле поиска пустое, показываем все запросы
+                Requests.Clear();
+                foreach (var req in _allRequests)
+                    Requests.Add(req);
+            }
+            else
+            {
+                // Фильтрация запросов по всем полям
+                var filteredRequests = _allRequests
+                    .Where(req =>
+                        // Проверка всех полей (преобразование в строку и нижний регистр)
+                        req.Request_Date.ToString("dd.MM.yyyy").ToLower().Contains(searchText) ||
+                        (req.Reason?.ToLower().Contains(searchText) == true) ||
+                        (req.Status.HasValue && (req.Status.Value ? "принято" : "отклонено").Contains(searchText)) ||
+                        (req.User?.Name?.ToLower().Contains(searchText) == true) ||
+                        (req.Document?.Title?.ToLower().Contains(searchText) == true)
+                    )
+                    .ToList();
+
+                Requests.Clear();
+                foreach (var req in filteredRequests)
+                    Requests.Add(req);
+            }
+        }
+
         private void ClearSearchBtn_Click(object sender, RoutedEventArgs e)
         {
             ReqSearchBox.Text = string.Empty; // Очистка поля поиска
-            DataGridTable.ItemsSource = _allRequests; // Восстановление полного списка
+            Requests.Clear();
+            foreach (var req in _allRequests)
+                Requests.Add(req);
+        }
+
+        private void MainGrid_MouseDown(object sender, MouseButtonEventArgs e)
+        {
+            // Получаем элемент, на который был произведён клик
+            var clickedElement = e.OriginalSource as DependencyObject;
+
+            // Проверяем, является ли клик по корневому Grid (MainGrid)
+            bool isEmptySpace = false;
+            while (clickedElement != null)
+            {
+                if (clickedElement is Grid grid && grid.Name == "MainGrid")
+                {
+                    isEmptySpace = true;
+                    break;
+                }
+                // Игнорируем клики по интерактивным элементам
+                if (clickedElement is Button || clickedElement is TextBox ||
+                    clickedElement is TextBlock || clickedElement is Image ||
+                    clickedElement is DataGrid || clickedElement is ComboBox)
+                {
+                    break;
+                }
+                clickedElement = VisualTreeHelper.GetParent(clickedElement);
+            }
+
+            // Если клик был на пустом месте и ReqSearchBox в фокусе, снимаем фокус
+            if (isEmptySpace && Keyboard.FocusedElement == ReqSearchBox)
+            {
+                Keyboard.ClearFocus();
+            }
+        }
+
+        private void MainGrid_KeyDown(object sender, KeyEventArgs e)
+        {
+            // Проверяем, нажата ли клавиша Esc или Enter
+            if (e.Key == Key.Escape || e.Key == Key.Enter)
+            {
+                // Если ReqSearchBox в фокусе, снимаем фокус
+                if (Keyboard.FocusedElement == ReqSearchBox)
+                {
+                    Keyboard.ClearFocus();
+                    e.Handled = true; // Предотвращаем дальнейшую обработку события
+                }
+            }
         }
     }
 }

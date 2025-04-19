@@ -8,20 +8,20 @@
         <beforeApplicationStartup />
       </update>
     </subscription>
-    <deploymentProvider codebase="http://swayy/ArchiveApp/ArchiveApp.application" />
+    <deploymentProvider codebase="http://sway/ArchiveApp/ArchiveApp.application" />
   </deployment>
   <compatibleFrameworks xmlns="urn:schemas-microsoft-com:clickonce.v2">
     <framework targetVersion="4.8" profile="Full" supportedRuntime="4.0.30319" />
   </compatibleFrameworks>
   <dependency>
-    <dependentAssembly dependencyType="install" codebase="ArchiveApp.exe.manifest" size="30178">
+    <dependentAssembly dependencyType="install" codebase="ArchiveApp.exe.manifest" size="5837">
       <assemblyIdentity name="ArchiveApp.exe" version="1.0.0.1" publicKeyToken="0000000000000000" language="neutral" processorArchitecture="msil" type="win32" />
       <hash>
         <dsig:Transforms>
           <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
         </dsig:Transforms>
         <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha256" />
-        <dsig:DigestValue>1ilXibZ4J2sWEd1/35Qjr8k9fU8XQel44ccoGZKA+To=</dsig:DigestValue>
+        <dsig:DigestValue>3vWon5NyBN1I1aJL2unUbZfXNdh+w6Awjq+rus/Gi1Y=</dsig:DigestValue>
       </hash>
     </dependentAssembly>
   </dependency>
