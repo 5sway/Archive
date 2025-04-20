@@ -20,46 +20,46 @@ namespace ArchiveApp
             OnRoleChanged?.Invoke();
         }
 
-            private void SetPermissionsBasedOnRole()
+        private void SetPermissionsBasedOnRole()
+        {
+            var mainGrid = this.Content as Grid;
+            switch (_Role)
             {
-                var mainGrid = this.Content as Grid;
-                switch (_Role)
-                {
-                    case "Администратор":
-                        AdminControlsVisibility(true);
-                        ClerkControlsVisibility(true);
-                        ArchivariusControlsVisibility(true);
-                        Grid.SetRow(RegCardBtn, 2);
-                        Grid.SetColumn(RegCardBtn, 1);
-                        DocumentBtn.BorderThickness = new Thickness(1, 1, 1, 1);
-                        SimpleRepBtn.BorderThickness = new Thickness(0, 1, 1, 1);
-                        RegCardBtn.BorderThickness = new Thickness(1, 0, 1, 1);
-                        Grid.SetRow(RequestBtn, 2);
-                        Grid.SetColumn(RequestBtn, 2);
-                        RequestBtn.BorderThickness = new Thickness(0, 0, 1, 1);
-                        break;
-                    case "Делопроизводитель":
-                        AdminControlsVisibility(false);
-                        ClerkControlsVisibility(true);
-                        ArchivariusControlsVisibility(false);
-                        Grid.SetRow(RegCardBtn, 1);
-                        Grid.SetColumn(RegCardBtn, 3);
-                        RegCardBtn.BorderThickness = new Thickness(0, 1, 1, 1);
-                        break;
-                    case "Архивариус":
-                        AdminControlsVisibility(false);
-                        ClerkControlsVisibility(true);
-                        ArchivariusControlsVisibility(true);
-                        Grid.SetRow(RegCardBtn, 1);
-                        Grid.SetColumn(RegCardBtn, 3);
-                        RegCardBtn.BorderThickness = new Thickness(0, 1, 1, 1);
-                        RequestBtn.BorderThickness = new Thickness(1, 0, 1, 1);
-                        break;
-                    default:
-                        MessageBox.Show($"Неизвестная роль: {_Role}", "Ошибка", MessageBoxButton.OK, MessageBoxImage.Error);
-                        break;
-                }
+                case "Администратор":
+                    AdminControlsVisibility(true);
+                    ClerkControlsVisibility(true);
+                    ArchivariusControlsVisibility(true);
+                    Grid.SetRow(RegCardBtn, 2);
+                    Grid.SetColumn(RegCardBtn, 1);
+                    DocumentBtn.BorderThickness = new Thickness(1, 1, 1, 1);
+                    SimpleRepBtn.BorderThickness = new Thickness(0, 1, 1, 1);
+                    RegCardBtn.BorderThickness = new Thickness(1, 0, 1, 1);
+                    Grid.SetRow(RequestBtn, 2);
+                    Grid.SetColumn(RequestBtn, 2);
+                    RequestBtn.BorderThickness = new Thickness(0, 0, 1, 1);
+                    break;
+                case "Делопроизводитель":
+                    AdminControlsVisibility(false);
+                    ClerkControlsVisibility(true);
+                    ArchivariusControlsVisibility(false);
+                    Grid.SetRow(RegCardBtn, 1);
+                    Grid.SetColumn(RegCardBtn, 3);
+                    RegCardBtn.BorderThickness = new Thickness(0, 1, 1, 1);
+                    break;
+                case "Архивариус":
+                    AdminControlsVisibility(false);
+                    ClerkControlsVisibility(true);
+                    ArchivariusControlsVisibility(true);
+                    Grid.SetRow(RegCardBtn, 1);
+                    Grid.SetColumn(RegCardBtn, 3);
+                    RegCardBtn.BorderThickness = new Thickness(0, 1, 1, 1);
+                    RequestBtn.BorderThickness = new Thickness(1, 0, 1, 1);
+                    break;
+                default:
+                    MessageBox.Show($"Неизвестная роль: {_Role}", "Ошибка", MessageBoxButton.OK, MessageBoxImage.Error);
+                    break;
             }
+        }
 
         private void AdminControlsVisibility(bool isVisible)
         {
@@ -166,7 +166,10 @@ namespace ArchiveApp
                     }
 
                     ExportReport(filePath, format, tables, _Role, startDate, endDate);
+                    // Navigate to MainMenuPage only if the file was saved
+                    Manager.MainFrame.Navigate(new MainMenuPage(_Role));
                 }
+                // If the user cancels the SaveFileDialog, stay on ReportOptionsPage (no navigation)
             }
             catch (Exception ex)
             {
@@ -178,10 +181,14 @@ namespace ArchiveApp
         {
             switch (format.ToLower())
             {
-                case "word": return ".docx";
-                case "excel": return ".xlsx";
-                case "pdf": return ".pdf";
-                default: return ".docx";
+                case "word":
+                    return ".docx";
+                case "excel":
+                    return ".xlsx";
+                case "pdf":
+                    return ".pdf";
+                default:
+                    return ".docx";
             }
         }
 
@@ -189,10 +196,14 @@ namespace ArchiveApp
         {
             switch (format.ToLower())
             {
-                case "word": return "Word documents (*.docx)|*.docx";
-                case "excel": return "Excel files (*.xlsx)|*.xlsx";
-                case "pdf": return "PDF files (*.pdf)|*.pdf";
-                default: return "Word documents (*.docx)|*.docx";
+                case "word":
+                    return "Word documents (*.docx)|*.docx";
+                case "excel":
+                    return "Excel files (*.xlsx)|*.xlsx";
+                case "pdf":
+                    return "PDF files (*.pdf)|*.pdf";
+                default:
+                    return "Word documents (*.docx)|*.docx";
             }
         }
 

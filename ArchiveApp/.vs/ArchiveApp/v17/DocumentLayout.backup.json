@@ -1,44 +1,7 @@
 {
   "Version": 1,
   "WorkspaceRootPath": "D:\\Kursach\\ArchiveApp\\",
-  "Documents": [
-    {
-      "AbsoluteMoniker": "D:0:0:{E536B243-99BD-442C-97CC-07DB471FD4D8}|ArchiveApp\\ArchiveApp.csproj|d:\\kursach\\archiveapp\\archiveapp\\mainwindow.xaml.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{E536B243-99BD-442C-97CC-07DB471FD4D8}|ArchiveApp\\ArchiveApp.csproj|solutionrelative:archiveapp\\mainwindow.xaml.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{E536B243-99BD-442C-97CC-07DB471FD4D8}|ArchiveApp\\ArchiveApp.csproj|d:\\kursach\\archiveapp\\archiveapp\\reportoptionspage.xaml.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{E536B243-99BD-442C-97CC-07DB471FD4D8}|ArchiveApp\\ArchiveApp.csproj|solutionrelative:archiveapp\\reportoptionspage.xaml.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{E536B243-99BD-442C-97CC-07DB471FD4D8}|ArchiveApp\\ArchiveApp.csproj|d:\\kursach\\archiveapp\\archiveapp\\userpage.xaml.cs||{8B382828-6202-11D1-8870-0000F87579D2}|",
-      "RelativeMoniker": "D:0:0:{E536B243-99BD-442C-97CC-07DB471FD4D8}|ArchiveApp\\ArchiveApp.csproj|solutionrelative:archiveapp\\userpage.xaml.cs||{8B382828-6202-11D1-8870-0000F87579D2}|"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{E536B243-99BD-442C-97CC-07DB471FD4D8}|ArchiveApp\\ArchiveApp.csproj|d:\\kursach\\archiveapp\\archiveapp\\userpage.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}",
-      "RelativeMoniker": "D:0:0:{E536B243-99BD-442C-97CC-07DB471FD4D8}|ArchiveApp\\ArchiveApp.csproj|solutionrelative:archiveapp\\userpage.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{E536B243-99BD-442C-97CC-07DB471FD4D8}|ArchiveApp\\ArchiveApp.csproj|d:\\kursach\\archiveapp\\archiveapp\\documentpage.xaml.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{E536B243-99BD-442C-97CC-07DB471FD4D8}|ArchiveApp\\ArchiveApp.csproj|solutionrelative:archiveapp\\documentpage.xaml.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{E536B243-99BD-442C-97CC-07DB471FD4D8}|ArchiveApp\\ArchiveApp.csproj|d:\\kursach\\archiveapp\\archiveapp\\documentpage.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}",
-      "RelativeMoniker": "D:0:0:{E536B243-99BD-442C-97CC-07DB471FD4D8}|ArchiveApp\\ArchiveApp.csproj|solutionrelative:archiveapp\\documentpage.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{E536B243-99BD-442C-97CC-07DB471FD4D8}|ArchiveApp\\ArchiveApp.csproj|d:\\kursach\\archiveapp\\archiveapp\\regcardpage.xaml.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{E536B243-99BD-442C-97CC-07DB471FD4D8}|ArchiveApp\\ArchiveApp.csproj|solutionrelative:archiveapp\\regcardpage.xaml.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{E536B243-99BD-442C-97CC-07DB471FD4D8}|ArchiveApp\\ArchiveApp.csproj|d:\\kursach\\archiveapp\\archiveapp\\authorizepage.xaml.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{E536B243-99BD-442C-97CC-07DB471FD4D8}|ArchiveApp\\ArchiveApp.csproj|solutionrelative:archiveapp\\authorizepage.xaml.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{E536B243-99BD-442C-97CC-07DB471FD4D8}|ArchiveApp\\ArchiveApp.csproj|d:\\kursach\\archiveapp\\archiveapp\\mainwindow.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}",
-      "RelativeMoniker": "D:0:0:{E536B243-99BD-442C-97CC-07DB471FD4D8}|ArchiveApp\\ArchiveApp.csproj|solutionrelative:archiveapp\\mainwindow.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}"
-    }
-  ],
+  "Documents": [],
   "DocumentGroupContainers": [
     {
       "Orientation": 0,
@@ -46,125 +9,11 @@
       "DocumentGroups": [
         {
           "DockedWidth": 200,
-          "SelectedChildIndex": 6,
+          "SelectedChildIndex": -1,
           "Children": [
             {
               "$type": "Bookmark",
               "Name": "ST:0:0:{e1b7d1f8-9b3c-49b1-8f4f-bfc63a88835d}"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 1,
-              "Title": "ReportOptionsPage.xaml.cs",
-              "DocumentMoniker": "D:\\Kursach\\ArchiveApp\\ArchiveApp\\ReportOptionsPage.xaml.cs",
-              "RelativeDocumentMoniker": "ArchiveApp\\ReportOptionsPage.xaml.cs",
-              "ToolTip": "D:\\Kursach\\ArchiveApp\\ArchiveApp\\ReportOptionsPage.xaml.cs",
-              "RelativeToolTip": "ArchiveApp\\ReportOptionsPage.xaml.cs",
-              "ViewState": "AgIAAMEAAAAAAAAAAAAQwOsAAAABAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-04-19T21:24:17.443Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 2,
-              "Title": "UserPage.xaml.cs",
-              "DocumentMoniker": "D:\\Kursach\\ArchiveApp\\ArchiveApp\\UserPage.xaml.cs",
-              "RelativeDocumentMoniker": "ArchiveApp\\UserPage.xaml.cs",
-              "ToolTip": "D:\\Kursach\\ArchiveApp\\ArchiveApp\\UserPage.xaml.cs",
-              "RelativeToolTip": "ArchiveApp\\UserPage.xaml.cs",
-              "ViewState": "AgIAACwBAAAAAAAAAAAAAFgBAAABAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-04-19T21:20:40.91Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 3,
-              "Title": "UserPage.xaml",
-              "DocumentMoniker": "D:\\Kursach\\ArchiveApp\\ArchiveApp\\UserPage.xaml",
-              "RelativeDocumentMoniker": "ArchiveApp\\UserPage.xaml",
-              "ToolTip": "D:\\Kursach\\ArchiveApp\\ArchiveApp\\UserPage.xaml",
-              "RelativeToolTip": "ArchiveApp\\UserPage.xaml",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003549|",
-              "WhenOpened": "2025-04-19T20:37:31.962Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 6,
-              "Title": "RegCardPage.xaml.cs",
-              "DocumentMoniker": "D:\\Kursach\\ArchiveApp\\ArchiveApp\\RegCardPage.xaml.cs",
-              "RelativeDocumentMoniker": "ArchiveApp\\RegCardPage.xaml.cs",
-              "ToolTip": "D:\\Kursach\\ArchiveApp\\ArchiveApp\\RegCardPage.xaml.cs",
-              "RelativeToolTip": "ArchiveApp\\RegCardPage.xaml.cs",
-              "ViewState": "AgIAANQAAAAAAAAAAAAqwO4AAAB8AAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-04-19T20:35:02.724Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 8,
-              "Title": "MainWindow.xaml",
-              "DocumentMoniker": "D:\\Kursach\\ArchiveApp\\ArchiveApp\\MainWindow.xaml",
-              "RelativeDocumentMoniker": "ArchiveApp\\MainWindow.xaml",
-              "ToolTip": "D:\\Kursach\\ArchiveApp\\ArchiveApp\\MainWindow.xaml",
-              "RelativeToolTip": "ArchiveApp\\MainWindow.xaml",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003549|",
-              "WhenOpened": "2025-04-19T20:32:02.335Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 0,
-              "Title": "MainWindow.xaml.cs",
-              "DocumentMoniker": "D:\\Kursach\\ArchiveApp\\ArchiveApp\\MainWindow.xaml.cs",
-              "RelativeDocumentMoniker": "ArchiveApp\\MainWindow.xaml.cs",
-              "ToolTip": "D:\\Kursach\\ArchiveApp\\ArchiveApp\\MainWindow.xaml.cs*",
-              "RelativeToolTip": "ArchiveApp\\MainWindow.xaml.cs*",
-              "ViewState": "AgIAAB8CAAAAAAAAAAAiwDYCAAAYAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-04-19T20:31:40.449Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 4,
-              "Title": "DocumentPage.xaml.cs",
-              "DocumentMoniker": "D:\\Kursach\\ArchiveApp\\ArchiveApp\\DocumentPage.xaml.cs",
-              "RelativeDocumentMoniker": "ArchiveApp\\DocumentPage.xaml.cs",
-              "ToolTip": "D:\\Kursach\\ArchiveApp\\ArchiveApp\\DocumentPage.xaml.cs",
-              "RelativeToolTip": "ArchiveApp\\DocumentPage.xaml.cs",
-              "ViewState": "AgIAAA4AAAAAAAAAAAAQwNkAAAAjAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-04-19T20:15:36.456Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 5,
-              "Title": "DocumentPage.xaml",
-              "DocumentMoniker": "D:\\Kursach\\ArchiveApp\\ArchiveApp\\DocumentPage.xaml",
-              "RelativeDocumentMoniker": "ArchiveApp\\DocumentPage.xaml",
-              "ToolTip": "D:\\Kursach\\ArchiveApp\\ArchiveApp\\DocumentPage.xaml",
-              "RelativeToolTip": "ArchiveApp\\DocumentPage.xaml",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003549|",
-              "WhenOpened": "2025-04-19T20:15:26.569Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 7,
-              "Title": "AuthorizePage.xaml.cs",
-              "DocumentMoniker": "D:\\Kursach\\ArchiveApp\\ArchiveApp\\AuthorizePage.xaml.cs",
-              "RelativeDocumentMoniker": "ArchiveApp\\AuthorizePage.xaml.cs",
-              "ToolTip": "D:\\Kursach\\ArchiveApp\\ArchiveApp\\AuthorizePage.xaml.cs",
-              "RelativeToolTip": "ArchiveApp\\AuthorizePage.xaml.cs",
-              "ViewState": "AgIAAN4BAAAAAAAAAAAQwOoBAACNAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-04-19T20:15:23.528Z",
-              "EditorCaption": ""
             }
           ]
         }

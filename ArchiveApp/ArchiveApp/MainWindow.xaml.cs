@@ -137,10 +137,8 @@ namespace ArchiveApp
                 { t => t.StartsWith("к") && t.Length > 2, () => NavigateIfNotCurrent<RegCardPage>() },
                 { t => t.StartsWith("р") && t.Length > 2, () => NavigateIfNotCurrent(() => new MainMenuPage(currentRole)) },
                 { t => t.StartsWith("п") && t.Length > 2 && currentRole == "Администратор", () => NavigateIfNotCurrent<UserPage>() },
-                { t => t.StartsWith("о") && t.Length > 2 && currentRole == "Администратор", () => NavigateIfNotCurrent(() => new ReportOptionsPage(true, currentRole)) },
-                { t => t.StartsWith("о") && t.Length > 2, () => NavigateIfNotCurrent(() => new ReportOptionsPage(false, currentRole)) }
-
-
+                { t => t.StartsWith("о") && t.Length > 2 && currentRole == "Администратор", () => NavigateToReportOptions(true, currentRole) },
+                { t => t.StartsWith("о") && t.Length > 2, () => NavigateToReportOptions(false, currentRole) }
             };
 
             foreach (var route in pageRoutes)
@@ -164,6 +162,23 @@ namespace ArchiveApp
         {
             if (!(MainFrame.Content?.GetType() == pageFactory().GetType()))
                 MainFrame.Navigate(pageFactory());
+            HighlightActiveButton();
+        }
+
+        private void NavigateToReportOptions(bool isFullReport, string role)
+        {
+            if (MainFrame.Content?.GetType() != typeof(ReportOptionsPage))
+            {
+                var optionsPage = new ReportOptionsPage(isFullReport, role);
+                var mainMenuPage = new MainMenuPage(role); // Create instance to access HandleReportOptions
+                optionsPage.ReportOptionsSelected += (format, tables, startDate, endDate) =>
+                {
+                    mainMenuPage.GetType()
+                        .GetMethod("HandleReportOptions", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance)
+                        .Invoke(mainMenuPage, new object[] { format, tables, startDate, endDate, isFullReport ? "Отчет" : "Простой отчет" });
+                };
+                MainFrame.Navigate(optionsPage);
+            }
             HighlightActiveButton();
         }
 
@@ -213,7 +228,6 @@ namespace ArchiveApp
 
         private void ShowElements()
         {
-
             MainBtn.Visibility = Visibility.Visible;
             DocBtn.Visibility = Visibility.Visible;
             ReqBtn.Visibility = Visibility.Visible;
@@ -564,20 +578,11 @@ namespace ArchiveApp
         private void RepBtn_Click(object sender, RoutedEventArgs e)
         {
             string userRole = UserData.CurrentUserRole;
-            if (userRole == "Администратор")
-            {
-                MainFrame.Navigate(new ReportOptionsPage(true, userRole));
-                HighlightActiveButton();
-                UpdateSearchTextVisibility();
-            }
-            else
-            {
-                MainFrame.Navigate(new ReportOptionsPage(false, userRole));
-                HighlightActiveButton();
-                UpdateSearchTextVisibility();
-            }
-
+            bool isFullReport = userRole == "Администратор";
+            NavigateToReportOptions(isFullReport, userRole);
+            UpdateSearchTextVisibility();
         }
+
         private void MainFrame_MouseDown(object sender, MouseButtonEventArgs e)
         {
             // Проверяем, находимся ли мы на странице авторизации

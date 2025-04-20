@@ -53,6 +53,10 @@ namespace ArchiveApp
                         RegCardsCheckBox.Visibility = Visibility.Visible;
                         AllTablesCheckBox.Visibility = Visibility.Visible;
                         AllTablesCheckBox.IsChecked = true;
+                        DocumentsCheckBox.IsChecked = true;
+                        RequestsCheckBox.IsChecked = true;
+                        UsersCheckBox.IsChecked = true;
+                        RegCardsCheckBox.IsChecked = true;
                         break;
 
                     case "Архивариус":
@@ -177,8 +181,8 @@ namespace ArchiveApp
                     EndDate = null;
                 }
 
+                // Вызываем событие без навигации
                 ReportOptionsSelected?.Invoke(SelectedFormat, SelectedTables, StartDate, EndDate);
-                NavigationService?.GoBack();
             }
             catch (Exception ex)
             {

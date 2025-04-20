@@ -259,7 +259,7 @@ namespace ArchiveApp
                 {
                     dataGrid.CommitEdit(DataGridEditingUnit.Cell, true);
                 }
-                catch (Exception ex)
+                catch (Exception)
                 {
                     MessageBox.Show("Некорректные данные. Пожалуйста, исправьте значение.", "Ошибка", MessageBoxButton.OK, MessageBoxImage.Warning);
                 }
