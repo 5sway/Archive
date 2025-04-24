@@ -14,14 +14,14 @@
     <framework targetVersion="4.8" profile="Full" supportedRuntime="4.0.30319" />
   </compatibleFrameworks>
   <dependency>
-    <dependentAssembly dependencyType="install" codebase="ArchiveApp.exe.manifest" size="5837">
+    <dependentAssembly dependencyType="install" codebase="ArchiveApp.exe.manifest" size="6344">
       <assemblyIdentity name="ArchiveApp.exe" version="1.0.0.1" publicKeyToken="0000000000000000" language="neutral" processorArchitecture="msil" type="win32" />
       <hash>
         <dsig:Transforms>
           <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
         </dsig:Transforms>
         <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha256" />
-        <dsig:DigestValue>klVsYnA/aFAiipTtFp79AgSsX2ExHRMqaMRw/ijVQwE=</dsig:DigestValue>
+        <dsig:DigestValue>H2iW4/af9icXh7efIKH2YOjAM3M8fCVV5L7/1ACi2Ek=</dsig:DigestValue>
       </hash>
     </dependentAssembly>
   </dependency>

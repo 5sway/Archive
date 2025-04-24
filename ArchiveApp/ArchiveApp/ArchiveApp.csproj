@@ -68,6 +68,9 @@
   <PropertyGroup>
     <SignManifests>true</SignManifests>
   </PropertyGroup>
+  <PropertyGroup>
+    <ApplicationIcon>Resources\ArchiveIcon.ico</ApplicationIcon>
+  </PropertyGroup>
   <ItemGroup>
     <Reference Include="ClosedXML, Version=0.104.2.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\ClosedXML.0.104.2\lib\netstandard2.0\ClosedXML.dll</HintPath>
@@ -377,6 +380,7 @@
       <DependentUpon>ArchiveModel.edmx</DependentUpon>
       <LastGenOutput>ArchiveModel.cs</LastGenOutput>
     </Content>
+    <Resource Include="Resources\ArchiveIcon.ico" />
     <Resource Include="Resources\RepIcon.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

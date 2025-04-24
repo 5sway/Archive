@@ -27,7 +27,8 @@
                   Margin="5,5,5,0"
                   IsReadOnly="True" 
                   PreviewKeyDown="DataGridTable_PreviewKeyDown"
-                  RowEditEnding="DataGridTable_RowEditEnding">
+                  RowEditEnding="DataGridTable_RowEditEnding"
+                  HorizontalScrollBarVisibility="Auto">
             <DataGrid.Columns>
                 <DataGridTemplateColumn Header="Дата" SortMemberPath="Receipt_Date" Width="*">
                     <DataGridTemplateColumn.CellTemplate>

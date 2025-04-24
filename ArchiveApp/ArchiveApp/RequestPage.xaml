@@ -30,7 +30,8 @@
               BorderThickness="1"
               Margin="5,5,5,0"
               IsReadOnly="True"
-              PreviewKeyDown="DataGridTable_PreviewKeyDown">
+              PreviewKeyDown="DataGridTable_PreviewKeyDown"
+              HorizontalScrollBarVisibility="Auto">
             <DataGrid.Columns>
                 <DataGridTemplateColumn Header="Дата запроса" SortMemberPath="Request_Date" Width="*">
                     <DataGridTemplateColumn.CellTemplate>

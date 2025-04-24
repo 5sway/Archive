@@ -17,14 +17,14 @@ namespace ArchiveApp
 {
     public partial class RegCardPage : Page
     {
-        private bool isEditMode = false;            // Флаг режима редактирования
-        private Registration_Card selectedRegCard = null; // Текущая выбранная карточка регистрации
-        public List<KeyValuePair<bool?, string>> StatusList { get; set; } // Список статусов подписи
-        private int currentUserId = UserData.CurrentUserId; // ID текущего пользователя
-        public List<Document> Documents { get; set; } // Список документов
-        public List<User> Users { get; set; }       // Список пользователей
-        private string currentUserRole = UserData.CurrentUserRole; // Роль текущего пользователя
-        public List<Registration_Card> RegCards { get; set; } // Список карточек регистрации
+        private bool isEditMode = false;
+        private Registration_Card selectedRegCard = null;
+        public List<KeyValuePair<bool?, string>> StatusList { get; set; }
+        private int currentUserId = UserData.CurrentUserId;
+        public List<Document> Documents { get; set; }
+        public List<User> Users { get; set; }
+        private string currentUserRole = UserData.CurrentUserRole;
+        public List<Registration_Card> RegCards { get; set; }
 
         public RegCardPage()
         {
@@ -213,8 +213,8 @@ namespace ArchiveApp
 
         private void MainGrid_MouseDown(object sender, MouseButtonEventArgs e)
         {
-            // Получаем элемент, на который был произведён клик
-            var clickedElement = e.OriginalSource as DependencyObject;
+            
+            var clickedElement = e.OriginalSource as DependencyObject; // Получаем элемент, на который был произведён клик
 
             // Проверяем, является ли клик по корневому Grid (RootGrid)
             bool isEmptySpace = false;

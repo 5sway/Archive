@@ -13,7 +13,7 @@ namespace ArchiveApp
 {
     public partial class AuthorizePage : Page
     {
-        // Импорт функций для точного таймера
+        // Импорт функций для точного таймера из winmm.dll
         [DllImport("winmm.dll")]
         public static extern uint timeBeginPeriod(uint period);
         [DllImport("winmm.dll")]
@@ -201,6 +201,7 @@ namespace ArchiveApp
 
         private void UpdatePlaceholderVisibility()
         {
+            // Обновление видимости подсказок в зависимости от наличия текста
             LoginText.Visibility = string.IsNullOrWhiteSpace(LoginBox.Text) ? Visibility.Visible : Visibility.Collapsed;
             PasswordText.Visibility = string.IsNullOrWhiteSpace(PasswordBox.Password) ? Visibility.Visible : Visibility.Collapsed;
             CaptchaText.Visibility = string.IsNullOrWhiteSpace(CaptchaTextBox.Text) ? Visibility.Visible : Visibility.Collapsed;
@@ -488,7 +489,7 @@ namespace ArchiveApp
             if (e.Key == Key.Escape)
             {
                 // Если один из DatePicker в фокусе, снимаем фокус
-                if (Keyboard.FocusedElement == LoginBox || Keyboard.FocusedElement == PasswordBox ||Keyboard.FocusedElement == CaptchaTextBox)
+                if (Keyboard.FocusedElement == LoginBox || Keyboard.FocusedElement == PasswordBox || Keyboard.FocusedElement == CaptchaTextBox)
                 {
                     Keyboard.ClearFocus();
                     e.Handled = true; // Предотвращаем дальнейшую обработку события
@@ -498,5 +499,4 @@ namespace ArchiveApp
 
         public event Action OnUserAuthorized;     // Событие успешной авторизации
     }
-
 }

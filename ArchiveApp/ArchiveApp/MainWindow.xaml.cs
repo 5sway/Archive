@@ -170,7 +170,7 @@ namespace ArchiveApp
             if (MainFrame.Content?.GetType() != typeof(ReportOptionsPage))
             {
                 var optionsPage = new ReportOptionsPage(isFullReport, role);
-                var mainMenuPage = new MainMenuPage(role); // Create instance to access HandleReportOptions
+                var mainMenuPage = new MainMenuPage(role);
                 optionsPage.ReportOptionsSelected += (format, tables, startDate, endDate) =>
                 {
                     mainMenuPage.GetType()
