@@ -13,7 +13,7 @@
           <Property Name="Number" Type="varchar" MaxLength="50" Nullable="false" />
           <Property Name="Receipt_Date" Type="date" Nullable="false" />
           <Property Name="Title" Type="nvarchar" MaxLength="100" Nullable="false" />
-          <Property Name="Source" Type="nchar" MaxLength="10" Nullable="false" />
+          <Property Name="Source" Type="nvarchar" MaxLength="50" Nullable="false" />
           <Property Name="Copies_Count" Type="int" Nullable="false" />
           <Property Name="Annotation" Type="nvarchar(max)" Nullable="false" />
           <Property Name="Storage_Type" Type="nvarchar" MaxLength="50" Nullable="false" />
@@ -171,7 +171,7 @@
           <Property Name="Number" Type="String" MaxLength="50" FixedLength="false" Unicode="false" Nullable="false" />
           <Property Name="Receipt_Date" Type="DateTime" Nullable="false" Precision="0" />
           <Property Name="Title" Type="String" MaxLength="100" FixedLength="false" Unicode="true" Nullable="false" />
-          <Property Name="Source" Type="String" MaxLength="10" FixedLength="true" Unicode="true" Nullable="false" />
+          <Property Name="Source" Type="String" MaxLength="50" FixedLength="false" Unicode="true" Nullable="false" />
           <Property Name="Copies_Count" Type="Int32" Nullable="false" />
           <Property Name="Annotation" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" Nullable="false" />
           <Property Name="Storage_Type" Type="String" MaxLength="50" FixedLength="false" Unicode="true" Nullable="false" />

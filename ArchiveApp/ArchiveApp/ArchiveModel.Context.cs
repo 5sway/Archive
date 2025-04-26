@@ -32,7 +32,7 @@ namespace ArchiveApp
         {
             throw new UnintentionalCodeFirstException();
         }
-    
+
         public virtual DbSet<Document> Document { get; set; }
         public virtual DbSet<Registration_Card> Registration_Card { get; set; }
         public virtual DbSet<Request> Request { get; set; }

@@ -171,11 +171,11 @@ namespace ArchiveApp
             {
                 var optionsPage = new ReportOptionsPage(isFullReport, role);
                 var mainMenuPage = new MainMenuPage(role);
-                optionsPage.ReportOptionsSelected += (format, tables, startDate, endDate) =>
+                optionsPage.ReportOptionsSelected += (format, isTableFormat, tables, selectedRecordIds, startDate, endDate) =>
                 {
                     mainMenuPage.GetType()
                         .GetMethod("HandleReportOptions", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance)
-                        .Invoke(mainMenuPage, new object[] { format, tables, startDate, endDate, isFullReport ? "Отчет" : "Простой отчет" });
+                        .Invoke(mainMenuPage, new object[] { format, isTableFormat, tables, selectedRecordIds, startDate, endDate, role, isFullReport ? "Отчет" : "Простой отчет" });
                 };
                 MainFrame.Navigate(optionsPage);
             }

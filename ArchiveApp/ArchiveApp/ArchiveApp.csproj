@@ -224,18 +224,18 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>ArchiveModel.edmx</DependentUpon>
     </Compile>
-    <Compile Include="BooleanToVisibilityConverter.cs" />
-    <Compile Include="BoolToconverter.cs" />
-    <Compile Include="BoolToStatusConverter.cs" />
+    <Compile Include="Classes\BooleanToVisibilityConverter.cs" />
+    <Compile Include="Classes\BoolToconverter.cs" />
+    <Compile Include="Classes\BoolToStatusConverter.cs" />
     <Compile Include="Document.cs">
       <DependentUpon>ArchiveModel.tt</DependentUpon>
     </Compile>
-    <Compile Include="ExportExcel.cs" />
-    <Compile Include="ExportWord.cs" />
+    <Compile Include="Classes\ExportExcel.cs" />
+    <Compile Include="Classes\ExportWord.cs" />
     <Compile Include="Registration_Card.cs">
       <DependentUpon>ArchiveModel.tt</DependentUpon>
     </Compile>
-    <Compile Include="ReportOptionsPage.xaml.cs">
+    <Compile Include="Pages\ReportOptionsPage.xaml.cs">
       <DependentUpon>ReportOptionsPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="Request.cs">
@@ -250,32 +250,32 @@
     <Compile Include="User.cs">
       <DependentUpon>ArchiveModel.tt</DependentUpon>
     </Compile>
-    <Compile Include="UserData.cs" />
-    <Compile Include="CaptchaGenerator.cs" />
-    <Compile Include="DocumentPage.xaml.cs">
+    <Compile Include="Classes\UserData.cs" />
+    <Compile Include="Classes\CaptchaGenerator.cs" />
+    <Compile Include="Pages\DocumentPage.xaml.cs">
       <DependentUpon>DocumentPage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="MainMenuPage.xaml.cs">
+    <Compile Include="Pages\MainMenuPage.xaml.cs">
       <DependentUpon>MainMenuPage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="RegCardPage.xaml.cs">
+    <Compile Include="Pages\RegCardPage.xaml.cs">
       <DependentUpon>RegCardPage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="RequestPage.xaml.cs">
+    <Compile Include="Pages\RequestPage.xaml.cs">
       <DependentUpon>RequestPage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="UserPage.xaml.cs">
+    <Compile Include="Pages\UserPage.xaml.cs">
       <DependentUpon>UserPage.xaml</DependentUpon>
     </Compile>
-    <Page Include="AuthorizePage.xaml">
+    <Page Include="Pages\AuthorizePage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="DocumentPage.xaml">
+    <Page Include="Pages\DocumentPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="MainMenuPage.xaml">
+    <Page Include="Pages\MainMenuPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -287,32 +287,32 @@
       <DependentUpon>App.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="AuthorizePage.xaml.cs">
+    <Compile Include="Pages\AuthorizePage.xaml.cs">
       <DependentUpon>AuthorizePage.xaml</DependentUpon>
     </Compile>
     <Compile Include="MainWindow.xaml.cs">
       <DependentUpon>MainWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
-    <Page Include="RegCardPage.xaml">
+    <Page Include="Pages\RegCardPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="ReportOptionsPage.xaml">
+    <Page Include="Pages\ReportOptionsPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="RequestPage.xaml">
+    <Page Include="Pages\RequestPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="UserPage.xaml">
+    <Page Include="Pages\UserPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Manager.cs" />
+    <Compile Include="Classes\Manager.cs" />
     <Compile Include="Properties\AssemblyInfo.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -330,7 +330,6 @@
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
-    <None Include="ArchiveApp_TemporaryKey.pfx" />
     <EntityDeploy Include="ArchiveModel.edmx">
       <Generator>EntityModelCodeGenerator</Generator>
       <LastGenOutput>ArchiveModel.Designer.cs</LastGenOutput>
@@ -370,6 +369,10 @@
     </BootstrapperPackage>
   </ItemGroup>
   <ItemGroup>
+    <Resource Include="Resources\ArchiveIcon.ico" />
+    <Resource Include="Resources\RepIcon.png" />
+  </ItemGroup>
+  <ItemGroup>
     <Content Include="ArchiveModel.Context.tt">
       <Generator>TextTemplatingFileGenerator</Generator>
       <LastGenOutput>ArchiveModel.Context.cs</LastGenOutput>
@@ -380,8 +383,6 @@
       <DependentUpon>ArchiveModel.edmx</DependentUpon>
       <LastGenOutput>ArchiveModel.cs</LastGenOutput>
     </Content>
-    <Resource Include="Resources\ArchiveIcon.ico" />
-    <Resource Include="Resources\RepIcon.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
