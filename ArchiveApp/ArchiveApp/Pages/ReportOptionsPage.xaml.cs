@@ -47,21 +47,37 @@ namespace ArchiveApp
         {
             using (var context = new ArchiveBaseEntities())
             {
-                DocumentsComboBox.ItemsSource = context.Document.ToList().Select(d => new { Id = d.Id, Title = d.Title }).ToList();
+                // Документы
+                var documents = new List<object> { new { Id = -1, Title = "Все записи" } };
+                documents.AddRange(context.Document.ToList().Select(d => new { Id = d.Id, Title = d.Title }));
+                DocumentsComboBox.ItemsSource = documents;
                 DocumentsComboBox.DisplayMemberPath = "Title";
                 DocumentsComboBox.SelectedValuePath = "Id";
+                DocumentsComboBox.SelectedValue = -1; // Устанавливаем "Все записи" по умолчанию
 
-                RequestsComboBox.ItemsSource = context.Request.ToList().Select(r => new { Id = r.Id, Reason = r.Reason }).ToList();
+                // Запросы
+                var requests = new List<object> { new { Id = -1, Reason = "Все записи" } };
+                requests.AddRange(context.Request.ToList().Select(r => new { Id = r.Id, Reason = r.Reason }));
+                RequestsComboBox.ItemsSource = requests;
                 RequestsComboBox.DisplayMemberPath = "Reason";
                 RequestsComboBox.SelectedValuePath = "Id";
+                RequestsComboBox.SelectedValue = -1; // Устанавливаем "Все записи" по умолчанию
 
-                UsersComboBox.ItemsSource = context.User.ToList().Select(u => new { Id = u.Id, Name = u.Name }).ToList();
+                // Пользователи
+                var users = new List<object> { new { Id = -1, Name = "Все записи" } };
+                users.AddRange(context.User.ToList().Select(u => new { Id = u.Id, Name = u.Name }));
+                UsersComboBox.ItemsSource = users;
                 UsersComboBox.DisplayMemberPath = "Name";
                 UsersComboBox.SelectedValuePath = "Id";
+                UsersComboBox.SelectedValue = -1; // Устанавливаем "Все записи" по умолчанию
 
-                RegCardsComboBox.ItemsSource = context.Registration_Card.ToList().Select(c => new { Id = c.Id, Title = c.Document?.Title }).ToList();
+                // Регистрационные карты
+                var regCards = new List<object> { new { Id = -1, Title = "Все записи" } };
+                regCards.AddRange(context.Registration_Card.ToList().Select(c => new { Id = c.Id, Title = c.Document?.Title }));
+                RegCardsComboBox.ItemsSource = regCards;
                 RegCardsComboBox.DisplayMemberPath = "Title";
                 RegCardsComboBox.SelectedValuePath = "Id";
+                RegCardsComboBox.SelectedValue = -1; // Устанавливаем "Все записи" по умолчанию
             }
         }
 
@@ -191,11 +207,20 @@ namespace ArchiveApp
         {
             if (DocumentsComboBox.SelectedValue != null)
             {
-                if (!SelectedRecordIds.ContainsKey("Documents"))
-                    SelectedRecordIds["Documents"] =
-
- new List<int>();
-                SelectedRecordIds["Documents"].Add((int)DocumentsComboBox.SelectedValue);
+                int selectedId = Convert.ToInt32(DocumentsComboBox.SelectedValue);
+                if (selectedId == -1)
+                {
+                    // Если выбрано "Все записи", удаляем фильтр для Documents
+                    if (SelectedRecordIds.ContainsKey("Documents"))
+                        SelectedRecordIds.Remove("Documents");
+                }
+                else
+                {
+                    if (!SelectedRecordIds.ContainsKey("Documents"))
+                        SelectedRecordIds["Documents"] = new List<int>();
+                    if (!SelectedRecordIds["Documents"].Contains(selectedId))
+                        SelectedRecordIds["Documents"].Add(selectedId);
+                }
             }
         }
 
@@ -203,9 +228,19 @@ namespace ArchiveApp
         {
             if (RequestsComboBox.SelectedValue != null)
             {
-                if (!SelectedRecordIds.ContainsKey("Requests"))
-                    SelectedRecordIds["Requests"] = new List<int>();
-                SelectedRecordIds["Requests"].Add((int)RequestsComboBox.SelectedValue);
+                int selectedId = Convert.ToInt32(RequestsComboBox.SelectedValue);
+                if (selectedId == -1)
+                {
+                    if (SelectedRecordIds.ContainsKey("Requests"))
+                        SelectedRecordIds.Remove("Requests");
+                }
+                else
+                {
+                    if (!SelectedRecordIds.ContainsKey("Requests"))
+                        SelectedRecordIds["Requests"] = new List<int>();
+                    if (!SelectedRecordIds["Requests"].Contains(selectedId))
+                        SelectedRecordIds["Requests"].Add(selectedId);
+                }
             }
         }
 
@@ -213,9 +248,19 @@ namespace ArchiveApp
         {
             if (UsersComboBox.SelectedValue != null)
             {
-                if (!SelectedRecordIds.ContainsKey("Users"))
-                    SelectedRecordIds["Users"] = new List<int>();
-                SelectedRecordIds["Users"].Add((int)UsersComboBox.SelectedValue);
+                int selectedId = Convert.ToInt32(UsersComboBox.SelectedValue);
+                if (selectedId == -1)
+                {
+                    if (SelectedRecordIds.ContainsKey("Users"))
+                        SelectedRecordIds.Remove("Users");
+                }
+                else
+                {
+                    if (!SelectedRecordIds.ContainsKey("Users"))
+                        SelectedRecordIds["Users"] = new List<int>();
+                    if (!SelectedRecordIds["Users"].Contains(selectedId))
+                        SelectedRecordIds["Users"].Add(selectedId);
+                }
             }
         }
 
@@ -223,9 +268,19 @@ namespace ArchiveApp
         {
             if (RegCardsComboBox.SelectedValue != null)
             {
-                if (!SelectedRecordIds.ContainsKey("RegistrationCards"))
-                    SelectedRecordIds["RegistrationCards"] = new List<int>();
-                SelectedRecordIds["RegistrationCards"].Add((int)RegCardsComboBox.SelectedValue);
+                int selectedId = Convert.ToInt32(RegCardsComboBox.SelectedValue);
+                if (selectedId == -1)
+                {
+                    if (SelectedRecordIds.ContainsKey("RegistrationCards"))
+                        SelectedRecordIds.Remove("RegistrationCards");
+                }
+                else
+                {
+                    if (!SelectedRecordIds.ContainsKey("RegistrationCards"))
+                        SelectedRecordIds["RegistrationCards"] = new List<int>();
+                    if (!SelectedRecordIds["RegistrationCards"].Contains(selectedId))
+                        SelectedRecordIds["RegistrationCards"].Add(selectedId);
+                }
             }
         }
 
@@ -264,15 +319,26 @@ namespace ArchiveApp
                 {
                     foreach (var table in SelectedTables)
                     {
-                        if (!SelectedRecordIds.ContainsKey(table) || !SelectedRecordIds[table].Any())
+                        // Проверяем, есть ли конкретные записи для таблицы, только если не выбрано "Все записи"
+                        bool isAllRecordsSelected = false;
+                        if (table == "Documents" && DocumentsComboBox.SelectedValue != null && Convert.ToInt32(DocumentsComboBox.SelectedValue) == -1)
+                            isAllRecordsSelected = true;
+                        else if (table == "Requests" && RequestsComboBox.SelectedValue != null && Convert.ToInt32(RequestsComboBox.SelectedValue) == -1)
+                            isAllRecordsSelected = true;
+                        else if (table == "Users" && UsersComboBox.SelectedValue != null && Convert.ToInt32(UsersComboBox.SelectedValue) == -1)
+                            isAllRecordsSelected = true;
+                        else if (table == "RegistrationCards" && RegCardsComboBox.SelectedValue != null && Convert.ToInt32(RegCardsComboBox.SelectedValue) == -1)
+                            isAllRecordsSelected = true;
+
+                        if (!isAllRecordsSelected && SelectedRecordIds.ContainsKey(table) && !SelectedRecordIds[table].Any())
                         {
                             var tableNames = new Dictionary<string, string>
-                            {
-                                { "Documents", "Документы" },
-                                { "Requests", "Запросы" },
-                                { "Users", "Пользователи" },
-                                { "RegistrationCards", "Регистрационные карты" }
-                            };
+                    {
+                        { "Documents", "Документы" },
+                        { "Requests", "Запросы" },
+                        { "Users", "Пользователи" },
+                        { "RegistrationCards", "Регистрационные карты" }
+                    };
 
                             string tableName = tableNames.ContainsKey(table) ? tableNames[table] : table;
 
