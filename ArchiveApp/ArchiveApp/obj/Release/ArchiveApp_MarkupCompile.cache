@@ -4,17 +4,17 @@
 winexe
 C#
 .cs
-C:\Users\kolya\Archive\ArchiveApp\ArchiveApp\obj\Release\
+D:\Важное\SetupFiles\ArchiveApp\ArchiveApp\obj\Release\
 ArchiveApp
 none
 false
 TRACE
-C:\Users\kolya\Archive\ArchiveApp\ArchiveApp\App.xaml
-81774997238
+D:\Важное\SetupFiles\ArchiveApp\ArchiveApp\App.xaml
+10-4135645
 2-1659009635
-29-2114531854
-551005121563
-Pages\AuthorizePage.xaml;Pages\DocumentPage.xaml;Pages\MainMenuPage.xaml;MainWindow.xaml;Pages\RegCardPage.xaml;Pages\ReportOptionsPage.xaml;Pages\RequestPage.xaml;Pages\UserPage.xaml;
+33-1774550042
+561914460275
+AuditPage.xaml;AuthorizePage.xaml;DocumentPage.xaml;MainMenuPage.xaml;MainWindow.xaml;RegCardPage.xaml;ReportOptionsPage.xaml;RequestPage.xaml;StorageControlPage.xaml;UserPage.xaml;
 
 False
 

@@ -1,0 +1,31 @@
+﻿<Page x:Class="ArchiveApp.StorageControlPage"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      Title="Контроль сроков хранения" Background="White">
+
+    <Grid Margin="10">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="50"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+
+        <StackPanel Orientation="Horizontal" Margin="0,0,0,10">
+            <Button Content="Обновить" Width="120" Height="35" Click="RefreshBtn_Click" 
+                    Background="#bae3e8" Margin="5"/>
+            <Button Content="Сформировать акт уничтожения" Width="220" Height="35" 
+                    Click="CreateActBtn_Click" Background="#ffdddd" Margin="5"/>
+        </StackPanel>
+
+        <DataGrid x:Name="ControlDataGrid" Grid.Row="1" AutoGenerateColumns="False" IsReadOnly="True"
+                  SelectionMode="Single" MouseDoubleClick="ControlDataGrid_MouseDoubleClick">
+            <DataGrid.Columns>
+                <DataGridTextColumn Header="ID" Binding="{Binding Id}" Width="60"/>
+                <DataGridTextColumn Header="Название" Binding="{Binding Title}" Width="280"/>
+                <DataGridTextColumn Header="Тип хранения" Binding="{Binding Storage_Type}" Width="120"/>
+                <DataGridTextColumn Header="Дата поступления" Binding="{Binding Receipt_Date, StringFormat=dd.MM.yyyy}" Width="130"/>
+                <DataGridTextColumn Header="Срок хранения" Binding="{Binding StorageTerm}" Width="180"/>
+                <DataGridTextColumn Header="Статус" Binding="{Binding Status}" Width="130"/>
+            </DataGrid.Columns>
+        </DataGrid>
+    </Grid>
+</Page>

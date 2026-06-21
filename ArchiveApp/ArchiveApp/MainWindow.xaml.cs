@@ -28,29 +28,29 @@ namespace ArchiveApp
         [DllImport("winmm.dll")]
         public static extern uint timeEndPeriod(uint period);
 
-        private Border _notificationPopup;           // Контейнер для всплывающего уведомления
-        private bool _isNotificationVisible;         // Флаг видимости уведомления
-        private DispatcherTimer _updateTimer;        // Таймер обновления размера окна
-        private TextBlock _windowSizeText;           // Текст с размерами окна
-        private TextBlock _timeText;                 // Текст с текущим временем
-        private TextBlock _userNameText;             // Текст с именем пользователя
-        private TextBlock _userRoleText;             // Текст с ролью пользователя
-        private bool isMenuVisible = true;           // Флаг видимости меню
-        private AuthorizePage _authorizePage;        // Страница авторизации
-        private System.Timers.Timer _highPrecisionTimer; // Высокоточный таймер для времени
+        private Border _notificationPopup;
+        private bool _isNotificationVisible;
+        private DispatcherTimer _updateTimer;
+        private TextBlock _windowSizeText;
+        private TextBlock _timeText;
+        private TextBlock _userNameText;
+        private TextBlock _userRoleText;
+        private bool isMenuVisible = true;
+        private AuthorizePage _authorizePage;
+        private System.Timers.Timer _highPrecisionTimer;
         private string currentUserRole = UserData.CurrentUserRole;
 
         public MainWindow()
         {
-            InitializeComponent();                    // Инициализация компонентов окна
-            timeBeginPeriod(1);                      // Установка высокой точности таймера
-            Manager.MainFrame = MainFrame;           // Назначение главного фрейма для навигации
-            _authorizePage = new AuthorizePage();    // Создание страницы авторизации
-            _authorizePage.OnUserAuthorized += ShowElements; // Подписка на событие успешной авторизации
-            MainFrame.Navigate(_authorizePage);     // Переход на страницу авторизации
-            HideElements();                          // Скрытие элементов интерфейса до авторизации
-            MainFrame.Navigated += MainFrame_Navigated; // Подписка на событие смены страницы
-            Closed += (s, e) => timeEndPeriod(1);    // Отключение высокой точности таймера при закрытии окна
+            InitializeComponent();
+            timeBeginPeriod(1);
+            Manager.MainFrame = MainFrame;
+            _authorizePage = new AuthorizePage();
+            _authorizePage.OnUserAuthorized += ShowElements;
+            MainFrame.Navigate(_authorizePage);
+            HideElements();
+            MainFrame.Navigated += MainFrame_Navigated;
+            Closed += (s, e) => timeEndPeriod(1);
             MouseDown += Window_MouseDown;
         }
 
@@ -62,8 +62,6 @@ namespace ArchiveApp
         private void UpdateSearchTextVisibility()
         {
             if (MainFrame.Content is AuthorizePage) return;
-
-            // Подсказка видна, если SearchBox пуст
             SearchText.Visibility = string.IsNullOrWhiteSpace(SearchBox.Text)
                 ? Visibility.Visible
                 : Visibility.Collapsed;
@@ -71,10 +69,7 @@ namespace ArchiveApp
 
         private void Window_MouseDown(object sender, MouseButtonEventArgs e)
         {
-            // Проверяем, находимся ли мы на странице авторизации
             if (MainFrame.Content is AuthorizePage) return;
-
-            // Проверяем, был ли клик вне SearchBox
             if (!IsMouseOverSearchBox(e.GetPosition(this)))
             {
                 ClearSearchBox();
@@ -83,7 +78,6 @@ namespace ArchiveApp
 
         private bool IsMouseOverSearchBox(Point position)
         {
-            // Проверяем, находится ли точка в пределах SearchBox или SearchText
             var searchBoxBounds = new Rect(
                 SearchBox.TranslatePoint(new Point(0, 0), this),
                 new Size(SearchBox.ActualWidth, SearchBox.ActualHeight));
@@ -97,7 +91,6 @@ namespace ArchiveApp
 
         private void ClearSearchBox()
         {
-            // Проверяем, находимся ли мы на странице авторизации
             if (MainFrame.Content is AuthorizePage) return;
 
             if (!string.IsNullOrEmpty(SearchBox.Text))
@@ -108,17 +101,22 @@ namespace ArchiveApp
             UpdateSearchTextVisibility();
         }
 
+        /// <summary>
+        /// Обрабатывает ввод текста в поисковой строке.
+        /// Реализует быструю навигацию по ключевым словам и сокращениям.
+        /// Поддерживает переходы на разные страницы в зависимости от роли пользователя.
+        /// </summary>
         private async void SearchBox_TextChanged(object sender, TextChangedEventArgs e)
         {
-            await Task.Delay(50);                    // Задержка для предотвращения частых обновлений поиска
-            if (SearchBox.Text != ((TextBox)sender).Text) return; // Проверка актуальности текста
+            await Task.Delay(50);
+            if (SearchBox.Text != ((TextBox)sender).Text) return;
 
             UpdateSearchTextVisibility();
 
-            string searchText = SearchBox.Text.Trim().ToLower(); // Получение текста поиска в нижнем регистре
-            if (string.IsNullOrEmpty(searchText)) return; // Выход, если поиск пустой
+            string searchText = SearchBox.Text.Trim().ToLower();
+            if (string.IsNullOrEmpty(searchText)) return;
 
-            string currentRole = UserData.CurrentUserRole; // Текущая роль пользователя
+            string currentRole = UserData.CurrentUserRole;
 
             var pageRoutes = new Dictionary<Func<string, bool>, Action>
             {
@@ -165,6 +163,10 @@ namespace ArchiveApp
             HighlightActiveButton();
         }
 
+        /// <summary>
+        /// Переход на страницу параметров отчёта с сохранением обработчика выбора.
+        /// Использует рефлексию для вызова приватного метода HandleReportOptions.
+        /// </summary>
         private void NavigateToReportOptions(bool isFullReport, string role)
         {
             if (MainFrame.Content?.GetType() != typeof(ReportOptionsPage))
@@ -191,7 +193,6 @@ namespace ArchiveApp
             else
             {
                 ShowElements();
-                // Проверяем роль пользователя и скрываем кнопки для "Делопроизводитель"
                 string role = UserData.CurrentUserRole;
                 if (role == "Делопроизводитель")
                 {
@@ -204,7 +205,7 @@ namespace ArchiveApp
             }
             HighlightActiveButton();
             UpdateSearchTextVisibility();
-            Keyboard.ClearFocus(); // Сбрасываем фокус после навигации
+            Keyboard.ClearFocus();
         }
 
         private void HideElements()
@@ -248,7 +249,6 @@ namespace ArchiveApp
             UpdateSearchTextVisibility();
             SearchBox.Text = "";
 
-            // Сбрасываем фокус
             Keyboard.ClearFocus();
             MenuGrid.ClearValue(FrameworkElement.FocusVisualStyleProperty);
         }
@@ -259,19 +259,19 @@ namespace ArchiveApp
                 SearchBox.Focus();
         }
 
+        /// <summary>
+        /// Запускает анимацию обновления, затем вызывает перезагрузку данных.
+        /// Комбинирует анимацию вращения и затухания для визуальной обратной связи.
+        /// </summary>
         private void RefreshButton_Click(object sender, RoutedEventArgs e)
         {
-            // Запускаем анимацию вращения кнопки
             var rotateAnimation = (Storyboard)Resources["RotateAnimation"];
             Storyboard.SetTarget(rotateAnimation, RefreshBtn);
             rotateAnimation.Begin();
-
-            // Запускаем анимацию затемнения и восстановления
             var reloadAnimation = (Storyboard)Resources["ReloadAnimation"];
             Storyboard.SetTarget(reloadAnimation, MainGrid);
             reloadAnimation.Completed += (s, args) =>
             {
-                // После завершения анимации обновляем данные и сбрасываем состояние
                 UpdateData();
                 ResetAppState();
             };
@@ -280,19 +280,18 @@ namespace ArchiveApp
 
         private void ResetAppState()
         {
-            // Сбрасываем состояние приложения
-            string role = UserData.CurrentUserRole; // Переходим на главную страницу
-            SearchBox.Text = ""; // Очищаем поле поиска
+            string role = UserData.CurrentUserRole;
+            SearchBox.Text = "";
             UpdateSearchTextVisibility();
-            isMenuVisible = true; // Показываем меню
+            isMenuVisible = true;
             MenuGrid.Visibility = Visibility.Visible;
             DocBtn.Visibility = Visibility.Visible;
             ReqBtn.Visibility = UserData.CurrentUserRole == "Делопроизводитель" ? Visibility.Collapsed : Visibility.Visible;
             CardBtn.Visibility = Visibility.Visible;
             MainBtn.Visibility = Visibility.Visible;
             ExitBtn.Visibility = Visibility.Visible;
-            HighlightActiveButton(); // Обновляем подсветку активной кнопки
-            CloseNotificationPopup(); // Закрываем уведомление, если оно открыто
+            HighlightActiveButton();
+            CloseNotificationPopup();
         }
 
         private void UpdateData()
@@ -376,18 +375,24 @@ namespace ArchiveApp
             var result = MessageBox.Show("Вы уверены, что хотите выйти из системы?", "Подтверждение выхода", MessageBoxButton.YesNo, MessageBoxImage.Question);
             if (result == MessageBoxResult.No) return;
 
-            CloseNotificationPopup();                 // Закрытие всплывающего окна перед выходом
+            CloseNotificationPopup();
             _authorizePage.ResetAuthorizationState();
             MainFrame.Navigate(_authorizePage);
+            AuditService.Log("Выход из системы", "User", "Пользователь завершил сессию");
             HideElements();
         }
 
+        /// <summary>
+        /// Инициализирует всплывающее окно уведомлений с информацией о пользователе и системе.
+        /// Содержит кнопки перехода к аудиту и контролю сроков хранения.
+        /// Настраивает таймеры для обновления времени и размера окна в реальном времени.
+        /// </summary>
         private void InitializeNotificationPopup()
         {
             _notificationPopup = new Border
             {
                 Width = 280,
-                Height = 200,
+                Height = 260,
                 Background = new SolidColorBrush(Color.FromRgb(240, 240, 240)),
                 CornerRadius = new CornerRadius(8),
                 BorderThickness = new Thickness(1),
@@ -428,9 +433,45 @@ namespace ArchiveApp
             var timeRow = CreateInfoRow("Время:", "");
             _timeText = (TextBlock)timeRow.Children[1];
             stackPanel.Children.Add(timeRow);
+            var buttonPanel = new StackPanel { Margin = new Thickness(0, 15, 0, 0) };
+
+            var auditButton = new Button
+            {
+                Content = "Просмотр аудита",
+                Width = 220,
+                Height = 35,
+                Margin = new Thickness(0, 5, 0, 5),
+                Background = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#bae3e8")),
+                FontWeight = FontWeights.Medium,
+                Visibility = UserData.CurrentUserRole == "Администратор" ? Visibility.Visible : Visibility.Collapsed
+            };
+
+            auditButton.Click += (s, e) =>
+            {
+                CloseNotificationPopup();
+                Manager.MainFrame.Navigate(new AuditPage());
+            };
+            buttonPanel.Children.Add(auditButton);
+            var storageControlButton = new Button
+            {
+                Content = "Контроль сроков хранения",
+                Width = 220,
+                Height = 35,
+                Margin = new Thickness(0, 5, 0, 5),
+                Background = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#bae3e8")),
+                FontWeight = FontWeights.Medium
+            };
+
+            storageControlButton.Click += (s, e) =>
+            {
+                CloseNotificationPopup();
+                Manager.MainFrame.Navigate(new StorageControlPage());
+            };
+            buttonPanel.Children.Add(storageControlButton);
+
+            stackPanel.Children.Add(buttonPanel);
 
             _notificationPopup.Child = stackPanel;
-
             _highPrecisionTimer = new System.Timers.Timer(1000);
             _highPrecisionTimer.Elapsed += (s, e) =>
             {
@@ -457,6 +498,36 @@ namespace ArchiveApp
             MainGrid.Children.Add(_notificationPopup);
         }
 
+        private void UpdateNotificationButtonsVisibility()
+        {
+            if (_notificationPopup == null || _notificationPopup.Child == null)
+                return;
+
+            if (!(_notificationPopup.Child is StackPanel mainStack))
+                return;
+
+            foreach (var element in mainStack.Children)
+            {
+                if (element is StackPanel buttonPanel)
+                {
+                    foreach (var child in buttonPanel.Children)
+                    {
+                        if (child is Button btn && btn.Content != null)
+                        {
+                            string contentText = btn.Content.ToString();
+
+                            if (contentText == "Просмотр аудита")
+                            {
+                                btn.Visibility = UserData.CurrentUserRole == "Администратор"
+                                    ? Visibility.Visible
+                                    : Visibility.Collapsed;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
         private void NotBtn_Click(object sender, RoutedEventArgs e)
         {
             if (_notificationPopup == null)
@@ -468,14 +539,22 @@ namespace ArchiveApp
             }
             else
             {
+                UpdateNotificationButtonsVisibility();
+
                 var buttonRight = NotBtn.TranslatePoint(new Point(NotBtn.ActualWidth, 0), MainGrid).X;
                 var popupLeft = buttonRight - _notificationPopup.Width;
 
                 Canvas.SetLeft(_notificationPopup, popupLeft);
                 Canvas.SetTop(_notificationPopup, NotBtn.ActualHeight + 5);
 
-                _userNameText.Text = !string.IsNullOrEmpty(UserData.CurrentUserName) ? UserData.CurrentUserName : "Гость";
-                _userRoleText.Text = !string.IsNullOrEmpty(UserData.CurrentUserRole) ? UserData.CurrentUserRole : "Не определено";
+                _userNameText.Text = !string.IsNullOrEmpty(UserData.CurrentUserName)
+                    ? UserData.CurrentUserName
+                    : "Гость";
+
+                _userRoleText.Text = !string.IsNullOrEmpty(UserData.CurrentUserRole)
+                    ? UserData.CurrentUserRole
+                    : "Не определено";
+
                 _timeText.Text = DateTime.Now.ToString("HH:mm:ss");
                 _windowSizeText.Text = $"{Math.Round(ActualWidth)} x {Math.Round(ActualHeight)} px";
 
@@ -483,6 +562,7 @@ namespace ArchiveApp
                 _updateTimer.Start();
                 _notificationPopup.Visibility = Visibility.Visible;
                 _isNotificationVisible = true;
+
                 SizeChanged += MainWindow_SizeChanged;
             }
 
@@ -513,37 +593,32 @@ namespace ArchiveApp
         {
             if (_isNotificationVisible)
             {
-                _highPrecisionTimer.Stop();            // Остановка таймера времени
-                _updateTimer.Stop();                   // Остановка таймера размера
-                _notificationPopup.Visibility = Visibility.Collapsed; // Скрытие окна
-                _isNotificationVisible = false;        // Обновление флага
-                SizeChanged -= MainWindow_SizeChanged; // Отписка от события изменения размера
+                _highPrecisionTimer.Stop();
+                _updateTimer.Stop();
+                _notificationPopup.Visibility = Visibility.Collapsed;
+                _isNotificationVisible = false;
+                SizeChanged -= MainWindow_SizeChanged;
             }
         }
 
         private void MainGrid_MouseDown(object sender, MouseButtonEventArgs e)
         {
-            // Закрытие уведомления, если оно открыто
             if (_isNotificationVisible)
             {
                 var popupPosition = _notificationPopup.TransformToAncestor(MainGrid).Transform(new Point(0, 0));
                 var popupRect = new Rect(popupPosition, new Size(_notificationPopup.ActualWidth, _notificationPopup.ActualHeight));
                 var clickPoint = e.GetPosition(MainGrid);
 
-                // Проверяем, был ли клик вне области уведомления
                 if (!popupRect.Contains(clickPoint) && e.OriginalSource != NotBtn)
                 {
                     CloseNotificationPopup();
                 }
             }
 
-            // Проверяем, находимся ли мы на странице авторизации
             if (MainFrame.Content is AuthorizePage) return;
 
-            // Получаем элемент, на который был произведён клик
             var clickedElement = e.OriginalSource as DependencyObject;
 
-            // Проверяем, является ли клик по корневому Grid (MainGrid)
             bool isEmptySpace = false;
             while (clickedElement != null)
             {
@@ -552,7 +627,6 @@ namespace ArchiveApp
                     isEmptySpace = true;
                     break;
                 }
-                // Игнорируем клики по другим элементам (например, Button, TextBox, TextBlock)
                 if (clickedElement is Button || clickedElement is TextBox ||
                     clickedElement is TextBlock || clickedElement is Image ||
                     clickedElement is Frame || clickedElement is Border)
@@ -561,8 +635,6 @@ namespace ArchiveApp
                 }
                 clickedElement = VisualTreeHelper.GetParent(clickedElement);
             }
-
-            // Если клик был на пустом месте и SearchBox в фокусе, снимаем фокус
             if (isEmptySpace && Keyboard.FocusedElement == SearchBox)
             {
                 Keyboard.ClearFocus();
@@ -572,7 +644,7 @@ namespace ArchiveApp
 
         private void SearchText_MouseDown(object sender, MouseButtonEventArgs e)
         {
-            SearchBox.Focus();                           // Перевод фокуса на поле поиска
+            SearchBox.Focus();
         }
 
         private void RepBtn_Click(object sender, RoutedEventArgs e)
@@ -585,23 +657,18 @@ namespace ArchiveApp
 
         private void MainFrame_MouseDown(object sender, MouseButtonEventArgs e)
         {
-            // Проверяем, находимся ли мы на странице авторизации
             if (MainFrame.Content is AuthorizePage) return;
 
-            // Получаем элемент, на который был произведён клик
             var clickedElement = e.OriginalSource as DependencyObject;
 
-            // Проверяем, является ли клик по корневому элементу страницы (обычно Grid)
             bool isEmptySpace = false;
             while (clickedElement != null)
             {
-                // Если клик был на корневом Grid страницы (без имени, чтобы исключить вложенные Grid)
                 if (clickedElement is Grid grid && string.IsNullOrEmpty(grid.Name))
                 {
                     isEmptySpace = true;
                     break;
                 }
-                // Игнорируем клики по другим элементам (например, Button, TextBox, TextBlock)
                 if (clickedElement is Button || clickedElement is TextBox ||
                     clickedElement is TextBlock || clickedElement is Image ||
                     clickedElement is Border || clickedElement is DataGrid ||
@@ -612,7 +679,6 @@ namespace ArchiveApp
                 clickedElement = VisualTreeHelper.GetParent(clickedElement);
             }
 
-            // Если клик был на пустом месте и SearchBox в фокусе, снимаем фокус
             if (isEmptySpace && Keyboard.FocusedElement == SearchBox)
             {
                 Keyboard.ClearFocus();
@@ -622,14 +688,12 @@ namespace ArchiveApp
 
         private void MainGrid_KeyDown(object sender, KeyEventArgs e)
         {
-            // Проверяем, нажата ли клавиша Esc или Enter
             if (e.Key == Key.Escape || e.Key == Key.Enter)
             {
-                // Если один из DatePicker в фокусе, снимаем фокус
                 if (Keyboard.FocusedElement == SearchBox)
                 {
                     Keyboard.ClearFocus();
-                    e.Handled = true; // Предотвращаем дальнейшую обработку события
+                    e.Handled = true;
                 }
             }
         }

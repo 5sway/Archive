@@ -8,9 +8,16 @@ using Excel = Microsoft.Office.Interop.Excel;
 
 namespace ArchiveApp
 {
+    /// <summary>
+    /// Экспорт данных в формат Excel.
+    /// Формирует отдельные листы для каждой выбранной таблицы с заголовками и данными.
+    /// Включает вложенные данные (подписи, запросы, сканы) для полноты отчёта.
+    /// </summary>
     class ExportExcel
     {
-        public static void ExportToExcel(string filePath, List<string> selectedTables, Dictionary<string, List<int>> selectedRecordIds, string userRole, DateTime? startDate, DateTime? endDate)
+        public static void ExportToExcel(string filePath, List<string> selectedTables,
+            Dictionary<string, List<int>> selectedRecordIds, string userRole,
+            DateTime? startDate, DateTime? endDate)
         {
             try
             {
@@ -22,27 +29,49 @@ namespace ArchiveApp
 
                 using (var context = new ArchiveBaseEntities())
                 {
-                    var documents = context.Document.ToList() ?? new List<Document>();
-                    var requests = context.Request.Include("User").Include("Document").ToList() ?? new List<Request>();
-                    var users = context.User.Include("Role").ToList() ?? new List<User>();
-                    var regCards = context.Registration_Card.Include("User").Include("Document").ToList() ?? new List<Registration_Card>();
+                    List<int> documentIds = new List<int>();
+                    List<int> requestIds = new List<int>();
+                    List<int> userIds = new List<int>();
+                    List<int> cardIds = new List<int>();
 
-                    // Фильтрация по периоду
+                    if (selectedRecordIds != null)
+                    {
+                        if (selectedRecordIds.ContainsKey("Documents") && selectedRecordIds["Documents"].Any())
+                            documentIds = selectedRecordIds["Documents"];
+                        if (selectedRecordIds.ContainsKey("Requests") && selectedRecordIds["Requests"].Any())
+                            requestIds = selectedRecordIds["Requests"];
+                        if (selectedRecordIds.ContainsKey("Users") && selectedRecordIds["Users"].Any())
+                            userIds = selectedRecordIds["Users"];
+                        if (selectedRecordIds.ContainsKey("RegistrationCards") && selectedRecordIds["RegistrationCards"].Any())
+                            cardIds = selectedRecordIds["RegistrationCards"];
+                    }
+                    var documentsQuery = context.Document.AsQueryable();
+                    if (documentIds.Any())
+                        documentsQuery = documentsQuery.Where(d => documentIds.Contains(d.Id));
                     if (startDate.HasValue && endDate.HasValue)
-                    {
-                        documents = documents.Where(d => d.Receipt_Date >= startDate && d.Receipt_Date <= endDate).ToList();
-                        requests = requests.Where(r => r.Request_Date >= startDate && r.Request_Date <= endDate).ToList();
-                        regCards = regCards.Where(c => c.Registration_Date >= startDate && c.Registration_Date <= endDate).ToList();
-                    }
+                        documentsQuery = documentsQuery.Where(d => d.Receipt_Date >= startDate && d.Receipt_Date <= endDate);
+                    var documents = documentsQuery.ToList();
 
-                    // Фильтрация по выбранным записям
-                    if (selectedRecordIds.Any())
-                    {
-                        documents = selectedRecordIds.ContainsKey("Documents") ? documents.Where(d => selectedRecordIds["Documents"].Contains(d.Id)).ToList() : new List<Document>();
-                        requests = selectedRecordIds.ContainsKey("Requests") ? requests.Where(r => selectedRecordIds["Requests"].Contains(r.Id)).ToList() : new List<Request>();
-                        users = selectedRecordIds.ContainsKey("Users") ? users.Where(u => selectedRecordIds["Users"].Contains(u.Id)).ToList() : new List<User>();
-                        regCards = selectedRecordIds.ContainsKey("RegistrationCards") ? regCards.Where(c => selectedRecordIds["RegistrationCards"].Contains(c.Id)).ToList() : new List<Registration_Card>();
-                    }
+                    var requestsQuery = context.Request.Include("User").Include("Document").AsQueryable();
+                    if (requestIds.Any())
+                        requestsQuery = requestsQuery.Where(r => requestIds.Contains(r.Id));
+                    if (startDate.HasValue && endDate.HasValue)
+                        requestsQuery = requestsQuery.Where(r => r.Request_Date >= startDate && r.Request_Date <= endDate);
+                    var requests = requestsQuery.ToList();
+
+                    var usersQuery = context.User.Include("Role").AsQueryable();
+                    if (userIds.Any())
+                        usersQuery = usersQuery.Where(u => userIds.Contains(u.Id));
+                    var users = usersQuery.ToList();
+
+                    var regCardsQuery = context.Registration_Card.Include("User").Include("Document").AsQueryable();
+                    if (cardIds.Any())
+                        regCardsQuery = regCardsQuery.Where(c => cardIds.Contains(c.Id));
+                    if (startDate.HasValue && endDate.HasValue)
+                        regCardsQuery = regCardsQuery.Where(c => c.Registration_Date >= startDate && c.Registration_Date <= endDate);
+                    var regCards = regCardsQuery.ToList();
+
+                    var roles = context.Role.ToList();
 
                     if (userRole == "Делопроизводитель")
                     {
@@ -80,28 +109,28 @@ namespace ArchiveApp
                                 if (documents.Any())
                                 {
                                     sheet.Name = "Документы";
-                                    ExportDocumentsToExcel(sheet, documents);
+                                    ExportDocumentsToExcel(sheet, documents, requests, regCards, users);
                                 }
                                 break;
                             case "Requests":
                                 if (requests.Any())
                                 {
                                     sheet.Name = "Запросы";
-                                    ExportRequestsToExcel(sheet, requests);
+                                    ExportRequestsToExcel(sheet, requests, documents, users);
                                 }
                                 break;
                             case "Users":
                                 if (users.Any())
                                 {
                                     sheet.Name = "Пользователи";
-                                    ExportUsersToExcel(sheet, users);
+                                    ExportUsersToExcel(sheet, users, roles);
                                 }
                                 break;
                             case "RegistrationCards":
                                 if (regCards.Any())
                                 {
                                     sheet.Name = "Рег. карты";
-                                    ExportRegistrationCardsToExcel(sheet, regCards);
+                                    ExportRegistrationCardsToExcel(sheet, regCards, documents, users);
                                 }
                                 break;
                             default:
@@ -128,143 +157,264 @@ namespace ArchiveApp
             }
         }
 
-        private static void ExportDocumentsToExcel(Excel.Worksheet sheet, List<Document> documents)
+        private static void ExportDocumentsToExcel(Excel.Worksheet sheet, List<Document> documents,
+    List<Request> requests, List<Registration_Card> regCards, List<User> users)
         {
-            sheet.Cells.Font.Name = "Times New Roman";
-            sheet.Cells.Font.Size = 12;
+            int row = 1;
+            sheet.Cells[row, 1] = "ДОКУМЕНТЫ";
+            sheet.Cells[row, 1].Font.Bold = true;
+            sheet.Cells[row, 1].Font.Size = 16;
+            row += 2;
+            string[] docHeaders = {
+        "ID",
+        "Арх. шифр",
+        "Дата получения",
+        "Название",
+        "Источник",
+        "Копий",
+        "Тип",
+        "Полка",
+        "Срок хранения",
+        "Кол-во сканов",
+        "Путь к сканам"
+    };
 
-            sheet.Cells[1, 1] = "ID";
-            sheet.Cells[1, 2] = "Номер";
-            sheet.Cells[1, 3] = "Дата получения";
-            sheet.Cells[1, 4] = "Название";
-            sheet.Cells[1, 5] = "Источник";
-            sheet.Cells[1, 6] = "Копии";
-            sheet.Cells[1, 7] = "Тип хранения";
+            SetHeaders(sheet, row, docHeaders);
+            row++;
 
-            for (int i = 0; i < documents.Count; i++)
+            foreach (var doc in documents)
             {
-                var doc = documents[i];
-                sheet.Cells[i + 2, 1] = doc.Id;
-                sheet.Cells[i + 2, 2] = doc.Number ?? "";
-                sheet.Cells[i + 2, 3] = doc.Receipt_Date.ToShortDateString() ?? "";
-                sheet.Cells[i + 2, 4] = doc.Title ?? "";
-                sheet.Cells[i + 2, 5] = doc.Source ?? "";
-                sheet.Cells[i + 2, 6] = doc.Copies_Count;
-                sheet.Cells[i + 2, 7] = doc.Storage_Type ?? "";
+                sheet.Cells[row, 1] = doc.Id;
+                sheet.Cells[row, 2] = doc.Number ?? "";
+                sheet.Cells[row, 3] = doc.Receipt_Date.ToShortDateString();
+                sheet.Cells[row, 4] = doc.Title ?? "";
+                sheet.Cells[row, 5] = doc.Source ?? "";
+                sheet.Cells[row, 6] = doc.Copies_Count;
+                sheet.Cells[row, 7] = doc.Storage_Type ?? "";
+                sheet.Cells[row, 8] = doc.Shelf_Number ?? "-";
+                int termYears = doc.Storage_Type?.Contains("Электронный") == true ? 5 : 10;
+                DateTime endDate = doc.Receipt_Date.AddYears(termYears);
+                sheet.Cells[row, 9] = $"{termYears} лет (до {endDate:dd.MM.yyyy})";
+
+                var attachments = DocumentAttachmentService.GetAttachments(doc.Id);
+                sheet.Cells[row, 10] = attachments.Count;
+
+                if (attachments.Any())
+                {
+                    string paths = string.Join("\n", attachments.Select(a => a.FilePath));
+                    sheet.Cells[row, 11] = paths;
+                }
+                else
+                {
+                    sheet.Cells[row, 11] = "—";
+                }
+
+                row++;
+            }
+
+            row += 2;
+
+            foreach (var doc in documents)
+            {
+                var regCard = regCards.FirstOrDefault(r => r.Document_Id == doc.Id);
+                if (regCard != null)
+                {
+                    sheet.Cells[row, 1] = $"Подпись документа \"{doc.Title}\"";
+                    sheet.Cells[row, 1].Font.Bold = true;
+                    sheet.Cells[row, 1].Font.Size = 14;
+                    row++;
+
+                    string[] subHeaders = { "Дата регистрации", "Статус", "Подписал" };
+                    SetHeaders(sheet, row, subHeaders);
+                    row++;
+
+                    var user = users.FirstOrDefault(u => u.Id == regCard.User_Id);
+                    sheet.Cells[row, 1] = regCard.Registration_Date.ToShortDateString();
+                    sheet.Cells[row, 2] = regCard.Signature ? "Подписан" : "Не подписан";
+                    sheet.Cells[row, 3] = user != null ? $"{user.Last_Name} {user.Name} {user.First_Name}" : "Неизвестно";
+                    row += 2;
+                }
+
+                var docReqs = requests.Where(r => r.Document_Id == doc.Id).ToList();
+                if (docReqs.Any())
+                {
+                    sheet.Cells[row, 1] = $"Запросы по документу \"{doc.Title}\"";
+                    sheet.Cells[row, 1].Font.Bold = true;
+                    sheet.Cells[row, 1].Font.Size = 14;
+                    row++;
+
+                    string[] reqHeaders = { "Дата запроса", "Причина", "Статус", "Запросил" };
+                    SetHeaders(sheet, row, reqHeaders);
+                    row++;
+
+                    foreach (var req in docReqs)
+                    {
+                        sheet.Cells[row, 1] = req.Request_Date.ToShortDateString();
+                        sheet.Cells[row, 2] = req.Reason ?? "";
+                        sheet.Cells[row, 3] = req.Status == true ? "Принято" : "Отклонено";
+                        sheet.Cells[row, 4] = req.User != null ? $"{req.User.Last_Name} {req.User.Name}" : "—";
+                        row++;
+                    }
+                    row += 2;
+                }
             }
 
             FormatExcelSheet(sheet);
         }
 
-        private static void ExportRequestsToExcel(Excel.Worksheet sheet, List<Request> requests)
+        private static void ExportRequestsToExcel(Excel.Worksheet sheet, List<Request> requests,
+            List<Document> documents, List<User> users)
         {
-            sheet.Cells.Font.Name = "Times New Roman";
-            sheet.Cells.Font.Size = 12;
+            int row = 1;
 
-            sheet.Cells[1, 1] = "ID";
-            sheet.Cells[1, 2] = "Дата запроса";
-            sheet.Cells[1, 3] = "Причина";
-            sheet.Cells[1, 4] = "Статус";
-            sheet.Cells[1, 5] = "Запросил (ФИО)";
-            sheet.Cells[1, 6] = "Документ";
+            sheet.Cells[row, 1] = "ЗАПРОСЫ";
+            sheet.Cells[row, 1].Font.Bold = true;
+            sheet.Cells[row, 1].Font.Size = 16;
+            row += 2;
 
-            for (int i = 0; i < requests.Count; i++)
+            string[] reqHeaders = { "ID", "Дата запроса", "Причина", "Статус", "Запросил", "Документ" };
+            SetHeaders(sheet, row, reqHeaders);
+            row++;
+
+            foreach (var req in requests)
             {
-                var req = requests[i];
-                string requesterName = req.User != null
-                    ? $"{req.User.Last_Name} {req.User.Name} {req.User.First_Name}"
-                    : "Неизвестно";
+                sheet.Cells[row, 1] = req.Id;
+                sheet.Cells[row, 2] = req.Request_Date.ToShortDateString();
+                sheet.Cells[row, 3] = req.Reason ?? "";
+                sheet.Cells[row, 4] = req.Status == true ? "Принято" : "Отклонено";
+                sheet.Cells[row, 5] = req.User != null ? $"{req.User.Last_Name} {req.User.Name}" : "—";
+                sheet.Cells[row, 6] = req.Document?.Title ?? "—";
+                row++;
+            }
 
-                sheet.Cells[i + 2, 1] = req.Id;
-                sheet.Cells[i + 2, 2] = req.Request_Date.ToShortDateString() ?? "";
-                sheet.Cells[i + 2, 3] = req.Reason ?? "";
-                sheet.Cells[i + 2, 4] = req.Status == true ? "Подтвержден" : "Отклонен";
-                sheet.Cells[i + 2, 5] = requesterName;
-                sheet.Cells[i + 2, 6] = req.Document?.Title ?? "Неизвестно";
+            row += 2;
+
+            foreach (var req in requests)
+            {
+                if (req.Document != null)
+                {
+                    sheet.Cells[row, 1] = $"Документ запроса \"{req.Document.Title}\"";
+                    sheet.Cells[row, 1].Font.Bold = true;
+                    sheet.Cells[row, 1].Font.Size = 14;
+                    row++;
+
+                    string[] docHeaders = { "Арх. шифр", "Дата", "Источник", "Копий", "Тип", "Полка" };
+                    SetHeaders(sheet, row, docHeaders);
+                    row++;
+
+                    sheet.Cells[row, 1] = req.Document.Number ?? "";
+                    sheet.Cells[row, 2] = req.Document.Receipt_Date.ToShortDateString();
+                    sheet.Cells[row, 3] = req.Document.Source ?? "";
+                    sheet.Cells[row, 4] = req.Document.Copies_Count;
+                    sheet.Cells[row, 5] = req.Document.Storage_Type ?? "";
+                    sheet.Cells[row, 6] = req.Document.Shelf_Number ?? "-";
+                    row += 2;
+                }
             }
 
             FormatExcelSheet(sheet);
         }
 
-        private static void ExportUsersToExcel(Excel.Worksheet sheet, List<User> users)
+        private static void ExportUsersToExcel(Excel.Worksheet sheet, List<User> users, List<Role> roles)
         {
-            sheet.Cells.Font.Name = "Times New Roman";
-            sheet.Cells.Font.Size = 12;
+            int row = 1;
 
-            sheet.Cells[1, 1] = "ID";
-            sheet.Cells[1, 2] = "Логин";
-            sheet.Cells[1, 3] = "ФИО";
-            sheet.Cells[1, 4] = "Роль";
-            sheet.Cells[1, 5] = "Email";
-            sheet.Cells[1, 6] = "Телефон";
+            sheet.Cells[row, 1] = "ПОЛЬЗОВАТЕЛИ";
+            sheet.Cells[row, 1].Font.Bold = true;
+            sheet.Cells[row, 1].Font.Size = 16;
+            row += 2;
 
-            for (int i = 0; i < users.Count; i++)
+            string[] headers = { "ID", "Логин", "ФИО", "Роль", "Email", "Телефон" };
+            SetHeaders(sheet, row, headers);
+            row++;
+
+            foreach (var user in users)
             {
-                var user = users[i];
-                string fullName = $"{user.Last_Name} {user.Name} {user.First_Name}";
-
-                sheet.Cells[i + 2, 1] = user.Id;
-                sheet.Cells[i + 2, 2] = user.Login ?? "";
-                sheet.Cells[i + 2, 3] = fullName.Trim();
-                sheet.Cells[i + 2, 4] = user.Role?.Name ?? "Неизвестно";
-                sheet.Cells[i + 2, 5] = user.Email ?? "";
-                sheet.Cells[i + 2, 6] = user.Phone_Number ?? "";
+                sheet.Cells[row, 1] = user.Id;
+                sheet.Cells[row, 2] = user.Login ?? "";
+                sheet.Cells[row, 3] = $"{user.Last_Name} {user.Name} {user.First_Name}".Trim();
+                sheet.Cells[row, 4] = user.Role?.Name ?? "—";
+                sheet.Cells[row, 5] = user.Email ?? "";
+                sheet.Cells[row, 6] = user.Phone_Number ?? "";
+                row++;
             }
 
             FormatExcelSheet(sheet);
         }
 
-        private static void ExportRegistrationCardsToExcel(Excel.Worksheet sheet, List<Registration_Card> regCards)
+        private static void ExportRegistrationCardsToExcel(Excel.Worksheet sheet, List<Registration_Card> cards,
+            List<Document> documents, List<User> users)
         {
-            sheet.Cells.Font.Name = "Times New Roman";
-            sheet.Cells.Font.Size = 12;
+            int row = 1;
 
-            sheet.Cells[1, 1] = "ID";
-            sheet.Cells[1, 2] = "Дата регистрации";
-            sheet.Cells[1, 3] = "Подпись";
-            sheet.Cells[1, 4] = "Подписал (ФИО)";
-            sheet.Cells[1, 5] = "Документ";
+            sheet.Cells[row, 1] = "РЕГИСТРАЦИОННЫЕ КАРТЫ";
+            sheet.Cells[row, 1].Font.Bold = true;
+            sheet.Cells[row, 1].Font.Size = 16;
+            row += 2;
 
-            for (int i = 0; i < regCards.Count; i++)
+            string[] headers = { "ID", "Дата регистрации", "Статус", "Подписал", "Документ" };
+            SetHeaders(sheet, row, headers);
+            row++;
+
+            foreach (var card in cards)
             {
-                var reg = regCards[i];
-                string signerName = reg.User != null
-                    ? $"{reg.User.Last_Name} {reg.User.Name} {reg.User.First_Name}"
-                    : "Неизвестно";
+                sheet.Cells[row, 1] = card.Id;
+                sheet.Cells[row, 2] = card.Registration_Date.ToShortDateString();
+                sheet.Cells[row, 3] = card.Signature ? "Подписан" : "Не подписан";
+                sheet.Cells[row, 4] = card.User != null ? $"{card.User.Last_Name} {card.User.Name}" : "—";
+                sheet.Cells[row, 5] = card.Document?.Title ?? "—";
+                row++;
+            }
 
-                sheet.Cells[i + 2, 1] = reg.Id;
-                sheet.Cells[i + 2, 2] = reg.Registration_Date.ToShortDateString() ?? "";
-                sheet.Cells[i + 2, 3] = reg.Signature ? "Подписано" : "Не подписано";
-                sheet.Cells[i + 2, 4] = signerName;
-                sheet.Cells[i + 2, 5] = reg.Document?.Title ?? "Неизвестно";
+            row += 2;
+
+            foreach (var card in cards)
+            {
+                if (card.Document != null)
+                {
+                    sheet.Cells[row, 1] = $"Документ карты \"{card.Document.Title}\"";
+                    sheet.Cells[row, 1].Font.Bold = true;
+                    sheet.Cells[row, 1].Font.Size = 14;
+                    row++;
+
+                    string[] docHeaders = { "Арх. шифр", "Дата", "Источник", "Копий", "Тип", "Полка" };
+                    SetHeaders(sheet, row, docHeaders);
+                    row++;
+
+                    sheet.Cells[row, 1] = card.Document.Number ?? "";
+                    sheet.Cells[row, 2] = card.Document.Receipt_Date.ToShortDateString();
+                    sheet.Cells[row, 3] = card.Document.Source ?? "";
+                    sheet.Cells[row, 4] = card.Document.Copies_Count;
+                    sheet.Cells[row, 5] = card.Document.Storage_Type ?? "";
+                    sheet.Cells[row, 6] = card.Document.Shelf_Number ?? "-";
+                    row += 2;
+                }
             }
 
             FormatExcelSheet(sheet);
+        }
+
+        private static void SetHeaders(Excel.Worksheet sheet, int row, string[] headers)
+        {
+            for (int i = 0; i < headers.Length; i++)
+            {
+                sheet.Cells[row, i + 1] = headers[i];
+                sheet.Cells[row, i + 1].Font.Bold = true;
+                sheet.Cells[row, i + 1].Font.Name = "Times New Roman";
+                sheet.Cells[row, i + 1].Font.Size = 12;
+                sheet.Cells[row, i + 1].Interior.Color = Excel.XlRgbColor.rgbLightGray;
+            }
         }
 
         private static void FormatExcelSheet(Excel.Worksheet sheet)
         {
             sheet.Columns.AutoFit();
-            Excel.Range headerRange = sheet.Range["A1", GetExcelColumnName(sheet.UsedRange.Columns.Count) + "1"];
-            headerRange.Font.Bold = true;
-            headerRange.Font.Name = "Times New Roman";
-            headerRange.Font.Size = 12;
-            headerRange.Interior.Color = Excel.XlRgbColor.rgbLightGray;
             Excel.Range allCells = sheet.UsedRange;
+            allCells.Font.Name = "Times New Roman";
+            allCells.Font.Size = 11;
             allCells.HorizontalAlignment = Excel.XlHAlign.xlHAlignCenter;
             allCells.VerticalAlignment = Excel.XlVAlign.xlVAlignCenter;
-        }
-
-        private static string GetExcelColumnName(int columnNumber)
-        {
-            string columnName = "";
-            while (columnNumber > 0)
-            {
-                int modulo = (columnNumber - 1) % 26;
-                columnName = Convert.ToChar('A' + modulo) + columnName;
-                columnNumber = (columnNumber - modulo) / 26;
-            }
-            return columnName;
+            allCells.Borders.Weight = Excel.XlBorderWeight.xlThin;
         }
 
         private static void OpenExportedFile(string filePath)
@@ -280,7 +430,7 @@ namespace ArchiveApp
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"Не удалось открыть файл: {ex.Message}\nStackTrace: {ex.StackTrace}", "Ошибка", MessageBoxButton.OK, MessageBoxImage.Warning);
+                MessageBox.Show($"Не удалось открыть файл: {ex.Message}", "Ошибка", MessageBoxButton.OK, MessageBoxImage.Warning);
             }
         }
 
@@ -290,7 +440,8 @@ namespace ArchiveApp
             {
                 try
                 {
-                    System.Runtime.InteropServices.Marshal.ReleaseComObject(obj);
+                    if (System.Runtime.InteropServices.Marshal.IsComObject(obj))
+                        System.Runtime.InteropServices.Marshal.ReleaseComObject(obj);
                 }
                 catch { }
                 finally

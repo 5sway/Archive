@@ -11,70 +11,75 @@ using System.Globalization;
 
 namespace ArchiveApp
 {
+    /// <summary>
+    /// Генератор CAPTCHA-изображений.
+    /// Создаёт случайный текст из 5 символов (буквы, цифры, спецсимволы)
+    /// и отрисовывает его на изображении с шумом для защиты от автоматического распознавания.
+    /// </summary>
     public static class CaptchaGenerator
     {
-        private static Random _random = new Random(); // Генератор случайных чисел
+        private static Random _random = new Random();
 
         public static string GenerateCaptchaText(int length = 5)
         {
-            const string chars = "ABCDEFGHJKLMNPQRSTUVWXYZ123456789abcdefghjklmnpqrstuvwxyz!@#$%^&*()-_=+"; // Допустимые символы без похожих (I, O, 1, 0)
-            char[] captcha = new char[length];      // Массив для хранения символов капчи
-            for (int i = 0; i < length; i++)        // Заполнение массива случайными символами
-                captcha[i] = chars[_random.Next(chars.Length)]; // Выбор случайного символа
-            return new string(captcha);             // Преобразование массива в строку
+            const string chars = "ABCDEFGHJKLMNPQRSTUVWXYZ123456789abcdefghjklmnpqrstuvwxyz!@#$%^&*()-_=+";
+            char[] captcha = new char[length];
+            for (int i = 0; i < length; i++)
+                captcha[i] = chars[_random.Next(chars.Length)];
+            return new string(captcha);
         }
 
         public static BitmapImage GenerateCaptchaImage(string captchaText)
         {
-            int width = 150, height = 50;           // Размеры изображения капчи
-            DrawingVisual visual = new DrawingVisual(); // Объект для рисования
-            using (DrawingContext dc = visual.RenderOpen()) // Открытие контекста рисования
+            int width = 150, height = 50;
+            DrawingVisual visual = new DrawingVisual();
+            using (DrawingContext dc = visual.RenderOpen())
             {
-                dc.DrawRectangle(Brushes.White, null, new Rect(0, 0, width, height)); // Отрисовка белого фона
-                Typeface typeface = new Typeface("Arial"); // Шрифт для текста капчи
-                FormattedText formattedText = new FormattedText( // Форматированный текст капчи
-                    captchaText,                    // Текст для отображения
-                    CultureInfo.InvariantCulture,   // Инвариантная культура
-                    FlowDirection.LeftToRight,      // Направление текста слева направо
-                    typeface,                       // Выбранный шрифт
-                    30,                             // Размер шрифта
-                    Brushes.Black,                  // Цвет текста
-                    1.0);                           // Плотность пикселей
-                dc.DrawText(formattedText, new Point(15, 5)); // Отрисовка текста на изображении
+                dc.DrawRectangle(Brushes.White, null, new Rect(0, 0, width, height));
+                Typeface typeface = new Typeface("Arial");
+                FormattedText formattedText = new FormattedText(
+                    captchaText,
+                    CultureInfo.InvariantCulture,
+                    FlowDirection.LeftToRight,
+                    typeface,
+                    30,
+                    Brushes.Black,
+                    1.0);
+                dc.DrawText(formattedText, new Point(15, 5));
 
-                for (int i = 0; i < 20; i++)        // Добавление шума в виде случайных точек
+                for (int i = 0; i < 20; i++)
                 {
-                    double x = _random.Next(width); // Случайная X-координата
-                    double y = _random.Next(height);// Случайная Y-координата
-                    dc.DrawRectangle(Brushes.Gray, null, new Rect(x, y, 2, 2)); // Отрисовка серой точки
+                    double x = _random.Next(width);
+                    double y = _random.Next(height);
+                    dc.DrawRectangle(Brushes.Gray, null, new Rect(x, y, 2, 2));
                 }
             }
 
-            RenderTargetBitmap bitmap = new RenderTargetBitmap( // Создание растрового изображения
-                width, height,                      // Размеры изображения
-                96, 96,                             // Разрешение DPI
-                PixelFormats.Pbgra32);              // Формат пикселей с альфа-каналом
-            bitmap.Render(visual);                  // Рендеринг визуального объекта в битмап
+            RenderTargetBitmap bitmap = new RenderTargetBitmap(
+                width, height,
+                96, 96,
+                PixelFormats.Pbgra32);
+            bitmap.Render(visual);
 
-            return ConvertBitmapToBitmapImage(bitmap); // Конвертация в BitmapImage
+            return ConvertBitmapToBitmapImage(bitmap);
         }
 
         private static BitmapImage ConvertBitmapToBitmapImage(BitmapSource bitmap)
         {
-            using (MemoryStream memory = new MemoryStream()) // Создание потока памяти
+            using (MemoryStream memory = new MemoryStream())
             {
-                PngBitmapEncoder encoder = new PngBitmapEncoder(); // Кодировщик для PNG формата
-                encoder.Frames.Add(BitmapFrame.Create(bitmap)); // Добавление кадра из битмапа
-                encoder.Save(memory);               // Сохранение в поток памяти
+                PngBitmapEncoder encoder = new PngBitmapEncoder();
+                encoder.Frames.Add(BitmapFrame.Create(bitmap));
+                encoder.Save(memory);
 
-                BitmapImage bitmapImage = new BitmapImage(); // Создание объекта BitmapImage
-                bitmapImage.BeginInit();            // Начало инициализации
-                bitmapImage.StreamSource = new MemoryStream(memory.ToArray()); // Установка источника данных
-                bitmapImage.CacheOption = BitmapCacheOption.OnLoad; // Загрузка в память сразу
-                bitmapImage.EndInit();              // Завершение инициализации
-                bitmapImage.Freeze();               // Заморозка для потокобезопасности
+                BitmapImage bitmapImage = new BitmapImage();
+                bitmapImage.BeginInit();
+                bitmapImage.StreamSource = new MemoryStream(memory.ToArray());
+                bitmapImage.CacheOption = BitmapCacheOption.OnLoad;
+                bitmapImage.EndInit();
+                bitmapImage.Freeze();
 
-                return bitmapImage;                 // Возврат готового изображения
+                return bitmapImage;
             }
         }
     }

@@ -19,10 +19,10 @@
     <NuGetPackageImportStamp>
     </NuGetPackageImportStamp>
     <IsWebBootstrapper>false</IsWebBootstrapper>
-    <PublishUrl>D:\Kursach\Kursach\</PublishUrl>
+    <PublishUrl>D:\Важное\SetupFiles\</PublishUrl>
     <Install>true</Install>
     <InstallFrom>Disk</InstallFrom>
-    <UpdateEnabled>true</UpdateEnabled>
+    <UpdateEnabled>false</UpdateEnabled>
     <UpdateMode>Foreground</UpdateMode>
     <UpdateInterval>7</UpdateInterval>
     <UpdateIntervalUnits>Days</UpdateIntervalUnits>
@@ -30,8 +30,7 @@
     <UpdateRequired>false</UpdateRequired>
     <MapFileExtensions>true</MapFileExtensions>
     <UpdateUrl>http://localhost/ArchiveApp/</UpdateUrl>
-    <AutorunEnabled>true</AutorunEnabled>
-    <ApplicationRevision>1</ApplicationRevision>
+    <ApplicationRevision>2</ApplicationRevision>
     <ApplicationVersion>1.0.0.%2a</ApplicationVersion>
     <UseApplicationTrust>false</UseApplicationTrust>
     <PublishWizardCompleted>true</PublishWizardCompleted>
@@ -66,10 +65,13 @@
     <GenerateManifests>true</GenerateManifests>
   </PropertyGroup>
   <PropertyGroup>
-    <SignManifests>true</SignManifests>
+    <SignManifests>false</SignManifests>
   </PropertyGroup>
   <PropertyGroup>
     <ApplicationIcon>Resources\ArchiveIcon.ico</ApplicationIcon>
+  </PropertyGroup>
+  <PropertyGroup>
+    <NoWin32Manifest>true</NoWin32Manifest>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="ClosedXML, Version=0.104.2.0, Culture=neutral, processorArchitecture=MSIL">
@@ -127,6 +129,9 @@
     <Reference Include="Microsoft.Office.Interop.Word, Version=15.0.0.0, Culture=neutral, PublicKeyToken=71e9bce111e9429c, processorArchitecture=MSIL">
       <HintPath>..\packages\Microsoft.Office.Interop.Word.15.0.4797.1004\lib\net20\Microsoft.Office.Interop.Word.dll</HintPath>
       <EmbedInteropTypes>True</EmbedInteropTypes>
+    </Reference>
+    <Reference Include="Newtonsoft.Json, Version=13.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <HintPath>..\packages\Newtonsoft.Json.13.0.4\lib\net45\Newtonsoft.Json.dll</HintPath>
     </Reference>
     <Reference Include="PdfSharp, Version=6.1.0.0, Culture=neutral, PublicKeyToken=f94615aa0424f9eb, processorArchitecture=MSIL">
       <HintPath>..\packages\PDFsharp.6.1.0\lib\netstandard2.0\PdfSharp.dll</HintPath>
@@ -224,18 +229,23 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>ArchiveModel.edmx</DependentUpon>
     </Compile>
+    <Compile Include="AuditPage.xaml.cs">
+      <DependentUpon>AuditPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Classes\AuditService.cs" />
     <Compile Include="Classes\BooleanToVisibilityConverter.cs" />
     <Compile Include="Classes\BoolToconverter.cs" />
     <Compile Include="Classes\BoolToStatusConverter.cs" />
+    <Compile Include="Classes\DocumentAttachmentService.cs" />
+    <Compile Include="Classes\ExportExcel.cs" />
     <Compile Include="Document.cs">
       <DependentUpon>ArchiveModel.tt</DependentUpon>
     </Compile>
-    <Compile Include="Classes\ExportExcel.cs" />
     <Compile Include="Classes\ExportWord.cs" />
     <Compile Include="Registration_Card.cs">
       <DependentUpon>ArchiveModel.tt</DependentUpon>
     </Compile>
-    <Compile Include="Pages\ReportOptionsPage.xaml.cs">
+    <Compile Include="ReportOptionsPage.xaml.cs">
       <DependentUpon>ReportOptionsPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="Request.cs">
@@ -243,6 +253,9 @@
     </Compile>
     <Compile Include="Role.cs">
       <DependentUpon>ArchiveModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="StorageControlPage.xaml.cs">
+      <DependentUpon>StorageControlPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="sysdiagrams.cs">
       <DependentUpon>ArchiveModel.tt</DependentUpon>
@@ -252,30 +265,34 @@
     </Compile>
     <Compile Include="Classes\UserData.cs" />
     <Compile Include="Classes\CaptchaGenerator.cs" />
-    <Compile Include="Pages\DocumentPage.xaml.cs">
+    <Compile Include="DocumentPage.xaml.cs">
       <DependentUpon>DocumentPage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Pages\MainMenuPage.xaml.cs">
+    <Compile Include="MainMenuPage.xaml.cs">
       <DependentUpon>MainMenuPage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Pages\RegCardPage.xaml.cs">
+    <Compile Include="RegCardPage.xaml.cs">
       <DependentUpon>RegCardPage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Pages\RequestPage.xaml.cs">
+    <Compile Include="RequestPage.xaml.cs">
       <DependentUpon>RequestPage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Pages\UserPage.xaml.cs">
+    <Compile Include="UserPage.xaml.cs">
       <DependentUpon>UserPage.xaml</DependentUpon>
     </Compile>
-    <Page Include="Pages\AuthorizePage.xaml">
+    <Page Include="AuditPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Pages\DocumentPage.xaml">
+    <Page Include="AuthorizePage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Pages\MainMenuPage.xaml">
+    <Page Include="DocumentPage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="MainMenuPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -287,26 +304,30 @@
       <DependentUpon>App.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Pages\AuthorizePage.xaml.cs">
+    <Compile Include="AuthorizePage.xaml.cs">
       <DependentUpon>AuthorizePage.xaml</DependentUpon>
     </Compile>
     <Compile Include="MainWindow.xaml.cs">
       <DependentUpon>MainWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
-    <Page Include="Pages\RegCardPage.xaml">
+    <Page Include="RegCardPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Pages\ReportOptionsPage.xaml">
+    <Page Include="ReportOptionsPage.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="RequestPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Pages\RequestPage.xaml">
+    <Page Include="StorageControlPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Pages\UserPage.xaml">
+    <Page Include="UserPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -383,6 +404,9 @@
       <DependentUpon>ArchiveModel.edmx</DependentUpon>
       <LastGenOutput>ArchiveModel.cs</LastGenOutput>
     </Content>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Attachments\Documents\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">

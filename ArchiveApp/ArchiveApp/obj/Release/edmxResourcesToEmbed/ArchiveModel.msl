@@ -4,6 +4,7 @@
     <EntitySetMapping Name="Document">
       <EntityTypeMapping TypeName="ArchiveBaseModel.Document">
         <MappingFragment StoreEntitySet="Document">
+          <ScalarProperty Name="Shelf_Number" ColumnName="Shelf_Number" />
           <ScalarProperty Name="Id" ColumnName="Id" />
           <ScalarProperty Name="Number" ColumnName="Number" />
           <ScalarProperty Name="Receipt_Date" ColumnName="Receipt_Date" />

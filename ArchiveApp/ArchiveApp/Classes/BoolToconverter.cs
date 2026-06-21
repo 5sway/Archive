@@ -8,6 +8,10 @@ using System.Windows.Data;
 
 namespace ArchiveApp
 {
+    /// <summary>
+    /// Конвертер для отображения статуса подписи регистрационной карты.
+    /// Преобразует bool в строку "Подписано"/"Не подписано".
+    /// </summary>
     public class BoolToconverter : IValueConverter
     {
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)

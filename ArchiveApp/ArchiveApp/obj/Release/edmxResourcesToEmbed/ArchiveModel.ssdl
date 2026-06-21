@@ -12,6 +12,7 @@
     <Property Name="Copies_Count" Type="int" Nullable="false" />
     <Property Name="Annotation" Type="nvarchar(max)" Nullable="false" />
     <Property Name="Storage_Type" Type="nvarchar" MaxLength="50" Nullable="false" />
+    <Property Name="Shelf_Number" Type="nvarchar" MaxLength="50" />
   </EntityType>
   <EntityType Name="Registration_Card">
     <Key>

@@ -14,6 +14,7 @@
     <Property Name="Storage_Type" Type="String" MaxLength="50" FixedLength="false" Unicode="true" Nullable="false" />
     <NavigationProperty Name="Registration_Card" Relationship="Self.FK_Registration_Card_Document" FromRole="Document" ToRole="Registration_Card" />
     <NavigationProperty Name="Request" Relationship="Self.FK_Request_Document" FromRole="Document" ToRole="Request" />
+    <Property Name="Shelf_Number" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
   </EntityType>
   <EntityType Name="Registration_Card">
     <Key>

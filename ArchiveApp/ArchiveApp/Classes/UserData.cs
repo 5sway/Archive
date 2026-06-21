@@ -6,6 +6,10 @@ using System.Threading.Tasks;
 
 namespace ArchiveApp
 {
+    /// <summary>
+    /// Статический класс для хранения данных о текущем авторизованном пользователе.
+    /// Данные сохраняются на протяжении всей сессии и используются для контроля доступа.
+    /// </summary>
     public static class UserData
     {
         public static string CurrentUserRole { get; set; }

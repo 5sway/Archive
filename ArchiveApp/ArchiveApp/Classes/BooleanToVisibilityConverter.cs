@@ -4,6 +4,10 @@ using System.Windows.Data;
 
 namespace ArchiveApp
 {
+    /// <summary>
+    /// Конвертер для привязки: преобразует bool в Visibility.
+    /// Используется для скрытия/показа элементов интерфейса в зависимости от состояния.
+    /// </summary>
     [ValueConversion(typeof(bool), typeof(Visibility))]
     public class BooleanToVisibilityConverter : IValueConverter
     {
