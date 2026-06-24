@@ -86,5 +86,12 @@
 
         <Button Name="ViewScansBtn" Content="Просмотреть сканы" Background="#bae3e8" VerticalAlignment="Center"
             HorizontalAlignment="Left" Margin="380,0,0,0" Width="120" Height="40" Grid.Row="1" Click="ViewScansBtn_Click"/>
+        <ComboBox x:Name="StorageTypeFilter" Width="150" Height="25" Grid.Row="1" 
+          VerticalAlignment="Center" HorizontalAlignment="Left" Margin="510,0,0,0"
+          SelectionChanged="StorageTypeFilter_SelectionChanged">
+            <ComboBoxItem Content="Все типы" IsSelected="True"/>
+            <ComboBoxItem Content="Бумажный"/>
+            <ComboBoxItem Content="Электронный"/>
+        </ComboBox>
     </Grid>
 </Page>

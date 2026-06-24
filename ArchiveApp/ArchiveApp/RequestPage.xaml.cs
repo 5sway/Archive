@@ -300,30 +300,36 @@ namespace ArchiveApp
 
         private void ReqSearchBox_TextChanged(object sender, TextChangedEventArgs e)
         {
-            string searchText = ReqSearchBox.Text.ToLower();
+            string searchText = ReqSearchBox.Text?.ToLower().Trim() ?? "";
 
             if (string.IsNullOrWhiteSpace(searchText))
             {
                 Requests.Clear();
                 foreach (var req in _allRequests)
                     Requests.Add(req);
+                return;
             }
-            else
-            {
-                var filteredRequests = _allRequests
-                    .Where(req =>
-                        req.Request_Date.ToString("dd.MM.yyyy").ToLower().Contains(searchText) ||
-                        (req.Reason?.ToLower().Contains(searchText) == true) ||
-                        (req.Status.HasValue && (req.Status.Value ? "принято" : "отклонено").Contains(searchText)) ||
-                        (req.User?.Name?.ToLower().Contains(searchText) == true) ||
-                        (req.Document?.Title?.ToLower().Contains(searchText) == true)
-                    )
-                    .ToList();
 
-                Requests.Clear();
-                foreach (var req in filteredRequests)
-                    Requests.Add(req);
-            }
+            // Поиск по индексированным полям
+            var filteredRequests = _allRequests
+                .Where(req =>
+                    // Дата запроса (индекс IX_Request_Date)
+                    req.Request_Date.ToString("dd.MM.yyyy").Contains(searchText) ||
+                    // Статус (индекс IX_Request_Status)
+                    (req.Status.HasValue && (req.Status.Value ? "принято" : "отклонено").Contains(searchText)) ||
+                    // Причина
+                    (req.Reason?.ToLower().Contains(searchText) == true) ||
+                    // Имя пользователя
+                    (req.User?.Name?.ToLower().Contains(searchText) == true) ||
+                    (req.User?.Last_Name?.ToLower().Contains(searchText) == true) ||
+                    // Название документа (индекс IX_Document_Title)
+                    (req.Document?.Title?.ToLower().Contains(searchText) == true)
+                )
+                .ToList();
+
+            Requests.Clear();
+            foreach (var req in filteredRequests)
+                Requests.Add(req);
         }
 
         private void ClearSearchBtn_Click(object sender, RoutedEventArgs e)

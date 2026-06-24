@@ -1,87 +1,12 @@
 {
   "Version": 1,
   "WorkspaceRootPath": "D:\\\u0412\u0430\u0436\u043D\u043E\u0435\\SetupFiles\\ArchiveApp\\",
-  "Documents": [
-    {
-      "AbsoluteMoniker": "D:0:0:{E536B243-99BD-442C-97CC-07DB471FD4D8}|ArchiveApp\\ArchiveApp.csproj|d:\\\u0432\u0430\u0436\u043D\u043E\u0435\\setupfiles\\archiveapp\\archiveapp\\authorizepage.xaml.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{E536B243-99BD-442C-97CC-07DB471FD4D8}|ArchiveApp\\ArchiveApp.csproj|solutionrelative:archiveapp\\authorizepage.xaml.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{E536B243-99BD-442C-97CC-07DB471FD4D8}|ArchiveApp\\ArchiveApp.csproj|d:\\\u0432\u0430\u0436\u043D\u043E\u0435\\setupfiles\\archiveapp\\archiveapp\\mainwindow.xaml.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{E536B243-99BD-442C-97CC-07DB471FD4D8}|ArchiveApp\\ArchiveApp.csproj|solutionrelative:archiveapp\\mainwindow.xaml.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{E536B243-99BD-442C-97CC-07DB471FD4D8}|ArchiveApp\\ArchiveApp.csproj|d:\\\u0432\u0430\u0436\u043D\u043E\u0435\\setupfiles\\archiveapp\\archiveapp\\mainmenupage.xaml.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{E536B243-99BD-442C-97CC-07DB471FD4D8}|ArchiveApp\\ArchiveApp.csproj|solutionrelative:archiveapp\\mainmenupage.xaml.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{E536B243-99BD-442C-97CC-07DB471FD4D8}|ArchiveApp\\ArchiveApp.csproj|d:\\\u0432\u0430\u0436\u043D\u043E\u0435\\setupfiles\\archiveapp\\archiveapp\\authorizepage.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}",
-      "RelativeMoniker": "D:0:0:{E536B243-99BD-442C-97CC-07DB471FD4D8}|ArchiveApp\\ArchiveApp.csproj|solutionrelative:archiveapp\\authorizepage.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}"
-    }
-  ],
+  "Documents": [],
   "DocumentGroupContainers": [
     {
       "Orientation": 0,
       "VerticalTabListWidth": 256,
-      "DocumentGroups": [
-        {
-          "DockedWidth": 200,
-          "SelectedChildIndex": 3,
-          "Children": [
-            {
-              "$type": "Document",
-              "DocumentIndex": 1,
-              "Title": "MainWindow.xaml.cs",
-              "DocumentMoniker": "D:\\\u0412\u0430\u0436\u043D\u043E\u0435\\SetupFiles\\ArchiveApp\\ArchiveApp\\MainWindow.xaml.cs",
-              "RelativeDocumentMoniker": "ArchiveApp\\MainWindow.xaml.cs",
-              "ToolTip": "D:\\\u0412\u0430\u0436\u043D\u043E\u0435\\SetupFiles\\ArchiveApp\\ArchiveApp\\MainWindow.xaml.cs",
-              "RelativeToolTip": "ArchiveApp\\MainWindow.xaml.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAABMAAAAlAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-06-21T15:57:15.279Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 2,
-              "Title": "MainMenuPage.xaml.cs",
-              "DocumentMoniker": "D:\\\u0412\u0430\u0436\u043D\u043E\u0435\\SetupFiles\\ArchiveApp\\ArchiveApp\\MainMenuPage.xaml.cs",
-              "RelativeDocumentMoniker": "ArchiveApp\\MainMenuPage.xaml.cs",
-              "ToolTip": "D:\\\u0412\u0430\u0436\u043D\u043E\u0435\\SetupFiles\\ArchiveApp\\ArchiveApp\\MainMenuPage.xaml.cs",
-              "RelativeToolTip": "ArchiveApp\\MainMenuPage.xaml.cs",
-              "ViewState": "AgIAAOcAAAAAAAAAAAAUwAQBAAABAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-06-21T15:56:39.64Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 3,
-              "Title": "AuthorizePage.xaml",
-              "DocumentMoniker": "D:\\\u0412\u0430\u0436\u043D\u043E\u0435\\SetupFiles\\ArchiveApp\\ArchiveApp\\AuthorizePage.xaml",
-              "RelativeDocumentMoniker": "ArchiveApp\\AuthorizePage.xaml",
-              "ToolTip": "D:\\\u0412\u0430\u0436\u043D\u043E\u0435\\SetupFiles\\ArchiveApp\\ArchiveApp\\AuthorizePage.xaml",
-              "RelativeToolTip": "ArchiveApp\\AuthorizePage.xaml",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003549|",
-              "WhenOpened": "2026-06-21T15:55:30.018Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 0,
-              "Title": "AuthorizePage.xaml.cs",
-              "DocumentMoniker": "D:\\\u0412\u0430\u0436\u043D\u043E\u0435\\SetupFiles\\ArchiveApp\\ArchiveApp\\AuthorizePage.xaml.cs",
-              "RelativeDocumentMoniker": "ArchiveApp\\AuthorizePage.xaml.cs",
-              "ToolTip": "D:\\\u0412\u0430\u0436\u043D\u043E\u0435\\SetupFiles\\ArchiveApp\\ArchiveApp\\AuthorizePage.xaml.cs",
-              "RelativeToolTip": "ArchiveApp\\AuthorizePage.xaml.cs",
-              "ViewState": "AgIAANwBAAAAAAAAAADwv/UBAAABAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-06-21T15:54:27.519Z",
-              "EditorCaption": ""
-            }
-          ]
-        }
-      ]
+      "DocumentGroups": []
     }
   ]
 }

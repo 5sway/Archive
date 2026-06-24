@@ -325,7 +325,7 @@ namespace ArchiveApp
                 {
                     if (regCard.Signature)
                     {
-                        reportText += $"Документ зарегистрирован под №{regCard.Id} и размещён на полке №{docItem.Shelf_Number ?? "не указана"}. ";
+                        reportText += $"Документ зарегистрирован под №{regCard.Id} и размещён на полке {docItem.Shelf_Number ?? "не указана"}. ";
                         reportText += $"Согласно журналу регистрации, {regCard.Registration_Date:dd.MM.yyyy} документ был подписан. ";
                         if (user != null)
                             reportText += $"Подпись поставил {user.Last_Name} {user.Name} {user.First_Name}. ";

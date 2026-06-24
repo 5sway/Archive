@@ -7,8 +7,8 @@
         mc:Ignorable="d"
         Icon="/Resources/ArchiveIcon.png" Title="Archive"
         ResizeMode="CanResizeWithGrip" WindowStyle="SingleBorderWindow"
-        ShowInTaskbar="True" Background="White"
-        MinHeight="500" MinWidth="1200" MaxHeight="600" MaxWidth="1400">
+        ShowInTaskbar="True" Background="White" WindowStartupLocation="CenterScreen"
+        MinHeight="500" MinWidth="1400" MaxHeight="600" MaxWidth="1600">
     <Window.Resources>
         <Storyboard x:Key="RotateAnimation">
             <DoubleAnimation

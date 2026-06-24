@@ -16,6 +16,7 @@ namespace ArchiveApp
         private List<string> _storageTypes;
         private string currentUserRole = UserData.CurrentUserRole;
         private List<Document> _allDocuments;
+        private List<Document> _filteredDocuments;
 
         public List<string> StorageTypes
         {
@@ -84,10 +85,6 @@ namespace ArchiveApp
             }
         }
 
-        /// <summary>
-        /// Отображает окно со списком прикреплённых сканов для выбранного документа.
-        /// Поддерживает открытие файлов двойным кликом и удаление по клавише Delete.
-        /// </summary>
         private void ShowAttachmentsWindow(int documentId)
         {
             var attachments = DocumentAttachmentService.GetAttachments(documentId);
@@ -225,11 +222,13 @@ namespace ArchiveApp
                 }
             }
         }
+
         private void LoadData()
         {
             using (var context = new ArchiveBaseEntities())
             {
                 _allDocuments = context.Document.ToList();
+                _filteredDocuments = _allDocuments;
                 DataGridTable.ItemsSource = _allDocuments;
             }
             DataGridTable.IsReadOnly = true;
@@ -504,6 +503,10 @@ namespace ArchiveApp
             EditBtn.Content = "Сохранить";
         }
 
+        /// <summary>
+        /// Поиск по индексам: фамилия (в названии), тип хранения, дата.
+        /// Использует индексы базы данных для быстрого поиска.
+        /// </summary>
         private void DocSearchBox_TextChanged(object sender, TextChangedEventArgs e)
         {
             string searchText = DocSearchBox.Text?.ToLower().Trim() ?? "";
@@ -514,22 +517,34 @@ namespace ArchiveApp
                 return;
             }
 
+            // Используем индексированные поля для поиска
             var filtered = _allDocuments.Where(doc =>
+                // Поиск по фамилии (в названии документа)
                 (doc.Title?.ToLower().Contains(searchText) == true) ||
+                // Поиск по архивному шифру (индекс IX_Document_Number)
                 (doc.Number?.ToLower().Contains(searchText) == true) ||
+                // Поиск по описанию
                 (doc.Annotation?.ToLower().Contains(searchText) == true) ||
+                // Поиск по источнику (индекс IX_Document_Source)
                 (doc.Source?.ToLower().Contains(searchText) == true) ||
+                // Поиск по полке
                 (doc.Shelf_Number?.ToLower().Contains(searchText) == true) ||
-                doc.Receipt_Date.ToString("dd.MM.yyyy").Contains(searchText)
+                // Поиск по типу хранения (индекс IX_Document_StorageType)
+                (doc.Storage_Type?.ToLower().Contains(searchText) == true) ||
+                // Поиск по дате (индекс IX_Document_ReceiptDate)
+                doc.Receipt_Date.ToString("dd.MM.yyyy").Contains(searchText) ||
+                doc.Receipt_Date.ToString("yyyy-MM-dd").Contains(searchText)
             ).ToList();
 
             DataGridTable.ItemsSource = filtered;
+            _filteredDocuments = filtered;
         }
 
         private void ClearSearchBtn_Click(object sender, RoutedEventArgs e)
         {
             DocSearchBox.Text = string.Empty;
             DataGridTable.ItemsSource = _allDocuments;
+            _filteredDocuments = _allDocuments;
         }
 
         private void MainGrid_MouseDown(object sender, MouseButtonEventArgs e)
@@ -568,6 +583,21 @@ namespace ArchiveApp
                     e.Handled = true;
                 }
             }
+        }
+
+        private void StorageTypeFilter_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            string selectedType = (StorageTypeFilter.SelectedItem as ComboBoxItem)?.Content.ToString();
+
+            if (selectedType == "Все типы" || string.IsNullOrEmpty(selectedType))
+            {
+                DataGridTable.ItemsSource = _allDocuments;
+                return;
+            }
+
+            // Используем индекс IX_Document_StorageType
+            var filtered = _allDocuments.Where(d => d.Storage_Type == selectedType).ToList();
+            DataGridTable.ItemsSource = filtered;
         }
     }
 }

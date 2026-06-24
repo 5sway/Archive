@@ -43,14 +43,14 @@
     </dependentAssembly>
   </dependency>
   <dependency>
-    <dependentAssembly dependencyType="install" allowDelayedBinding="true" codebase="ArchiveApp.exe" size="6984704">
+    <dependentAssembly dependencyType="install" allowDelayedBinding="true" codebase="ArchiveApp.exe" size="6995456">
       <assemblyIdentity name="ArchiveApp" version="1.0.0.0" language="neutral" processorArchitecture="msil" />
       <hash>
         <dsig:Transforms>
           <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
         </dsig:Transforms>
         <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha256" />
-        <dsig:DigestValue>QpmcsefoXg/1ULrjA5vOx/84WAghpnfYQEphxOnu/xw=</dsig:DigestValue>
+        <dsig:DigestValue>Y+Tjmf88VqaIVAJ56lsY78qyookwEXz2W+QQsJXlhgg=</dsig:DigestValue>
       </hash>
     </dependentAssembly>
   </dependency>
@@ -78,13 +78,13 @@
       </hash>
     </dependentAssembly>
   </dependency>
-  <file name="ArchiveApp.exe.config" size="3344">
+  <file name="ArchiveApp.exe.config" size="3299">
     <hash>
       <dsig:Transforms>
         <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
       </dsig:Transforms>
       <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha256" />
-      <dsig:DigestValue>MnCay8XYCuOiBkKF91F1cTfA2nXFJDpuGU9wm4SMfC8=</dsig:DigestValue>
+      <dsig:DigestValue>YsCNdkjIOo6qa2laWop/UYdmOc2aLj9CYPZBoQP6/nk=</dsig:DigestValue>
     </hash>
   </file>
   <file name="ArchiveModel.Context.tt" size="22301">

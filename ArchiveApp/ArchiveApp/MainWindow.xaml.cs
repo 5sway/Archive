@@ -498,36 +498,6 @@ namespace ArchiveApp
             MainGrid.Children.Add(_notificationPopup);
         }
 
-        private void UpdateNotificationButtonsVisibility()
-        {
-            if (_notificationPopup == null || _notificationPopup.Child == null)
-                return;
-
-            if (!(_notificationPopup.Child is StackPanel mainStack))
-                return;
-
-            foreach (var element in mainStack.Children)
-            {
-                if (element is StackPanel buttonPanel)
-                {
-                    foreach (var child in buttonPanel.Children)
-                    {
-                        if (child is Button btn && btn.Content != null)
-                        {
-                            string contentText = btn.Content.ToString();
-
-                            if (contentText == "Просмотр аудита")
-                            {
-                                btn.Visibility = UserData.CurrentUserRole == "Администратор"
-                                    ? Visibility.Visible
-                                    : Visibility.Collapsed;
-                            }
-                        }
-                    }
-                }
-            }
-        }
-
         private void NotBtn_Click(object sender, RoutedEventArgs e)
         {
             if (_notificationPopup == null)
@@ -567,6 +537,45 @@ namespace ArchiveApp
             }
 
             UpdateSearchTextVisibility();
+        }
+
+        private void UpdateNotificationButtonsVisibility()
+        {
+            if (_notificationPopup == null || _notificationPopup.Child == null)
+                return;
+
+            if (!(_notificationPopup.Child is StackPanel mainStack))
+                return;
+
+            foreach (var element in mainStack.Children)
+            {
+                if (element is StackPanel buttonPanel)
+                {
+                    foreach (var child in buttonPanel.Children)
+                    {
+                        if (child is Button btn && btn.Content != null)
+                        {
+                            string contentText = btn.Content.ToString();
+
+                            // Аудит только для администратора
+                            if (contentText == "Просмотр аудита")
+                            {
+                                btn.Visibility = UserData.CurrentUserRole == "Администратор"
+                                    ? Visibility.Visible
+                                    : Visibility.Collapsed;
+                            }
+
+                            // Контроль сроков хранения — скрываем для делопроизводителя
+                            if (contentText == "Контроль сроков хранения")
+                            {
+                                btn.Visibility = UserData.CurrentUserRole != "Делопроизводитель"
+                                    ? Visibility.Visible
+                                    : Visibility.Collapsed;
+                            }
+                        }
+                    }
+                }
+            }
         }
 
         private void MainWindow_SizeChanged(object sender, SizeChangedEventArgs e)
