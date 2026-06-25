@@ -485,7 +485,7 @@ namespace ArchiveApp
             {
                 Title = "Изменение срока хранения",
                 Width = 450,
-                Height = 380,
+                Height = 425,
                 WindowStartupLocation = WindowStartupLocation.CenterScreen,
                 ResizeMode = ResizeMode.NoResize
             };
